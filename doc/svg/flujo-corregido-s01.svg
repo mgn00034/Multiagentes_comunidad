@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama: Flujo corregido de detección de tablero finalizado (S-01)
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="520" height="520" fill="#f8f9fa" rx="8"/>
+
+  <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/></marker></defs>
+
+  <!-- Entrada -->
+  <rect x="130" y="10" width="260" height="28" rx="6" fill="#f0f6ff" stroke="#2070b0" stroke-width="1.5"/>
+  <text x="260" y="29" text-anchor="middle" fill="#2070b0" font-size="10" font-weight="bold">Presencia con status="finished"</text>
+
+  <line x1="260" y1="38" x2="260" y2="58" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+
+  <!-- Decision 1: estado_anterior -->
+  <polygon points="260,60 400,95 260,130 120,95" fill="#ffffff" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="260" y="92" text-anchor="middle" fill="#334840" font-size="9">estado_anterior</text>
+  <text x="260" y="103" text-anchor="middle" fill="#334840" font-size="9">== "finished"?</text>
+
+  <!-- Si: ignorar redistribucion -->
+  <line x1="400" y1="95" x2="460" y2="95" stroke="#c05020" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="430" y="88" text-anchor="middle" fill="#c05020" font-size="9">Si</text>
+  <rect x="462" y="82" width="50" height="24" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1"/>
+  <text x="487" y="98" text-anchor="middle" fill="#c05020" font-size="9">ignorar</text>
+
+  <!-- No -->
+  <line x1="260" y1="130" x2="260" y2="155" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="270" y="145" fill="#2d8a6e" font-size="9">No</text>
+
+  <!-- Decision 2: tableros_consultados -->
+  <polygon points="260,157 410,192 260,227 110,192" fill="#ffffff" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="260" y="189" text-anchor="middle" fill="#334840" font-size="9">jid en tableros</text>
+  <text x="260" y="200" text-anchor="middle" fill="#334840" font-size="9">_consultados?</text>
+
+  <line x1="410" y1="192" x2="460" y2="192" stroke="#c05020" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="435" y="185" text-anchor="middle" fill="#c05020" font-size="9">Si</text>
+  <rect x="462" y="179" width="50" height="24" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1"/>
+  <text x="487" y="195" text-anchor="middle" fill="#c05020" font-size="9">ignorar</text>
+
+  <line x1="260" y1="227" x2="260" y2="250" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="270" y="240" fill="#2d8a6e" font-size="9">No</text>
+
+  <!-- Accion: add -->
+  <rect x="155" y="252" width="210" height="24" rx="4" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="260" y="268" text-anchor="middle" fill="#334840" font-size="10">tableros_consultados.add(jid)</text>
+
+  <line x1="260" y1="276" x2="260" y2="298" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+
+  <!-- Decision 3: informes_pendientes -->
+  <polygon points="260,300 410,335 260,370 110,335" fill="#ffffff" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="260" y="332" text-anchor="middle" fill="#334840" font-size="9">jid en informes</text>
+  <text x="260" y="343" text-anchor="middle" fill="#334840" font-size="9">_pendientes?</text>
+
+  <line x1="410" y1="335" x2="460" y2="335" stroke="#c05020" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="435" y="328" text-anchor="middle" fill="#c05020" font-size="9">Si</text>
+  <rect x="462" y="322" width="50" height="24" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1"/>
+  <text x="487" y="338" text-anchor="middle" fill="#c05020" font-size="9">ignorar</text>
+
+  <line x1="260" y1="370" x2="260" y2="393" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+  <text x="270" y="383" fill="#2d8a6e" font-size="9">No</text>
+
+  <!-- Accion: crear FSM -->
+  <rect x="145" y="395" width="230" height="28" rx="6" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="260" y="413" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">_crear_fsm_solicitud(jid)</text>
+
+  <line x1="260" y1="423" x2="260" y2="446" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#fa)"/>
+
+  <!-- Estado terminal -->
+  <rect x="105" y="448" width="310" height="58" rx="6" fill="#ffffff" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="260" y="464" text-anchor="middle" fill="#5c756a" font-size="9" font-style="italic">... FSM se ejecuta (estado terminal) ...</text>
+  <text x="260" y="478" text-anchor="middle" fill="#334840" font-size="9">informes_pendientes.pop(jid)</text>
+  <text x="260" y="491" text-anchor="middle" fill="#334840" font-size="9">tableros_consultados.discard(jid)</text>
+  <text x="260" y="504" text-anchor="middle" fill="#1a6b50" font-size="9">solicitar_siguiente_en_cola()</text>
+</svg>

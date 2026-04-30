@@ -1,0 +1,72 @@
+<svg viewBox="0 0 420 480" xmlns="http://www.w3.org/2000/svg" font-family="'Source Sans 3','Segoe UI',sans-serif" font-size="11">
+  <rect width="420" height="480" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="210" y="22" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#333" font-weight="700">Diagrama de actividad: MonitorizarMUCBehaviour (PeriodicBehaviour)</text>
+
+  <!-- Inicio -->
+  <circle cx="210" cy="50" r="10" fill="#333"/>
+
+  <line x1="210" y1="60" x2="210" y2="82" stroke="#555" stroke-width="1.2"/>
+
+  <!-- Paso 1: consultar ocupantes en memoria -->
+  <rect x="90" y="84" width="240" height="30" rx="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="210" y="104" text-anchor="middle" fill="#2E7D32" font-weight="600">Consultar ocupantes_por_sala</text>
+
+  <line x1="210" y1="114" x2="210" y2="136" stroke="#555" stroke-width="1.2"/>
+
+  <!-- Paso 2: for each sala -->
+  <rect x="70" y="138" width="280" height="30" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="210" y="158" text-anchor="middle" fill="#8B6914" font-weight="600">Para cada sala en salas_muc</text>
+
+  <line x1="210" y1="168" x2="210" y2="190" stroke="#555" stroke-width="1.2"/>
+
+  <!-- Paso 3: filtrar contactos -->
+  <rect x="80" y="192" width="260" height="30" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1"/>
+  <text x="210" y="212" text-anchor="middle" fill="#005A8C" font-weight="500">Filtrar contactos de esta sala</text>
+
+  <line x1="210" y1="222" x2="210" y2="244" stroke="#555" stroke-width="1.2"/>
+
+  <!-- Paso 4: for each contacto -->
+  <rect x="60" y="246" width="300" height="30" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="210" y="266" text-anchor="middle" fill="#8B6914" font-weight="500">Para cada contacto: nick, rol, estado</text>
+
+  <line x1="210" y1="276" x2="210" y2="296" stroke="#555" stroke-width="1.2"/>
+
+  <!-- Decision: es tablero? -->
+  <polygon points="210,298 260,322 210,346 160,322" fill="#F5F5F5" stroke="#888" stroke-width="1"/>
+  <text x="210" y="326" text-anchor="middle" fill="#333" font-size="10" font-weight="500">tablero_?</text>
+
+  <!-- Rama si -->
+  <line x1="260" y1="322" x2="330" y2="322" stroke="#009E73" stroke-width="1.2"/>
+  <text x="280" y="315" fill="#009E73" font-size="9" font-weight="600">si</text>
+  <line x1="330" y1="322" x2="330" y2="348" stroke="#009E73" stroke-width="1.2"/>
+  <rect x="255" y="350" width="150" height="26" rx="5" fill="#E8F5E9" stroke="#4CAF50" stroke-width="0.8"/>
+  <text x="330" y="368" text-anchor="middle" fill="#2E7D32" font-size="10">tablero_a_sala[jid] = id</text>
+  <line x1="330" y1="376" x2="330" y2="395" stroke="#555" stroke-width="1"/>
+  <line x1="330" y1="395" x2="210" y2="395" stroke="#555" stroke-width="1"/>
+
+  <!-- Rama no -->
+  <line x1="160" y1="322" x2="100" y2="322" stroke="#888" stroke-width="1"/>
+  <text x="135" y="315" fill="#888" font-size="9">no</text>
+  <line x1="100" y1="322" x2="100" y2="395" stroke="#888" stroke-width="1"/>
+  <line x1="100" y1="395" x2="210" y2="395" stroke="#888" stroke-width="1"/>
+
+  <!-- Paso 5: actualizar ocupantes -->
+  <line x1="210" y1="395" x2="210" y2="410" stroke="#555" stroke-width="1.2"/>
+  <rect x="65" y="412" width="290" height="30" rx="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="210" y="432" text-anchor="middle" fill="#2E7D32" font-weight="600">Actualizar ocupantes_por_sala[id]</text>
+
+  <!-- Fin (ciclo) -->
+  <line x1="210" y1="442" x2="210" y2="458" stroke="#555" stroke-width="1.2"/>
+  <rect x="148" y="456" width="124" height="20" rx="10" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="210" y="470" text-anchor="middle" fill="#8B6914" font-size="10" font-weight="500">Esperar intervalo</text>
+
+  <!-- Leyenda -->
+  <rect x="10" y="38" width="8" height="8" rx="2" fill="#E8F5E9" stroke="#4CAF50" stroke-width="0.5"/>
+  <text x="22" y="46" fill="#555" font-size="8">Accion</text>
+  <polygon points="72,38 80,42 72,46" fill="#F5F5F5" stroke="#888" stroke-width="0.5"/>
+  <text x="84" y="46" fill="#555" font-size="8">Decision</text>
+  <rect x="128" y="38" width="8" height="8" rx="2" fill="#FFF8E1" stroke="#F9A825" stroke-width="0.5"/>
+  <text x="140" y="46" fill="#555" font-size="8">Ciclo</text>
+</svg>

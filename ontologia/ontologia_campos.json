@@ -1,0 +1,29 @@
+{
+  "join": [],
+  "join-accepted": [
+    "symbol"
+  ],
+  "join-refused": [
+    "reason"
+  ],
+  "join-timeout": [
+    "reason"
+  ],
+  "game-start": [
+    "opponent",
+    "thread"
+  ],
+  "turn": [
+    "active_symbol"
+  ],
+  "move": [
+    "position"
+  ],
+  "ok": [],
+  "game-over": [
+    "reason"
+  ],
+  "turn-result": [
+    "result"
+  ]
+}

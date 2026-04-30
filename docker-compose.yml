@@ -1,0 +1,35 @@
+services:
+  prosody:
+    image: prosodyim/prosody:0.12
+    container_name: prosody-sma
+    ports:
+      - "5222:5222"
+      - "5269:5269"
+      - "5322:5322"
+    volumes:
+      - ./prosody/prosody.cfg.lua:/etc/prosody/prosody.cfg.lua:ro
+      - ./certs/prosody.crt:/etc/prosody/certs/prosody.crt:ro
+      - ./certs/prosody.key:/etc/prosody/certs/prosody.key:ro
+      - prosody-data:/var/lib/prosody
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-local
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  prosody-data:
+    name: prosody-sma-data
+  ollama_data: {}

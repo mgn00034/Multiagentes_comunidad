@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Flujo del ciclo de turno en el Agente Tablero: comparación del
+  estado antes de la actualización con el estado posterior, que
+  incorpora el nuevo mensaje INFORM turn-result.
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="820" height="260" fill="#f8f9fa" rx="8"/>
+
+  <defs>
+    <marker id="flecha-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/>
+    </marker>
+    <marker id="flecha-nueva" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b87020"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="24" text-anchor="middle" fill="#1a3a52" font-weight="bold" font-size="13">Ciclo de turno del Agente Tablero — antes y después</text>
+
+  <!-- ============ FILA «ANTES» ============ -->
+  <rect x="20" y="50" width="70" height="46" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.3"/>
+  <text x="55" y="78" text-anchor="middle" fill="#c05020" font-weight="bold" font-size="11">Antes</text>
+
+  <!-- Caja 1: CFP turn -->
+  <rect x="108" y="50" width="130" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="173" y="69" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">CFP turn</text>
+  <text x="173" y="84" text-anchor="middle" fill="#5c756a" font-size="9">tablero → jugador</text>
+
+  <!-- Flecha 1 -->
+  <line x1="240" y1="73" x2="270" y2="73" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-base)"/>
+
+  <!-- Caja 2: PROPOSE move -->
+  <rect x="272" y="50" width="130" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="337" y="69" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">PROPOSE move</text>
+  <text x="337" y="84" text-anchor="middle" fill="#5c756a" font-size="9">jugador → tablero</text>
+
+  <!-- Flecha 2 -->
+  <line x1="404" y1="73" x2="434" y2="73" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-base)"/>
+
+  <!-- Caja 3: ACCEPT_PROPOSAL move -->
+  <rect x="436" y="50" width="140" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="506" y="69" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">ACCEPT_PROPOSAL</text>
+  <text x="506" y="84" text-anchor="middle" fill="#5c756a" font-size="9">tablero → jugador</text>
+
+  <!-- Flecha 3 -->
+  <line x1="578" y1="73" x2="608" y2="73" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-base)"/>
+
+  <!-- Caja 4: tablero decide solo -->
+  <rect x="610" y="50" width="190" height="46" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.2"/>
+  <text x="705" y="69" text-anchor="middle" fill="#c05020" font-size="11" font-weight="bold">tablero evalúa</text>
+  <text x="705" y="84" text-anchor="middle" fill="#5c756a" font-size="9">cierra o emite nuevo CFP</text>
+
+  <!-- ============ FILA «AHORA» ============ -->
+  <rect x="20" y="140" width="70" height="46" rx="4" fill="#e8f2ec" stroke="#2d8a6e" stroke-width="1.3"/>
+  <text x="55" y="168" text-anchor="middle" fill="#1a6b50" font-weight="bold" font-size="11">Ahora</text>
+
+  <!-- Caja 1: CFP turn -->
+  <rect x="108" y="140" width="130" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="173" y="159" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">CFP turn</text>
+  <text x="173" y="174" text-anchor="middle" fill="#5c756a" font-size="9">tablero → jugador</text>
+
+  <line x1="240" y1="163" x2="270" y2="163" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-base)"/>
+
+  <!-- Caja 2: PROPOSE move -->
+  <rect x="272" y="140" width="130" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="337" y="159" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">PROPOSE move</text>
+  <text x="337" y="174" text-anchor="middle" fill="#5c756a" font-size="9">jugador → tablero</text>
+
+  <line x1="404" y1="163" x2="434" y2="163" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-base)"/>
+
+  <!-- Caja 3: ACCEPT_PROPOSAL move -->
+  <rect x="436" y="140" width="140" height="46" rx="4" fill="#ffffff" stroke="#2070b0" stroke-width="1.2"/>
+  <text x="506" y="159" text-anchor="middle" fill="#1a3a52" font-size="11" font-weight="bold">ACCEPT_PROPOSAL</text>
+  <text x="506" y="174" text-anchor="middle" fill="#5c756a" font-size="9">tablero → jugador</text>
+
+  <!-- Flecha 3 (resaltada) -->
+  <line x1="578" y1="163" x2="608" y2="163" stroke="#b87020" stroke-width="1.6" marker-end="url(#flecha-nueva)"/>
+
+  <!-- Caja 4 NUEVA: esperar turn-result -->
+  <rect x="610" y="140" width="190" height="46" rx="4" fill="#fff6e0" stroke="#b87020" stroke-width="1.6"/>
+  <text x="705" y="159" text-anchor="middle" fill="#6a4a10" font-size="11" font-weight="bold">esperar turn-result</text>
+  <text x="705" y="174" text-anchor="middle" fill="#6a4a10" font-size="9">jugador → tablero (INFORM)</text>
+
+  <!-- Etiqueta «nuevo» -->
+  <rect x="732" y="114" width="64" height="18" rx="9" fill="#b87020"/>
+  <text x="764" y="127" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">nuevo</text>
+  <line x1="705" y1="133" x2="705" y2="140" stroke="#b87020" stroke-width="1.2"/>
+
+  <!-- Nota inferior -->
+  <line x1="40" y1="212" x2="780" y2="212" stroke="#b0b8b4" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="410" y="228" text-anchor="middle" fill="#1a3a52" font-size="10" font-style="italic">La decisión «continuar / cerrar partida» pasa a depender del `result` que el jugador envía en el turn-result,</text>
+  <text x="410" y="242" text-anchor="middle" fill="#1a3a52" font-size="10" font-style="italic">en lugar de tomarla el tablero por su cuenta al recibir el movimiento confirmado.</text>
+</svg>

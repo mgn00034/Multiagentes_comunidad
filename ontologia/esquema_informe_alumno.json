@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "informe-alumno-tictactoe-v1",
+  "title": "Informe de integracion del alumno - TicTacToe SMA UJA",
+  "description": "Esquema JSON que define el formato del informe que cada alumno genera tras la prueba colectiva (Bateria 3). Recoge lo que observaron sus agentes durante la sesion de laboratorio.",
+  "type": "object",
+  "required": [
+    "equipo",
+    "puesto",
+    "timestamp_inicio",
+    "timestamp_fin",
+    "agentes_desplegados",
+    "partidas_observadas"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "equipo": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identificador del equipo o nombre del alumno (ej: 'grupo_03', 'ana_garcia')."
+    },
+    "puesto": {
+      "type": "string",
+      "pattern": "^pc[0-9]{2}$",
+      "description": "Identificador del puesto del laboratorio (ej: 'pc05'). Debe coincidir con la sala MUC asignada (sala_pcXX)."
+    },
+    "timestamp_inicio": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Marca temporal ISO 8601 del inicio de la sesion de pruebas del alumno."
+    },
+    "timestamp_fin": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Marca temporal ISO 8601 del fin de la sesion de pruebas del alumno."
+    },
+    "agentes_desplegados": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Lista de agentes que el alumno desplego en el servidor.",
+      "items": {
+        "type": "object",
+        "required": ["jid", "rol"],
+        "additionalProperties": false,
+        "properties": {
+          "jid": {
+            "type": "string",
+            "minLength": 1,
+            "description": "JID completo del agente (ej: 'tablero_pc05@sinbad2.ujaen.es')."
+          },
+          "rol": {
+            "type": "string",
+            "enum": ["tablero", "jugador"],
+            "description": "Rol del agente en el sistema."
+          }
+        }
+      }
+    },
+    "partidas_observadas": {
+      "type": "array",
+      "description": "Lista de partidas que el alumno observo desde sus agentes durante la sesion.",
+      "items": {
+        "type": "object",
+        "required": [
+          "tablero_jid",
+          "resultado",
+          "jugadores",
+          "turnos",
+          "tablero_final"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "tablero_jid": {
+            "type": "string",
+            "minLength": 1,
+            "description": "JID del tablero que arbitro la partida."
+          },
+          "resultado": {
+            "type": "string",
+            "enum": ["win", "draw", "aborted"],
+            "description": "Resultado de la partida segun la ontologia."
+          },
+          "ganador_ficha": {
+            "description": "Ficha ganadora. Obligatorio si resultado='win', null en caso contrario.",
+            "anyOf": [
+              { "type": "string", "enum": ["X", "O"] },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "jugadores": {
+            "type": "object",
+            "required": ["X", "O"],
+            "additionalProperties": false,
+            "description": "JIDs de los jugadores por ficha.",
+            "properties": {
+              "X": {
+                "type": "string",
+                "minLength": 1,
+                "description": "JID del jugador con ficha X."
+              },
+              "O": {
+                "type": "string",
+                "minLength": 1,
+                "description": "JID del jugador con ficha O."
+              }
+            }
+          },
+          "turnos": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9,
+            "description": "Numero de turnos jugados en la partida."
+          },
+          "tablero_final": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["X", "O", ""]
+            },
+            "minItems": 9,
+            "maxItems": 9,
+            "description": "Estado final del tablero (9 celdas, fila a fila, de izquierda a derecha y de arriba abajo)."
+          },
+          "timestamp": {
+            "type": "string",
+            "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+            "description": "Hora a la que el agente observo el fin de la partida (HH:MM:SS)."
+          },
+          "razon": {
+            "description": "Razon de finalizacion si resultado='aborted'.",
+            "anyOf": [
+              { "type": "string", "enum": ["invalid", "timeout", "both-timeout"] },
+              { "type": "null" }
+            ],
+            "default": null
+          }
+        }
+      }
+    },
+    "incidencias": {
+      "type": "array",
+      "description": "Incidencias observadas por los agentes del alumno durante la sesion.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["tipo", "detalle"],
+        "additionalProperties": false,
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": ["timeout", "error", "rechazo", "desconexion", "otro"],
+            "description": "Categoria de la incidencia."
+          },
+          "detalle": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Descripcion legible de la incidencia."
+          },
+          "timestamp": {
+            "type": "string",
+            "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+            "description": "Hora de la incidencia (HH:MM:SS)."
+          }
+        }
+      }
+    }
+  }
+}

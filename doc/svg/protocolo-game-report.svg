@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama de secuencia: Protocolo de informe (supervisor → tablero)
+  Sistemas Multiagente — Universidad de Jaén
+  Nivel 1: Agentes FIPA con SPADE
+-->
+<svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="520" height="200" fill="#f8f9fa" rx="8"/>
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/></marker></defs>
+  <rect x="40" y="8" width="100" height="22" rx="4" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="90" y="23" text-anchor="middle" fill="#1a6b50" font-weight="bold">Supervisor</text>
+  <rect x="380" y="8" width="80" height="22" rx="4" fill="#f0f6ff" stroke="#2070b0" stroke-width="1.5"/>
+  <text x="420" y="23" text-anchor="middle" fill="#2070b0" font-weight="bold">Tablero</text>
+  <line x1="90" y1="30" x2="90" y2="195" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="420" y1="30" x2="420" y2="195" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="90" y1="52" x2="420" y2="52" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#a2)"/>
+  <text x="255" y="47" text-anchor="middle" fill="#1a6b50" font-weight="bold">REQUEST game-report</text>
+  <text x="255" y="65" text-anchor="middle" fill="#5c756a" font-size="9">ontology=tictactoe · performative=request</text>
+  <text x="255" y="76" text-anchor="middle" fill="#2070b0" font-size="9">conversation-id=game-report · thread=report-{jid}-{ts}</text>
+  <line x1="420" y1="100" x2="90" y2="100" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+  <text x="255" y="95" text-anchor="middle" fill="#5c756a">AGREE</text>
+  <text x="255" y="113" text-anchor="middle" fill="#8a9a94" font-size="9">performative=agree · thread=report-{jid}-{ts}</text>
+  <text x="460" y="105" fill="#8a9a94" font-size="9" font-style="italic">(opcional)</text>
+  <line x1="420" y1="140" x2="90" y2="140" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#a2)"/>
+  <text x="255" y="135" text-anchor="middle" fill="#1a6b50" font-weight="bold">INFORM game-report</text>
+  <text x="255" y="155" text-anchor="middle" fill="#5c756a" font-size="9">performative=inform · thread=report-{jid}-{ts}</text>
+  <text x="255" y="167" text-anchor="middle" fill="#5c756a" font-size="9">body: {result, winner, players, turns, board}</text>
+</svg>

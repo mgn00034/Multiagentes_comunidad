@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+  <defs>
+    <marker id="a1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#555" stroke-width="1.2"/>
+    </marker>
+    <marker id="a1-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#009E73" stroke-width="1.2"/>
+    </marker>
+    <marker id="a1-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#0072B2" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="820" height="520" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Flujo de datos — Escritura y lectura en la capa de persistencia</text>
+
+  <!-- ═══ ESCRITURA (izquierda) ═══ -->
+  <rect x="30" y="50" width="370" height="450" rx="8" fill="rgba(0,158,115,0.04)" stroke="#009E73" stroke-width="1" stroke-dasharray="5,2"/>
+  <text x="50" y="72" fill="#007A59" font-size="13" font-weight="700" font-family="'Crimson Pro',serif">Escritura (agente → SQLite)</text>
+
+  <!-- Tablero finaliza -->
+  <rect x="60" y="90" width="160" height="36" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1"/>
+  <text x="140" y="112" fill="#005A8C" font-size="10" font-weight="600" text-anchor="middle">Tablero finaliza</text>
+
+  <line x1="140" y1="126" x2="140" y2="146" stroke="#555" stroke-width="1" marker-end="url(#a1)"/>
+
+  <!-- Callback presencia -->
+  <rect x="60" y="150" width="160" height="36" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1"/>
+  <text x="140" y="164" fill="#7B1FA2" font-size="10" font-weight="600" text-anchor="middle">_on_presencia_muc</text>
+  <text x="140" y="178" fill="#666" font-size="9" text-anchor="middle">registrar_evento_log()</text>
+
+  <!-- Flecha a evento -->
+  <line x1="220" y1="168" x2="270" y2="168" stroke="#E65100" stroke-width="1.2" marker-end="url(#a1)"/>
+
+  <!-- guardar_evento -->
+  <rect x="274" y="150" width="110" height="36" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1.2"/>
+  <text x="329" y="172" fill="#BF360C" font-size="10" font-weight="600" text-anchor="middle">guardar_evento</text>
+
+  <line x1="140" y1="186" x2="140" y2="210" stroke="#555" stroke-width="1" marker-end="url(#a1)"/>
+
+  <!-- FSM solicita informe -->
+  <rect x="60" y="214" width="160" height="36" rx="6" fill="rgba(0,114,178,0.1)" stroke="#0072B2" stroke-width="1"/>
+  <text x="140" y="228" fill="#005A8C" font-size="10" font-weight="600" text-anchor="middle">SolicitarInformeFSM</text>
+  <text x="140" y="242" fill="#666" font-size="9" text-anchor="middle">PROCESAR_INFORME</text>
+
+  <line x1="140" y1="250" x2="140" y2="274" stroke="#555" stroke-width="1" marker-end="url(#a1)"/>
+
+  <!-- Bifurcacion: informe + evento -->
+  <rect x="60" y="278" width="160" height="36" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1.2"/>
+  <text x="140" y="292" fill="#007A59" font-size="10" font-weight="600" text-anchor="middle">Almacenar informe</text>
+  <text x="140" y="306" fill="#666" font-size="9" text-anchor="middle">informes_por_sala + log</text>
+
+  <!-- Flecha a guardar_informe -->
+  <line x1="220" y1="290" x2="270" y2="290" stroke="#0072B2" stroke-width="1.2" marker-end="url(#a1-b)"/>
+
+  <!-- guardar_informe -->
+  <rect x="274" y="272" width="110" height="36" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1.2"/>
+  <text x="329" y="294" fill="#005A8C" font-size="10" font-weight="600" text-anchor="middle">guardar_informe</text>
+
+  <!-- Flecha tambien evento -->
+  <line x1="220" y1="302" x2="260" y2="334" stroke="#E65100" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a1)"/>
+
+  <rect x="274" y="318" width="110" height="36" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1"/>
+  <text x="329" y="340" fill="#BF360C" font-size="10" font-weight="600" text-anchor="middle">guardar_evento</text>
+
+  <!-- SQLite disco -->
+  <rect x="150" y="390" width="160" height="50" rx="25" fill="#F5F5F5" stroke="#aaa" stroke-width="1.5"/>
+  <text x="230" y="412" fill="#555" font-size="12" font-weight="700" text-anchor="middle">SQLite</text>
+  <text x="230" y="428" fill="#888" font-size="9" text-anchor="middle">data/supervisor.db</text>
+
+  <!-- Flechas al disco: bus vertical por el lado derecho para -->
+  <!-- no cruzar los recuadros de guardar_informe/guardar_evento -->
+  <line x1="384" y1="168" x2="394" y2="168" stroke="#E65100" stroke-width="1.2"/>
+  <line x1="384" y1="290" x2="394" y2="290" stroke="#0072B2" stroke-width="1.2"/>
+  <line x1="384" y1="336" x2="394" y2="336" stroke="#E65100" stroke-width="1.2"/>
+  <circle cx="394" cy="168" r="2" fill="#E65100"/>
+  <circle cx="394" cy="290" r="2" fill="#0072B2"/>
+  <circle cx="394" cy="336" r="2" fill="#E65100"/>
+  <polyline points="394,168 394,382 260,382 260,390" fill="none"
+            stroke="#555" stroke-width="1.2" stroke-dasharray="4,2"
+            marker-end="url(#a1)"/>
+
+  <text x="140" y="470" fill="#009E73" font-size="10" font-weight="600">Escritura inmediata:</text>
+  <text x="140" y="484" fill="#555" font-size="10">cada INSERT va seguido de COMMIT</text>
+
+  <!-- ═══ LECTURA (derecha) ═══ -->
+  <rect x="420" y="50" width="370" height="450" rx="8" fill="rgba(0,114,178,0.04)" stroke="#0072B2" stroke-width="1" stroke-dasharray="5,2"/>
+  <text x="440" y="72" fill="#005A8C" font-size="13" font-weight="700" font-family="'Crimson Pro',serif">Lectura (panel web → SQLite)</text>
+
+  <!-- Navegador -->
+  <rect x="450" y="90" width="180" height="36" rx="6" fill="#F5F5F5" stroke="#aaa" stroke-width="1"/>
+  <text x="540" y="112" fill="#555" font-size="10" font-weight="600" text-anchor="middle">Navegador (polling 5 s)</text>
+
+  <!-- Modo en vivo -->
+  <line x1="500" y1="126" x2="500" y2="154" stroke="#009E73" stroke-width="1.2" marker-end="url(#a1-g)"/>
+  <text x="470" y="144" fill="#009E73" font-size="9" font-weight="600">En vivo</text>
+
+  <rect x="440" y="158" width="200" height="50" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1"/>
+  <text x="540" y="178" fill="#007A59" font-size="10" font-weight="600" text-anchor="middle">GET /supervisor/api/state</text>
+  <text x="540" y="194" fill="#666" font-size="9" text-anchor="middle">Lee estado en memoria del agente</text>
+
+  <text x="660" y="184" fill="#888" font-size="9">No toca SQLite</text>
+  <text x="660" y="198" fill="#888" font-size="9">(datos volatiles)</text>
+
+  <!-- Modo historico -->
+  <polyline points="630,108 670,108 670,265 640,265" fill="none"
+            stroke="#F9A825" stroke-width="1.2" marker-end="url(#a1)"/>
+  <text x="678" y="145" fill="#8B6914" font-size="9" font-weight="600">Historico</text>
+
+  <!-- listar_ejecuciones -->
+  <rect x="440" y="244" width="200" height="42" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="540" y="262" fill="#8B6914" font-size="10" font-weight="600" text-anchor="middle">GET /api/ejecuciones</text>
+  <text x="540" y="278" fill="#666" font-size="9" text-anchor="middle">listar_ejecuciones()</text>
+
+  <line x1="540" y1="286" x2="540" y2="308" stroke="#555" stroke-width="1" marker-end="url(#a1)"/>
+
+  <!-- obtener_datos -->
+  <rect x="440" y="312" width="200" height="56" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="540" y="330" fill="#8B6914" font-size="10" font-weight="600" text-anchor="middle">GET /api/ejecuciones/{id}</text>
+  <text x="540" y="348" fill="#666" font-size="9" text-anchor="middle">obtener_salas_ejecucion(id)</text>
+  <text x="540" y="362" fill="#666" font-size="9" text-anchor="middle">obtener_informes_ejecucion(id)</text>
+
+  <!-- Flechas a SQLite -->
+  <line x1="540" y1="368" x2="540" y2="396" stroke="#555" stroke-width="1" marker-end="url(#a1)"/>
+
+  <!-- SQLite disco (lectura) -->
+  <rect x="480" y="400" width="160" height="50" rx="25" fill="#F5F5F5" stroke="#aaa" stroke-width="1.5"/>
+  <text x="560" y="422" fill="#555" font-size="12" font-weight="700" text-anchor="middle">SQLite</text>
+  <text x="560" y="438" fill="#888" font-size="9" text-anchor="middle">SELECT + json.loads()</text>
+
+  <text x="470" y="470" fill="#0072B2" font-size="10" font-weight="600">Lectura bajo demanda:</text>
+  <text x="470" y="484" fill="#555" font-size="10">solo cuando el usuario selecciona</text>
+  <text x="470" y="498" fill="#555" font-size="10">una ejecucion pasada en el selector</text>
+</svg>

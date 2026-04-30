@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+
+  <!-- Fondo -->
+  <rect width="820" height="500" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Sistema de temas y accesibilidad — WCAG AA y paleta daltonismo-segura</text>
+
+  <!-- ═══ TEMA OSCURO (izquierda) ═══ -->
+  <rect x="30" y="50" width="370" height="280" rx="8" fill="#111816" stroke="#334840" stroke-width="1.2"/>
+  <text x="50" y="74" fill="#e8ece9" font-size="13" font-weight="700">Tema oscuro (data-theme="dark")</text>
+
+  <!-- Paleta de colores oscura -->
+  <rect x="50" y="90" width="36" height="24" rx="4" fill="#111816" stroke="#334840" stroke-width="0.8"/>
+  <text x="96" y="106" fill="#c4cdc8" font-size="10">--body: #111816</text>
+  <text x="260" y="106" fill="#888" font-size="9">fondo principal</text>
+
+  <rect x="50" y="120" width="36" height="24" rx="4" fill="#1a2420" stroke="#334840" stroke-width="0.8"/>
+  <text x="96" y="136" fill="#c4cdc8" font-size="10">--surface: #1a2420</text>
+  <text x="260" y="136" fill="#888" font-size="9">tarjetas, paneles</text>
+
+  <rect x="50" y="150" width="36" height="24" rx="4" fill="#c4cdc8"/>
+  <text x="96" y="166" fill="#c4cdc8" font-size="10">--text: #c4cdc8</text>
+  <text x="260" y="166" fill="#888" font-size="9">10.8:1 contraste</text>
+
+  <rect x="50" y="180" width="36" height="24" rx="4" fill="#4dd6a5"/>
+  <text x="96" y="196" fill="#4dd6a5" font-size="10">--green: #4dd6a5</text>
+  <text x="260" y="196" fill="#888" font-size="9">victoria, 10.2:1</text>
+
+  <rect x="50" y="210" width="36" height="24" rx="4" fill="#e85a6e"/>
+  <text x="96" y="226" fill="#e85a6e" font-size="10">--error: #e85a6e</text>
+  <text x="260" y="226" fill="#888" font-size="9">derrota, 6.5:1</text>
+
+  <rect x="50" y="240" width="36" height="24" rx="4" fill="#b8a0d8"/>
+  <text x="96" y="256" fill="#b8a0d8" font-size="10">--draw: #b8a0d8</text>
+  <text x="260" y="256" fill="#888" font-size="9">empate (purpura)</text>
+
+  <rect x="50" y="270" width="36" height="24" rx="4" fill="#e8975a"/>
+  <text x="96" y="286" fill="#e8975a" font-size="10">--aborted: #e8975a</text>
+  <text x="260" y="286" fill="#888" font-size="9">abortada, 7.6:1</text>
+
+  <rect x="50" y="300" width="36" height="24" rx="4" fill="#5dade2"/>
+  <text x="96" y="316" fill="#5dade2" font-size="10">--x-color: #5dade2</text>
+  <text x="260" y="316" fill="#888" font-size="9">ficha X (azul)</text>
+
+  <!-- ═══ TEMA CLARO (derecha) ═══ -->
+  <rect x="420" y="50" width="370" height="280" rx="8" fill="#f5f7f6" stroke="#ddd" stroke-width="1.2"/>
+  <text x="440" y="74" fill="#1a2420" font-size="13" font-weight="700">Tema claro (data-theme="light")</text>
+
+  <rect x="440" y="90" width="36" height="24" rx="4" fill="#f5f7f6" stroke="#ddd" stroke-width="0.8"/>
+  <text x="486" y="106" fill="#334840" font-size="10">--body: #f5f7f6</text>
+  <text x="650" y="106" fill="#888" font-size="9">fondo principal</text>
+
+  <rect x="440" y="120" width="36" height="24" rx="4" fill="#ffffff" stroke="#ddd" stroke-width="0.8"/>
+  <text x="486" y="136" fill="#334840" font-size="10">--surface: #ffffff</text>
+  <text x="650" y="136" fill="#888" font-size="9">tarjetas, paneles</text>
+
+  <rect x="440" y="150" width="36" height="24" rx="4" fill="#334840"/>
+  <text x="486" y="166" fill="#334840" font-size="10">--text: #334840</text>
+  <text x="650" y="166" fill="#888" font-size="9">9.2:1 contraste</text>
+
+  <rect x="440" y="180" width="36" height="24" rx="4" fill="#1a7a52"/>
+  <text x="486" y="196" fill="#1a7a52" font-size="10">--green: #1a7a52</text>
+  <text x="650" y="196" fill="#888" font-size="9">victoria, 5.7:1</text>
+
+  <rect x="440" y="210" width="36" height="24" rx="4" fill="#b8243a"/>
+  <text x="486" y="226" fill="#b8243a" font-size="10">--error: #b8243a</text>
+  <text x="650" y="226" fill="#888" font-size="9">derrota</text>
+
+  <rect x="440" y="240" width="36" height="24" rx="4" fill="#7c5dac"/>
+  <text x="486" y="256" fill="#7c5dac" font-size="10">--draw: #7c5dac</text>
+  <text x="650" y="256" fill="#888" font-size="9">empate (purpura)</text>
+
+  <rect x="440" y="270" width="36" height="24" rx="4" fill="#c46520"/>
+  <text x="486" y="286" fill="#c46520" font-size="10">--aborted: #c46520</text>
+  <text x="650" y="286" fill="#888" font-size="9">abortada</text>
+
+  <rect x="440" y="300" width="36" height="24" rx="4" fill="#2471a3"/>
+  <text x="486" y="316" fill="#2471a3" font-size="10">--x-color: #2471a3</text>
+  <text x="650" y="316" fill="#888" font-size="9">ficha X (azul)</text>
+
+  <!-- ═══ TIPOGRAFIA ═══ -->
+  <rect x="30" y="348" width="370" height="60" rx="6" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="50" y="368" fill="#333" font-size="11" font-weight="700">Tipografias accesibles</text>
+  <text x="50" y="386" fill="#555" font-size="10" font-family="'Atkinson Hyperlegible',sans-serif">Atkinson Hyperlegible — texto general (Braille Institute)</text>
+  <text x="50" y="400" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">JetBrains Mono — JIDs, codigo, datos tecnicos</text>
+
+  <!-- ═══ ACCESIBILIDAD ═══ -->
+  <rect x="420" y="348" width="370" height="60" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="0.8"/>
+  <text x="440" y="368" fill="#005A8C" font-size="11" font-weight="700">Atributos ARIA y semantica</text>
+  <text x="440" y="386" fill="#555" font-size="10">role="tablist/tab/tabpanel/dialog/img"</text>
+  <text x="440" y="400" fill="#555" font-size="10">aria-selected, aria-pressed, aria-label en SVGs</text>
+
+  <!-- ═══ NOTAS PEDAGOGICAS ═══ -->
+  <rect x="30" y="424" width="760" height="62" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="0.8"/>
+  <text x="50" y="444" fill="#8B6914" font-size="11" font-weight="700">Aspectos pedagogicos del sistema de temas</text>
+  <text x="50" y="462" fill="#555" font-size="10">1. Las paletas usan la paleta de Wong (daltonismo-segura): azul, naranja, verde, purpura distinguibles con deuteranopia/protanopia.</text>
+  <text x="50" y="480" fill="#555" font-size="10">2. El cambio de tema se implementa con CSS custom properties (variables) en el pseudo-selector [data-theme], sin duplicar reglas CSS.</text>
+</svg>

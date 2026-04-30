@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor · Tic-Tac-Toe Multi-Sala</title>
+
+    <!-- Tipografías accesibles:
+         Atkinson Hyperlegible — diseñada por el Braille Institute para baja visión
+         JetBrains Mono — legibilidad superior en tamaños pequeños -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Estilos del dashboard con paletas WCAG AA -->
+    <link rel="stylesheet" href="/supervisor/static/supervisor.css?v=2">
+</head>
+<body>
+
+    <!-- ─── HEADER STICKY ──────────────────────────────────────────── -->
+    <header class="sv-header">
+        <div class="sv-header-left">
+            <div class="sv-header-icon">
+                <svg viewBox="0 0 30 30" width="24" height="24"
+                     fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round">
+                    <!-- Cuadrícula -->
+                    <line x1="10" y1="2" x2="10" y2="28"/>
+                    <line x1="20" y1="2" x2="20" y2="28"/>
+                    <line x1="2" y1="10" x2="28" y2="10"/>
+                    <line x1="2" y1="20" x2="28" y2="20"/>
+                    <!-- X en celda superior-izquierda -->
+                    <line x1="3" y1="3" x2="8" y2="8"
+                          stroke="var(--x-color)"/>
+                    <line x1="8" y1="3" x2="3" y2="8"
+                          stroke="var(--x-color)"/>
+                    <!-- O en celda central -->
+                    <circle cx="15" cy="15" r="3"
+                            stroke="var(--o-color)"/>
+                </svg>
+            </div>
+            <div>
+                <h1>Supervisor · Tic-Tac-Toe Multi-Sala</h1>
+                <div class="sv-header-status">
+                    <div class="sv-online-dot"></div>
+                    <span class="sv-header-jid" id="sv-supervisor-jid">
+                        supervisor@localhost
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="sv-header-right">
+            <div class="sv-ejecucion-selector">
+                <label for="sv-ejecucion-select"
+                       class="sv-ejecucion-label">Ejecucion:</label>
+                <select id="sv-ejecucion-select"
+                        class="sv-ejecucion-select">
+                    <option value="live" selected>En vivo</option>
+                </select>
+            </div>
+            <span class="sv-clock" id="sv-clock">--:--:--</span>
+            <div class="sv-global-stats" id="sv-global-stats">
+                0 salas · 0 informes
+            </div>
+            <button class="sv-finalizar-btn" id="sv-finalizar-torneo"
+                    title="Finalizar el torneo y detener el supervisor">
+                ⏹ Finalizar torneo
+            </button>
+            <button class="sv-theme-toggle" id="theme-toggle"
+                    aria-label="Cambiar a modo diurno"
+                    title="Cambiar a modo diurno">
+                <div class="sv-theme-toggle-knob" id="theme-toggle-knob">
+                    🌙
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── LAYOUT: SIDEBAR + MAIN ────────────────────────────────── -->
+    <div class="sv-layout">
+
+        <!-- ─── SIDEBAR: SALAS MUC ────────────────────────────────── -->
+        <aside class="sv-sidebar">
+            <div class="sv-sidebar-title">Salas de juego MUC</div>
+
+            <!-- Lista de salas generada dinámicamente por JS -->
+            <div id="sv-salas-list"></div>
+
+            <!-- Leyenda informativa -->
+            <div class="sv-sidebar-info">
+                <div class="sv-sidebar-info-title">
+                    Información del supervisor
+                </div>
+                <div class="sv-sidebar-info-text">
+                    Presencia MUC (XEP-0045) para saber qué agentes
+                    están conectados. Informes FIPA-ACL recibidos
+                    cuando cada partida finaliza (victoria, empate
+                    o abortada).
+                </div>
+            </div>
+        </aside>
+
+        <!-- ─── ÁREA PRINCIPAL ─────────────────────────────────────── -->
+        <main class="sv-main" id="sv-main-content">
+
+            <!-- Cabecera de la sala activa -->
+            <div class="sv-sala-header" style="margin-bottom:18px">
+                <h2 id="sv-sala-nombre">—</h2>
+                <div class="sv-sala-header-desc" id="sv-sala-desc"></div>
+            </div>
+
+            <!-- Stats de la sala (6 cajas) -->
+            <div class="sv-stats-grid" id="sv-stats"></div>
+
+            <!-- Tabs: Informes | Agentes | Clasificación | Log -->
+            <div class="sv-tabs" id="sv-tabs" role="tablist"
+                 aria-label="Secciones del dashboard"></div>
+
+            <!-- Contenido del panel activo -->
+            <div id="sv-panel-content" role="tabpanel"></div>
+
+            <!-- Footer -->
+            <footer class="sv-footer">
+                <span>
+                    Sistemas Multiagente · Universidad de Jaén
+                    · Sinbad2 TIC-206
+                </span>
+                <span>
+                    SPADE · MUC XEP-0045 · Ontología tictactoe
+                </span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- ─── MODAL: DETALLE DE INFORME ──────────────────────────────── -->
+    <div class="sv-modal-overlay hidden" id="modal-overlay"
+         role="dialog" aria-label="Detalle del informe de partida">
+        <div class="sv-modal" onclick="event.stopPropagation()">
+            <!-- Botón cerrar (fuera del body para mantener posición) -->
+            <div style="display:flex;justify-content:flex-end;
+                        margin-bottom:-8px">
+                <button class="sv-modal-close" id="modal-close"
+                        aria-label="Cerrar detalle">✕</button>
+            </div>
+            <!-- Contenido dinámico del modal -->
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Lógica del dashboard (polling + renderizado) -->
+    <script src="/supervisor/static/supervisor.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 700" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#555" stroke-width="1.2"/>
+    </marker>
+    <marker id="a-grn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#009E73" stroke-width="1.2"/>
+    </marker>
+    <marker id="a-blu" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#0072B2" stroke-width="1.2"/>
+    </marker>
+    <marker id="a-pur" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#9C27B0" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="820" height="700" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Mapa de interacciones del usuario — Acciones y respuestas del dashboard</text>
+
+  <!-- ═══ INTERACCION 1: SELECCIONAR SALA ═══ -->
+  <rect x="30" y="48" width="370" height="100" rx="6" fill="rgba(0,158,115,0.06)" stroke="#009E73" stroke-width="1"/>
+  <text x="50" y="68" fill="#1B5E20" font-size="12" font-weight="700">1. Seleccionar sala MUC</text>
+  <text x="50" y="86" fill="#555" font-size="10">Accion: clic en boton de sala en sidebar</text>
+  <text x="50" y="102" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ seleccionarSala(salaId)</text>
+  <text x="50" y="118" fill="#888" font-size="10">Efecto: cambia salaActivaId, resetea tab a "informes"</text>
+  <text x="50" y="134" fill="#888" font-size="10">y filtro a "all", re-renderiza todo el panel.</text>
+
+  <!-- Flecha -->
+  <line x1="280" y1="152" x2="280" y2="168" stroke="#009E73" stroke-width="1.2" marker-end="url(#a-grn)"/>
+
+  <!-- Visual feedback -->
+  <rect x="220" y="172" width="160" height="24" rx="4" fill="#E8F5E9" stroke="#009E73" stroke-width="0.8"/>
+  <text x="300" y="188" fill="#007A59" font-size="9" text-anchor="middle">Borde izq verde = sala activa</text>
+
+  <!-- ═══ INTERACCION 2: CAMBIAR TAB ═══ -->
+  <rect x="420" y="48" width="370" height="100" rx="6" fill="rgba(0,114,178,0.06)" stroke="#0072B2" stroke-width="1"/>
+  <text x="440" y="68" fill="#005A8C" font-size="12" font-weight="700">2. Cambiar pestana</text>
+  <text x="440" y="86" fill="#555" font-size="10">Accion: clic en tab (Informes/Agentes/Clasif./Log)</text>
+  <text x="440" y="102" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ seleccionarTab(tabId)</text>
+  <text x="440" y="118" fill="#888" font-size="10">Efecto: cambia tabActivo, re-renderiza panel.</text>
+  <text x="440" y="134" fill="#888" font-size="10">Tab "Agentes" oculto en modo historico.</text>
+
+  <!-- Tabs visuales -->
+  <rect x="440" y="172" width="330" height="24" rx="12" fill="#F5F5F5" stroke="#ddd" stroke-width="0.5"/>
+  <rect x="444" y="174" width="72" height="20" rx="10" fill="#009E73"/>
+  <text x="480" y="188" fill="#FFF" font-size="9" text-anchor="middle">Informes</text>
+  <text x="548" y="188" fill="#888" font-size="9" text-anchor="middle">Agentes</text>
+  <text x="630" y="188" fill="#888" font-size="9" text-anchor="middle">Clasificacion</text>
+  <text x="730" y="188" fill="#888" font-size="9" text-anchor="middle">Log</text>
+
+  <!-- ═══ INTERACCION 3: FILTRAR INFORMES ═══ -->
+  <rect x="30" y="214" width="370" height="100" rx="6" fill="rgba(249,168,37,0.08)" stroke="#F9A825" stroke-width="1"/>
+  <text x="50" y="234" fill="#8B6914" font-size="12" font-weight="700">3. Filtrar por resultado</text>
+  <text x="50" y="252" fill="#555" font-size="10">Accion: clic en boton de filtro (Todos/V/E/A)</text>
+  <text x="50" y="268" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ seleccionarFiltro(filtro)</text>
+  <text x="50" y="284" fill="#888" font-size="10">Efecto: cambia filtroResultado, re-renderiza solo</text>
+  <text x="50" y="300" fill="#888" font-size="10">el panel de informes (no toda la UI).</text>
+
+  <!-- Filtros visuales -->
+  <rect x="60" y="318" width="50" height="18" rx="9" fill="#009E7322"/>
+  <text x="85" y="331" fill="#009E73" font-size="9" text-anchor="middle">Todos</text>
+  <rect x="116" y="318" width="66" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="149" y="331" fill="#888" font-size="9" text-anchor="middle">Victorias</text>
+  <rect x="188" y="318" width="60" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="218" y="331" fill="#888" font-size="9" text-anchor="middle">Empates</text>
+  <rect x="254" y="318" width="70" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="289" y="331" fill="#888" font-size="9" text-anchor="middle">Abortadas</text>
+
+  <!-- ═══ INTERACCION 4: ABRIR/CERRAR MODAL ═══ -->
+  <rect x="420" y="214" width="370" height="100" rx="6" fill="rgba(156,39,176,0.06)" stroke="#9C27B0" stroke-width="1"/>
+  <text x="440" y="234" fill="#7B1FA2" font-size="12" font-weight="700">4. Abrir detalle de informe</text>
+  <text x="440" y="252" fill="#555" font-size="10">Accion: clic en tarjeta de informe</text>
+  <text x="440" y="268" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ abrirInformePorIndice(idx) → abrirModal()</text>
+  <text x="440" y="284" fill="#888" font-size="10">Cierre: clic en overlay, boton ✕, o tecla Escape.</text>
+  <text x="440" y="300" fill="#888" font-size="10">El modal muestra tablero SVG grande + metadatos.</text>
+
+  <!-- Modal mini -->
+  <rect x="500" y="320" width="100" height="60" rx="4" fill="#111816" stroke="#334840" stroke-width="0.8"/>
+  <text x="550" y="344" fill="#4dd6a5" font-size="8" text-anchor="middle">🏆 Victoria</text>
+  <rect x="520" y="352" width="30" height="20" rx="2" fill="#1a2420" stroke="#334840" stroke-width="0.5"/>
+  <text x="535" y="366" fill="#aaa" font-size="7" text-anchor="middle">SVG</text>
+  <text x="560" y="366" fill="#c4cdc8" font-size="7">...</text>
+
+  <text x="620" y="354" fill="#9C27B0" font-size="9">← modal</text>
+  <text x="620" y="368" fill="#9C27B0" font-size="9">   overlay</text>
+
+  <!-- ═══ INTERACCION 5: CAMBIAR TEMA ═══ -->
+  <rect x="30" y="360" width="370" height="90" rx="6" fill="rgba(156,39,176,0.06)" stroke="#9C27B0" stroke-width="1"/>
+  <text x="50" y="380" fill="#7B1FA2" font-size="12" font-weight="700">5. Alternar tema claro / oscuro</text>
+  <text x="50" y="398" fill="#555" font-size="10">Accion: clic en toggle del header</text>
+  <text x="50" y="414" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ toggleTema() → aplicarTema()</text>
+  <text x="50" y="430" fill="#888" font-size="10">Efecto: cambia data-theme en &lt;html&gt;, persiste en</text>
+  <text x="50" y="444" fill="#888" font-size="10">localStorage. Las CSS vars cambian toda la paleta.</text>
+
+  <!-- Toggle visual -->
+  <rect x="60" y="458" width="50" height="22" rx="11" fill="#263238" stroke="#546E7A" stroke-width="0.8"/>
+  <circle cx="73" cy="469" r="8" fill="#37474F" stroke="#78909C" stroke-width="0.5"/>
+  <text x="73" y="472" fill="#FFF" font-size="7" text-anchor="middle">🌙</text>
+  <text x="120" y="472" fill="#888" font-size="9">oscuro</text>
+
+  <rect x="180" y="458" width="50" height="22" rx="11" fill="#E0E0E0" stroke="#BDBDBD" stroke-width="0.8"/>
+  <circle cx="217" cy="469" r="8" fill="#FFF" stroke="#BDBDBD" stroke-width="0.5"/>
+  <text x="217" y="472" fill="#333" font-size="7" text-anchor="middle">☀️</text>
+  <text x="240" y="472" fill="#888" font-size="9">claro</text>
+
+  <!-- ═══ INTERACCION 6: SELECTOR EJECUCION ═══ -->
+  <rect x="420" y="400" width="370" height="90" rx="6" fill="rgba(249,168,37,0.08)" stroke="#F9A825" stroke-width="1"/>
+  <text x="440" y="420" fill="#8B6914" font-size="12" font-weight="700">6. Cambiar ejecucion (vivo / historico)</text>
+  <text x="440" y="438" fill="#555" font-size="10">Accion: cambio en &lt;select&gt; del header</text>
+  <text x="440" y="454" fill="#555" font-size="10" font-family="'JetBrains Mono',monospace">→ cambiarEjecucion()</text>
+  <text x="440" y="470" fill="#888" font-size="10">Si "live": esHistorico=false, reanuda polling.</text>
+  <text x="440" y="486" fill="#888" font-size="10">Si ID: esHistorico=true, detiene polling, carga SQLite.</text>
+
+  <!-- ═══ DIAGRAMA DE FLUJO DE EVENTOS ═══ -->
+  <rect x="30" y="510" width="760" height="170" rx="6" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="50" y="530" fill="#333" font-size="12" font-weight="700">Flujo de eventos: del clic del usuario al cambio visual</text>
+
+  <!-- Paso 1: Evento -->
+  <rect x="50" y="544" width="100" height="36" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1"/>
+  <text x="100" y="560" fill="#005A8C" font-size="10" text-anchor="middle" font-weight="600">Evento</text>
+  <text x="100" y="574" fill="#005A8C" font-size="9" text-anchor="middle">clic / change</text>
+
+  <line x1="154" y1="562" x2="186" y2="562" stroke="#555" stroke-width="1" marker-end="url(#a)"/>
+
+  <!-- Paso 2: Handler -->
+  <rect x="190" y="544" width="120" height="36" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="250" y="560" fill="#8B6914" font-size="10" text-anchor="middle" font-weight="600">Handler JS</text>
+  <text x="250" y="574" fill="#8B6914" font-size="9" text-anchor="middle">seleccionarSala()</text>
+
+  <line x1="314" y1="562" x2="346" y2="562" stroke="#555" stroke-width="1" marker-end="url(#a)"/>
+
+  <!-- Paso 3: Muta estado -->
+  <rect x="350" y="544" width="120" height="36" rx="6" fill="rgba(0,114,178,0.1)" stroke="#0072B2" stroke-width="1"/>
+  <text x="410" y="560" fill="#005A8C" font-size="10" text-anchor="middle" font-weight="600">Muta estado</text>
+  <text x="410" y="574" fill="#005A8C" font-size="9" text-anchor="middle">estado.salaActivaId</text>
+
+  <line x1="474" y1="562" x2="506" y2="562" stroke="#555" stroke-width="1" marker-end="url(#a)"/>
+
+  <!-- Paso 4: Render -->
+  <rect x="510" y="544" width="120" height="36" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1"/>
+  <text x="570" y="560" fill="#007A59" font-size="10" text-anchor="middle" font-weight="600">renderTodo()</text>
+  <text x="570" y="574" fill="#007A59" font-size="9" text-anchor="middle">innerHTML</text>
+
+  <line x1="634" y1="562" x2="666" y2="562" stroke="#555" stroke-width="1" marker-end="url(#a)"/>
+
+  <!-- Paso 5: DOM -->
+  <rect x="670" y="544" width="100" height="36" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1"/>
+  <text x="720" y="560" fill="#7B1FA2" font-size="10" text-anchor="middle" font-weight="600">DOM</text>
+  <text x="720" y="574" fill="#7B1FA2" font-size="9" text-anchor="middle">visual actualizado</text>
+
+  <!-- Nota -->
+  <text x="50" y="604" fill="#555" font-size="10" font-weight="600">Patron arquitectonico:</text>
+  <text x="210" y="604" fill="#555" font-size="10">Estado centralizado → mutacion → re-renderizado completo (similar a un store unidireccional).</text>
+  <text x="50" y="622" fill="#555" font-size="10" font-weight="600">Sin framework:</text>
+  <text x="210" y="622" fill="#555" font-size="10">Todo es innerHTML con template literals. No hay React, Vue ni virtual DOM. Didacticamente transparente.</text>
+
+  <!-- Teclado -->
+  <rect x="50" y="638" width="270" height="28" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="0.8"/>
+  <text x="60" y="656" fill="#BF360C" font-size="10" font-weight="600">Evento de teclado:</text>
+  <text x="182" y="656" fill="#555" font-size="10">Escape → cerrarModal()</text>
+
+  <!-- Accesibilidad -->
+  <rect x="340" y="638" width="430" height="28" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="0.8"/>
+  <text x="350" y="656" fill="#005A8C" font-size="10" font-weight="600">Accesibilidad:</text>
+  <text x="440" y="656" fill="#555" font-size="10">role="tablist", aria-selected, aria-label en SVG y botones</text>
+</svg>

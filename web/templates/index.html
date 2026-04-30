@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Multiagente | SMA</title>
+    <style>
+        :root {
+            --uja-verde: #1B5E20;
+            --uja-naranja: #D55E00;
+            --gris-oscuro: #424242;
+            --bg-main: #fafafa;
+            --bg-sidebar: #f5f5f5;
+            --bg-outer: #e9ecef;
+            --border-color: #dddddd;
+            --card-bg: #ffffff;
+            --history-title-bg: #f0f0f0;
+            --text-secondary: #666666;
+
+            --btn-bg: #e0e0e0;
+            --btn-border: #cccccc;
+            --btn-hover: #d0d0d0;
+            --game-item-active-bg: #E8F5E9;
+            --game-item-active-border: #4CAF50;
+            --game-item-active-text: #1B5E20;
+
+            --shadow: 0 10px 25px rgba(0,0,0,0.15);
+            --transition-speed: 0.3s;
+        }
+
+        body.dark-mode {
+            --uja-verde: #81C784;
+            --uja-naranja: #FFB74D;
+            --gris-oscuro: #E0E0E0;
+            --bg-main: #1E1E1E;
+            --bg-sidebar: #121212;
+            --bg-outer: #000000;
+            --border-color: #333333;
+            --card-bg: #2D2D2D;
+            --history-title-bg: #252525;
+            --text-secondary: #AAAAAA;
+
+            --btn-bg: #333333;
+            --btn-border: #555555;
+            --btn-hover: #444444;
+            --game-item-active-bg: #1B5E20;
+            --game-item-active-border: #81C784;
+            --game-item-active-text: #E8F5E9;
+
+            --shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-outer);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        .app-container {
+            width: 1000px;
+            height: 600px;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .header {
+            background-color: #1B5E20;
+            color: white;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .mode-toggle-btn {
+            position: absolute;
+            right: 20px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.7);
+            color: white;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+        .mode-toggle-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100% - 50px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-sidebar);
+            border-right: 2px solid var(--border-color);
+            padding: 15px;
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+            overflow-y: auto;
+        }
+        .sidebar-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--gris-oscuro);
+            margin-bottom: 20px;
+            transition: color var(--transition-speed);
+        }
+        .game-item {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        .game-item.active {
+            background-color: var(--game-item-active-bg);
+            border-color: var(--game-item-active-border);
+        }
+
+        .game-item-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--gris-oscuro);
+            transition: color var(--transition-speed);
+        }
+        .game-item.active .game-item-title {
+            color: var(--game-item-active-text);
+        }
+
+        .game-item-status {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            transition: color var(--transition-speed);
+        }
+        .game-item.active .game-item-status {
+            color: #009E73;
+        }
+
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+            box-sizing: border-box;
+        }
+
+        .status-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            transition: border-color var(--transition-speed);
+        }
+        .status-indicator { font-size: 16px; font-weight: bold; color: var(--uja-verde); transition: color var(--transition-speed); }
+        .status-turn { font-size: 16px; font-weight: bold; color: var(--gris-oscuro); transition: color var(--transition-speed); }
+
+        .players-info {
+            font-size: 14px;
+            color: var(--gris-oscuro);
+            margin-top: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            line-height: 1.6;
+            transition: color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .middle-section {
+            display: flex;
+            flex: 1;
+            margin-top: 20px;
+            gap: 40px;
+        }
+
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .board-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            transition: color var(--transition-speed);
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+        }
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            font-weight: bold;
+            cursor: default;
+        }
+        .cell:nth-child(1), .cell:nth-child(2) { border-right: 4px solid var(--gris-oscuro); border-bottom: 4px solid var(--gris-oscuro); }
+        .cell:nth-child(3) { border-bottom: 4px solid var(--gris-oscuro); }
+        .cell:nth-child(4), .cell:nth-child(5) { border-right: 4px solid var(--gris-oscuro); border-bottom: 4px solid var(--gris-oscuro); }
+        .cell:nth-child(6) { border-bottom: 4px solid var(--gris-oscuro); }
+        .cell:nth-child(7), .cell:nth-child(8) { border-right: 4px solid var(--gris-oscuro); }
+
+        .cell.x { color: var(--uja-verde); }
+        .cell.o { color: var(--uja-naranja); }
+
+        .history-container {
+            width: 330px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+        .history-title {
+            background-color: var(--history-title-bg);
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+        }
+        .history-list {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+            color: var(--gris-oscuro);
+            overflow-y: auto;
+            max-height: 180px;
+            line-height: 1.5;
+            transition: color var(--transition-speed);
+        }
+
+        .controls-footer {
+            border-top: 2px solid var(--border-color);
+            padding-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: border-color var(--transition-speed);
+        }
+        .controls-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin-right: 10px;
+            transition: color var(--transition-speed);
+        }
+        .btn {
+            background-color: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            color: var(--gris-oscuro);
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+        }
+        .btn:hover { background-color: var(--btn-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .live-indicator {
+            margin-left: auto;
+            font-size: 11px;
+            font-style: italic;
+            color: var(--text-secondary);
+            transition: color var(--transition-speed);
+        }
+        .live-indicator.active { color: #009E73; }
+        .live-indicator.paused { color: var(--uja-naranja); }
+    </style>
+</head>
+<body class="light-mode">
+<div class="app-container">
+    <div class="header">
+        🤖 TIC-TAC-TOE MULTIAGENTE - PANEL DE CONTROL
+        <button class="mode-toggle-btn" id="mode-toggle" onclick="toggleDarkMode()" title="Cambiar modo claro/oscuro">
+            <span id="mode-icon">🌙</span> <span id="mode-text">Modo Oscuro</span>
+        </button>
+    </div>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="sidebar-title">📋 MIS PARTIDAS</div>
+
+            <div class="game-item active" id="item-actual" onclick="seleccionarPartida('actual')">
+                <div class="game-item-title" id="sb-game-id">Partida Actual</div>
+                <div class="game-item-status" id="sb-game-status">🟢 Conectando...</div>
+            </div>
+
+            <div id="historial-partidas-container"></div>
+
+            <div class="game-item" style="cursor: default; margin-top: 15px;">
+                <div class="game-item-title">Estadísticas del Tablero</div>
+                <div class="game-item-status" id="sb-history-count">Partidas jugadas: 0</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+
+            <div class="status-topbar">
+                <div class="status-indicator" id="ui-status">🟢 ESTADO: [ Conectando ]</div>
+                <div class="status-turn" id="ui-turn">⏳ TURNO ACTUAL: [ - ]</div>
+            </div>
+
+            <div class="players-info" id="ui-players">
+                <b>👤 JUGADOR X:</b> Esperando...<br>
+                <b>👤 JUGADOR O:</b> Esperando...
+            </div>
+
+            <div class="middle-section">
+                <div class="board-container">
+                    <div class="board-title">TABLERO 3x3</div>
+                    <div class="board">
+                        <div class="cell" id="c0"></div><div class="cell" id="c1"></div><div class="cell" id="c2"></div>
+                        <div class="cell" id="c3"></div><div class="cell" id="c4"></div><div class="cell" id="c5"></div>
+                        <div class="cell" id="c6"></div><div class="cell" id="c7"></div><div class="cell" id="c8"></div>
+                    </div>
+                </div>
+
+                <div class="history-container">
+                    <div class="history-title">HISTORIAL DE EVENTOS</div>
+                    <div class="history-list" id="ui-history">
+                        </div>
+                </div>
+            </div>
+
+            <div class="controls-footer">
+                <div class="controls-text">CONTROLES RETROSPECTIVOS:</div>
+                <button class="btn" id="btn-first" onclick="saltarTurno('first')" title="Ir al inicio">▌◄◄</button>
+                <button class="btn" id="btn-prev" onclick="saltarTurno('prev')" title="Turno anterior">◄</button>
+                <button class="btn" id="btn-next" onclick="saltarTurno('next')" title="Turno siguiente">►</button>
+                <button class="btn" id="btn-last" onclick="saltarTurno('last')" title="Ir al directo">►►▌</button>
+
+                <div class="live-indicator active" id="live-indicator"><i>[ API Polling Conectada... ]</i></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let datosGlobales = null;
+    let datosVista = null;
+    let partidaSeleccionadaId = 'actual';
+    let visualizandoPaso = -1;
+    let isLive = true;
+
+    function aplicarPreferenciaModo() {
+        const body = document.body;
+        const btnIcon = document.getElementById('mode-icon');
+        const btnText = document.getElementById('mode-text');
+
+        const modoGuardado = localStorage.getItem('theme') || 'light';
+
+        if (modoGuardado === 'dark') {
+            body.classList.add('dark-mode');
+            btnIcon.innerText = '☀️';
+            btnText.innerText = 'Modo Claro';
+        } else {
+            body.classList.remove('dark-mode');
+            btnIcon.innerText = '🌙';
+            btnText.innerText = 'Modo Oscuro';
+        }
+    }
+
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        aplicarPreferenciaModo();
+    }
+
+    aplicarPreferenciaModo();
+
+    function formatJid(jid) {
+        if (!jid) return "Esperando...";
+        return jid.split('/')[0];
+    }
+
+    function seleccionarPartida(id) {
+        if (partidaSeleccionadaId !== id) {
+            visualizandoPaso = -1;
+        }
+
+        partidaSeleccionadaId = id;
+
+        document.getElementById('item-actual').classList.toggle('active', id === 'actual');
+        const itemsPasadas = document.querySelectorAll('.game-item-pasada');
+        itemsPasadas.forEach(item => item.classList.toggle('active', item.dataset.id === id));
+
+        if (id === 'actual') {
+            isLive = true;
+        } else {
+            isLive = false;
+        }
+
+        procesarVista();
+    }
+
+    async function fetchEstado() {
+        try {
+            const res = await fetch('/game/state');
+            if (res.ok) {
+                let rawData = await res.json();
+
+                // Mapeo corregido (leyendo directamente los datos en inglés que manda Python)
+                datosGlobales = {
+                    board_id: rawData.board_id || "1",
+                    status: rawData.status || "waiting",
+                    history: rawData.history || [],
+                    players: rawData.players || {},
+                    current_turn: rawData.current_turn || "-",
+                    result: rawData.result || null,
+                    winner: rawData.winner || null,
+                    total_partidas_jugadas: rawData.total_partidas_jugadas || 0,
+                    partidas_pasadas: rawData.partidas_pasadas || []
+                };
+
+                if (isLive) {
+                    visualizandoPaso = datosGlobales.history.length;
+                }
+                renderizarSidebar();
+                procesarVista();
+            }
+        } catch (e) {
+            console.error("Error conectando con el agente tablero", e);
+            document.getElementById('ui-status').innerText = '🔴 ESTADO: [ Error de Conexión ]';
+            document.getElementById('ui-status').style.color = '#c0392b';
+        }
+    }
+
+    function renderizarSidebar() {
+        const container = document.getElementById('historial-partidas-container');
+        if (!datosGlobales || !datosGlobales.partidas_pasadas) return;
+
+        let html = '';
+        for (let i = datosGlobales.partidas_pasadas.length - 1; i >= 0; i--) {
+            const p = datosGlobales.partidas_pasadas[i];
+            const actClass = (partidaSeleccionadaId === p.id) ? 'active' : '';
+
+            let statusText = '❌ Abortada';
+            if (p.result === 'win') statusText = `🏆 Gana ${p.winner}`;
+            else if (p.result === 'draw') statusText = '🤝 Empate';
+
+            let reportIcon = p.report_sent ? '<span style="color:green" title="Reporte enviado">✅</span>' : '<span style="color:orange" title="Reporte pendiente">⏳</span>';
+
+            html += `
+            <div class="game-item game-item-pasada ${actClass}" data-id="${p.id}" onclick="seleccionarPartida('${p.id}')">
+                <div class="game-item-title">${p.id} ${reportIcon}</div>
+                <div class="game-item-status">${statusText}</div>
+            </div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function procesarVista() {
+        if (!datosGlobales) return;
+
+        if (partidaSeleccionadaId === 'actual') {
+            datosVista = datosGlobales;
+            if (isLive) visualizandoPaso = datosVista.history.length;
+        } else {
+            datosVista = datosGlobales.partidas_pasadas.find(p => p.id === partidaSeleccionadaId);
+            if (!datosVista) datosVista = datosGlobales;
+
+            if (isLive === false && visualizandoPaso === -1) {
+                visualizandoPaso = datosVista.history.length;
+            } else if (isLive === false && visualizandoPaso > datosVista.history.length) {
+                visualizandoPaso = datosVista.history.length;
+            }
+        }
+
+        actualizarUI();
+    }
+
+    function actualizarUI() {
+        if (!datosVista) return;
+
+        document.getElementById('sb-game-id').innerText = `Mesa #${datosGlobales.board_id || '1'}`;
+        document.getElementById('sb-game-status').innerText = datosGlobales.status === "playing" || datosGlobales.status === "jugando" ? "🟢 Jugando..." :
+                                                            (datosGlobales.status === "waiting" ? "🟡 Esperando..." : "🏁 Finalizada");
+        document.getElementById('sb-history-count').innerText = `Partidas jugadas: ${datosGlobales.total_partidas_jugadas || 0}`;
+
+        let txtEstado = datosVista.status.toUpperCase();
+        let colorEstado = "var(--uja-verde)";
+
+        if(datosVista.status === "finished") {
+            if(datosVista.result === "win") txtEstado = `VICTORIA (${datosVista.winner})`;
+            else if(datosVista.result === "draw") { txtEstado = "EMPATE"; colorEstado = "#8A6500"; }
+            else { txtEstado = "ABORTADA"; colorEstado = "var(--uja-naranja)"; }
+        } else if (datosVista.status === "waiting") {
+            colorEstado = "#f39c12";
+        }
+
+        const uiStatus = document.getElementById('ui-status');
+        uiStatus.innerText = `🟢 ESTADO: [ ${txtEstado} ]`;
+        uiStatus.style.color = colorEstado;
+
+        let turnoMostrado = datosVista.current_turn || "-";
+        if (!isLive && visualizandoPaso < datosVista.history.length) {
+            turnoMostrado = (visualizandoPaso % 2 === 0) ? "X" : "O";
+        }
+        document.getElementById('ui-turn').innerText = `⏳ TURNO: [ ${datosVista.status === 'finished' && isLive ? '-' : turnoMostrado} ]`;
+
+        const pX = datosVista.players['X'] ? formatJid(datosVista.players['X']) : 'Esperando...';
+        const pO = datosVista.players['O'] ? formatJid(datosVista.players['O']) : 'Esperando...';
+        document.getElementById('ui-players').innerHTML = `<b>👤 JUGADOR X:</b> ${pX}<br><b>👤 JUGADOR O:</b> ${pO}`;
+
+        const tableroVirtual = ["","","","","","","","",""];
+        for (let i = 0; i < visualizandoPaso; i++) {
+            const mov = datosVista.history[i];
+            tableroVirtual[mov.position] = mov.symbol;
+        }
+
+        for (let i = 0; i < 9; i++) {
+            const celda = document.getElementById('c' + i);
+            const val = tableroVirtual[i];
+            celda.innerText = val;
+            celda.className = 'cell';
+            if (val === 'X') celda.classList.add('x');
+            else if (val === 'O') celda.classList.add('o');
+        }
+
+        let htmlHistorial = `<span style="color: var(--text-secondary)">[00:00]</span> Partida iniciada en MUC<br>`;
+        for (let i = 0; i < visualizandoPaso; i++) {
+            const mov = datosVista.history[i];
+            const color = mov.symbol === 'X' ? 'var(--uja-verde)' : 'var(--uja-naranja)';
+            htmlHistorial += `<span style="color: var(--text-secondary)">[Paso 0${i+1}]</span> <b style="color: ${color}">${mov.symbol}</b> mueve a [${mov.position}] ➔ <font color="#009e73">OK</font><br>`;
+        }
+
+        if (!isLive) {
+            htmlHistorial += `<br><i>⚠️ Visualizando turno ${visualizandoPaso} de ${datosVista.history.length} en diferido...</i>`;
+        } else if (datosVista.status === "waiting") {
+            htmlHistorial += `<span style="color: var(--text-secondary)">...</span> Esperando al oponente...`;
+        } else if (datosVista.status === "finished") {
+             htmlHistorial += `<br><span style="color: var(--text-secondary)">...</span> ¡Partida finalizada!`;
+        }
+
+        const divHistorial = document.getElementById('ui-history');
+        divHistorial.innerHTML = htmlHistorial;
+        if (isLive) divHistorial.scrollTop = divHistorial.scrollHeight;
+
+        actualizarBotones();
+    }
+
+    function saltarTurno(accion) {
+        if (!datosVista) return;
+        const totalPasos = datosVista.history.length;
+
+        if (accion === 'first') { visualizandoPaso = 0; isLive = false; }
+        else if (accion === 'prev' && visualizandoPaso > 0) { visualizandoPaso--; isLive = false; }
+        else if (accion === 'next' && visualizandoPaso < totalPasos) {
+            visualizandoPaso++;
+            isLive = (visualizandoPaso === totalPasos && partidaSeleccionadaId === 'actual');
+        }
+        else if (accion === 'last') {
+            visualizandoPaso = totalPasos;
+            if (partidaSeleccionadaId === 'actual') isLive = true;
+        }
+
+        actualizarUI();
+    }
+
+    function actualizarBotones() {
+        const totalPasos = datosVista ? datosVista.history.length : 0;
+        document.getElementById('btn-first').disabled = (visualizandoPaso === 0);
+        document.getElementById('btn-prev').disabled = (visualizandoPaso === 0);
+        document.getElementById('btn-next').disabled = (visualizandoPaso === totalPasos);
+        document.getElementById('btn-last').disabled = (visualizandoPaso === totalPasos && (isLive || partidaSeleccionadaId !== 'actual'));
+
+        const indicador = document.getElementById('live-indicator');
+        if (isLive && partidaSeleccionadaId === 'actual') {
+            indicador.className = 'live-indicator active';
+            indicador.innerHTML = '<i>[ Live Sync Activo ]</i>';
+        } else {
+            indicador.className = 'live-indicator paused';
+            indicador.innerHTML = `<i>[ Viendo ${partidaSeleccionadaId} en diferido ]</i>`;
+        }
+    }
+
+    setInterval(fetchEstado, 1000);
+    fetchEstado();
+</script>
+</body>
+</html>

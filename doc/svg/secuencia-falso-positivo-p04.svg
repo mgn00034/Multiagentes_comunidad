@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama: Secuencia temporal del falso positivo (P-04)
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="600" height="380" fill="#f8f9fa" rx="8"/>
+
+  <!-- Eje temporal -->
+  <line x1="50" y1="30" x2="50" y2="360" stroke="#2d8a6e" stroke-width="2"/>
+  <polygon points="46,355 50,365 54,355" fill="#2d8a6e"/>
+
+  <!-- Etiqueta tiempo -->
+  <text x="30" y="25" text-anchor="middle" fill="#334840" font-size="10" font-weight="bold">t</text>
+
+  <!-- t1 -->
+  <circle cx="50" cy="50" r="4" fill="#2d8a6e"/>
+  <text x="30" y="54" text-anchor="end" fill="#2d8a6e" font-size="9" font-weight="bold">t1</text>
+  <rect x="68" y="40" width="250" height="20" rx="3" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="193" y="54" text-anchor="middle" fill="#334840" font-size="10">Jugador A entra en la sala</text>
+  <text x="340" y="54" fill="#5c756a" font-size="9">+ ocupantes_por_sala</text>
+
+  <!-- t2 -->
+  <circle cx="50" cy="85" r="4" fill="#2d8a6e"/>
+  <text x="30" y="89" text-anchor="end" fill="#2d8a6e" font-size="9" font-weight="bold">t2</text>
+  <rect x="68" y="75" width="250" height="20" rx="3" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="193" y="89" text-anchor="middle" fill="#334840" font-size="10">Jugador B entra en la sala</text>
+  <text x="340" y="89" fill="#5c756a" font-size="9">+ ocupantes_por_sala</text>
+
+  <!-- t3 -->
+  <circle cx="50" cy="120" r="4" fill="#2070b0"/>
+  <text x="30" y="124" text-anchor="end" fill="#2070b0" font-size="9" font-weight="bold">t3</text>
+  <rect x="68" y="110" width="250" height="20" rx="3" fill="#f0f6ff" stroke="#2070b0" stroke-width="1"/>
+  <text x="193" y="124" text-anchor="middle" fill="#334840" font-size="10">Tablero cambia a "playing"</text>
+
+  <!-- t4 -->
+  <circle cx="50" cy="155" r="4" fill="#8a9a94"/>
+  <text x="30" y="159" text-anchor="end" fill="#8a9a94" font-size="9" font-weight="bold">t4</text>
+  <rect x="68" y="145" width="250" height="20" rx="3" fill="#ffffff" stroke="#b0b8b4" stroke-width="1"/>
+  <text x="193" y="159" text-anchor="middle" fill="#5c756a" font-size="10" font-style="italic">Se juega la partida</text>
+
+  <!-- t5 -->
+  <circle cx="50" cy="190" r="4" fill="#2070b0"/>
+  <text x="30" y="194" text-anchor="end" fill="#2070b0" font-size="9" font-weight="bold">t5</text>
+  <rect x="68" y="180" width="250" height="20" rx="3" fill="#f0f6ff" stroke="#2070b0" stroke-width="1"/>
+  <text x="193" y="194" text-anchor="middle" fill="#334840" font-size="10">Tablero cambia a "finished"</text>
+
+  <!-- t6: Evento critico -->
+  <circle cx="50" cy="225" r="4" fill="#c05020"/>
+  <text x="30" y="229" text-anchor="end" fill="#c05020" font-size="9" font-weight="bold">t6</text>
+  <rect x="68" y="215" width="250" height="20" rx="3" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="193" y="229" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">Jugador A abandona la sala</text>
+  <text x="340" y="229" fill="#c05020" font-size="9">- ocupantes_por_sala</text>
+
+  <!-- t7-t8 -->
+  <circle cx="50" cy="260" r="4" fill="#2d8a6e"/>
+  <text x="30" y="264" text-anchor="end" fill="#2d8a6e" font-size="9" font-weight="bold">t7</text>
+  <rect x="68" y="250" width="250" height="20" rx="3" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="193" y="264" text-anchor="middle" fill="#334840" font-size="10">Supervisor solicita informe</text>
+
+  <circle cx="50" cy="295" r="4" fill="#2d8a6e"/>
+  <text x="30" y="299" text-anchor="end" fill="#2d8a6e" font-size="9" font-weight="bold">t8</text>
+  <rect x="68" y="285" width="250" height="20" rx="3" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="193" y="299" text-anchor="middle" fill="#334840" font-size="10">Tablero responde con INFORM</text>
+
+  <!-- t9: Validacion erronea -->
+  <circle cx="50" cy="335" r="5" fill="#c05020"/>
+  <text x="30" y="339" text-anchor="end" fill="#c05020" font-size="9" font-weight="bold">t9</text>
+  <rect x="68" y="322" width="510" height="32" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="323" y="336" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">Validacion: ocupantes = foto en t9 (Jugador A ya no esta)</text>
+  <text x="323" y="349" text-anchor="middle" fill="#c05020" font-size="9">"Jugador X (jugador_ana) no fue observado" — FALSO POSITIVO</text>
+</svg>

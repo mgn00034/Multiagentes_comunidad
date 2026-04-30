@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#555" stroke-width="1.2"/>
+    </marker>
+    <marker id="ar-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#009E73" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="820" height="440" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Ciclo de vida de una ejecucion — AlmacenSupervisor</text>
+
+  <!-- ═══ FASE 1: Inicializacion ═══ -->
+  <rect x="30" y="56" width="170" height="70" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.2"/>
+  <text x="115" y="78" fill="#7B1FA2" font-size="11" font-weight="700" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">__init__(ruta_db)</text>
+  <text x="115" y="96" fill="#666" font-size="9" text-anchor="middle">Crea directorio si no existe</text>
+  <text x="115" y="110" fill="#666" font-size="9" text-anchor="middle">Abre conexion SQLite</text>
+
+  <line x1="200" y1="91" x2="238" y2="91" stroke="#555" stroke-width="1.2" marker-end="url(#ar)"/>
+
+  <!-- ═══ FASE 2: Crear tablas ═══ -->
+  <rect x="242" y="56" width="170" height="70" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.2"/>
+  <text x="327" y="78" fill="#7B1FA2" font-size="11" font-weight="700" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">_crear_tablas()</text>
+  <text x="327" y="96" fill="#666" font-size="9" text-anchor="middle">CREATE TABLE IF NOT EXISTS</text>
+  <text x="327" y="110" fill="#666" font-size="9" text-anchor="middle">3 tablas + 2 indices</text>
+
+  <line x1="412" y1="91" x2="450" y2="91" stroke="#555" stroke-width="1.2" marker-end="url(#ar)"/>
+
+  <!-- ═══ FASE 3: Crear ejecucion ═══ -->
+  <rect x="454" y="56" width="180" height="70" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1.5"/>
+  <text x="544" y="78" fill="#007A59" font-size="11" font-weight="700" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">crear_ejecucion(salas)</text>
+  <text x="544" y="96" fill="#666" font-size="9" text-anchor="middle">INSERT ejecuciones</text>
+  <text x="544" y="110" fill="#666" font-size="9" text-anchor="middle">ejecucion_id = lastrowid</text>
+
+  <!-- Estado: ejecucion activa -->
+  <rect x="650" y="60" width="80" height="22" rx="11" fill="#009E73"/>
+  <text x="690" y="75" fill="#FFF" font-size="9" font-weight="600" text-anchor="middle">ACTIVA</text>
+
+  <!-- ═══ Flecha hacia fase operativa ═══ -->
+  <line x1="544" y1="126" x2="544" y2="158" stroke="#009E73" stroke-width="1.5" marker-end="url(#ar-g)"/>
+
+  <!-- ═══ FASE 4: Operacion (ciclo) ═══ -->
+  <rect x="140" y="162" width="580" height="120" rx="8" fill="rgba(0,158,115,0.06)" stroke="#009E73" stroke-width="1" stroke-dasharray="5,2"/>
+  <text x="160" y="182" fill="#007A59" font-size="11" font-weight="700">Fase operativa — se repite durante toda la ejecucion</text>
+
+  <!-- guardar_informe -->
+  <rect x="160" y="196" width="170" height="56" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1.2"/>
+  <text x="245" y="216" fill="#005A8C" font-size="11" font-weight="600" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">guardar_informe()</text>
+  <text x="245" y="234" fill="#666" font-size="9" text-anchor="middle">INSERT informes + COMMIT</text>
+  <text x="245" y="248" fill="#888" font-size="8" text-anchor="middle">sala_id, remitente, cuerpo_json</text>
+
+  <!-- guardar_evento -->
+  <rect x="360" y="196" width="170" height="56" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1.2"/>
+  <text x="445" y="216" fill="#BF360C" font-size="11" font-weight="600" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">guardar_evento()</text>
+  <text x="445" y="234" fill="#666" font-size="9" text-anchor="middle">INSERT eventos + COMMIT</text>
+  <text x="445" y="248" fill="#888" font-size="8" text-anchor="middle">sala_id, tipo, de, detalle, ts</text>
+
+  <!-- Nota guard clause -->
+  <rect x="556" y="196" width="150" height="56" rx="6" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="631" y="216" fill="#555" font-size="10" font-weight="600" text-anchor="middle">Clausula guarda</text>
+  <text x="631" y="234" fill="#888" font-size="9" text-anchor="middle">Si ejecucion_id es None</text>
+  <text x="631" y="248" fill="#888" font-size="9" text-anchor="middle">→ no-op (retorno silencioso)</text>
+
+  <!-- Flecha repeticion (recta, con punto de inicio) -->
+  <circle cx="148" cy="262" r="3" fill="#009E73"/>
+  <polyline points="148,262 118,262 118,190 148,190" fill="none" stroke="#009E73" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#ar-g)"/>
+  <text x="94" y="230" fill="#009E73" font-size="8" font-weight="600">N veces</text>
+
+  <!-- ═══ Flecha hacia finalizacion ═══ -->
+  <line x1="430" y1="282" x2="430" y2="310" stroke="#555" stroke-width="1.2" marker-end="url(#ar)"/>
+  <text x="444" y="300" fill="#888" font-size="9">Ctrl+C / SIGTERM</text>
+
+  <!-- ═══ FASE 5: Finalizar ejecucion ═══ -->
+  <rect x="310" y="314" width="200" height="56" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.2"/>
+  <text x="410" y="334" fill="#8B6914" font-size="11" font-weight="700" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">finalizar_ejecucion()</text>
+  <text x="410" y="349" fill="#666" font-size="9" text-anchor="middle">Filtra salas sin actividad</text>
+  <text x="410" y="363" fill="#666" font-size="9" text-anchor="middle">UPDATE salas_json + SET fin</text>
+
+  <!-- Estado: finalizada -->
+  <rect x="524" y="318" width="96" height="22" rx="11" fill="#F9A825"/>
+  <text x="572" y="333" fill="#FFF" font-size="9" font-weight="600" text-anchor="middle">FINALIZADA</text>
+
+  <!-- ═══ Flecha hacia cierre ═══ -->
+  <line x1="410" y1="370" x2="410" y2="396" stroke="#555" stroke-width="1.2" marker-end="url(#ar)"/>
+
+  <!-- ═══ FASE 6: Cerrar ═══ -->
+  <rect x="340" y="400" width="140" height="30" rx="6" fill="#F5F5F5" stroke="#aaa" stroke-width="0.8"/>
+  <text x="410" y="420" fill="#555" font-size="11" font-weight="600" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace">cerrar()</text>
+
+  <!-- ═══ Lectura (lateral) ═══ -->
+  <rect x="30" y="300" width="240" height="120" rx="6" fill="rgba(0,114,178,0.06)" stroke="#0072B2" stroke-width="0.8" stroke-dasharray="5,2"/>
+  <text x="50" y="320" fill="#005A8C" font-size="10" font-weight="700">Lectura (consulta del panel web)</text>
+  <text x="50" y="340" fill="#005A8C" font-size="10" font-family="'JetBrains Mono',monospace">listar_ejecuciones()</text>
+  <text x="50" y="358" fill="#005A8C" font-size="10" font-family="'JetBrains Mono',monospace">obtener_salas_ejecucion(id)</text>
+  <text x="50" y="376" fill="#005A8C" font-size="10" font-family="'JetBrains Mono',monospace">obtener_informes_ejecucion(id)</text>
+  <text x="50" y="394" fill="#005A8C" font-size="10" font-family="'JetBrains Mono',monospace">obtener_eventos_ejecucion(id)</text>
+  <text x="50" y="412" fill="#888" font-size="9">Solo SELECT — no modifican estado</text>
+</svg>

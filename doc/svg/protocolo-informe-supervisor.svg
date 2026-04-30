@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama de secuencia: Protocolo de recolección de resultados (FIPA-Request)
+  Sistemas Multiagente — Universidad de Jaén
+  Nivel 1: Agentes FIPA con SPADE
+
+  Flujo: Supervisor detecta "finished" en sala MUC → REQUEST game-report → Tablero responde
+  Casos: A (respuesta correcta), A2 (partida abortada), B (rechazo), C (timeout 10s)
+-->
+<svg viewBox="0 0 880 655" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Fuentes embebidas vía Google Fonts para uso standalone -->
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap');
+        </style>
+        <!-- Marcadores de flecha por color -->
+        <marker id="aS13g" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#009E73" stroke-width="1.2"/></marker>
+        <marker id="aS13b" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#0072B2" stroke-width="1.2"/></marker>
+        <marker id="aS13or" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#D55E00" stroke-width="1.2"/></marker>
+        <marker id="aS13r" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#C62828" stroke-width="1.2"/></marker>
+        <marker id="aS13v" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#7B1FA2" stroke-width="1.2"/></marker>
+        <marker id="aS13ag" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M1,1 L7,3 L1,5" fill="none" stroke="#4CAF50" stroke-width="1.2"/></marker>
+    </defs>
+
+    <!-- Fondo claro -->
+    <rect width="880" height="655" fill="#FFFFFF"/>
+
+    <!-- ==================== ACTORES ==================== -->
+    <!-- Sala MUC -->
+    <rect x="30" y="5" width="160" height="32" rx="6" fill="#F9A825"/>
+    <text x="110" y="26" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#1B5E20" font-weight="600">Sala MUC</text>
+
+    <!-- Agente Supervisor (profesor) -->
+    <rect x="310" y="5" width="200" height="32" rx="6" fill="#009E73"/>
+    <text x="410" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#fff" font-weight="600">Agente Supervisor</text>
+    <text x="410" y="33" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="9" fill="#B2DFDB">(profesor)</text>
+
+    <!-- Agente Tablero (alumno) -->
+    <rect x="640" y="5" width="200" height="32" rx="6" fill="#0072B2"/>
+    <text x="740" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#fff" font-weight="600">Agente Tablero</text>
+    <text x="740" y="33" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="9" fill="#B3D7F2">(alumno)</text>
+
+    <!-- ==================== LÍNEAS DE VIDA ==================== -->
+    <line x1="110" y1="37" x2="110" y2="555" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="410" y1="37" x2="410" y2="555" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="740" y1="37" x2="740" y2="555" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- ===== PASO 0: Tablero finaliza y notifica MUC (y=48, h=55) ===== -->
+    <rect x="5" y="48" width="870" height="55" rx="5" fill="rgba(249,168,37,0.1)" stroke="#F9A825" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="63" font-family="Crimson Pro, serif" font-size="11" fill="#8B6914" font-weight="700">PASO 0 — El tablero finaliza una partida y actualiza su presencia MUC</text>
+
+    <path d="M740,80 L120,80" stroke="#D55E00" stroke-width="1.5" marker-end="url(#aS13or)"/>
+    <text x="430" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#B34700" font-weight="600">presence update (status = "finished")</text>
+
+    <path d="M120,95 L400,95" stroke="#F9A825" stroke-width="1.5" marker-end="url(#aS13g)"/>
+    <text x="260" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#8B6914" font-weight="600">notify: tablero_abc0001 → finished</text>
+
+    <!-- ===== PASO 1: Supervisor envía REQUEST + Tablero responde AGREE (y=128, h=70) ===== -->
+    <rect x="5" y="128" width="870" height="70" rx="5" fill="rgba(0,158,115,0.08)" stroke="#009E73" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="143" font-family="Crimson Pro, serif" font-size="11" fill="#007A59" font-weight="700">PASO 1 — El supervisor solicita el informe; el tablero confirma aceptación</text>
+
+    <path d="M410,158 L730,158" stroke="#009E73" stroke-width="1.5" marker-end="url(#aS13g)"/>
+    <text x="570" y="153" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#007A59" font-weight="600">REQUEST {"action": "game-report"}</text>
+    <text x="570" y="168" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#666">ontology: tictactoe · thread: report-tablero_abc0001-17172…</text>
+
+    <path d="M730,185 L420,185" stroke="#4CAF50" stroke-width="1.5" marker-end="url(#aS13ag)"/>
+    <text x="575" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2E7D32" font-weight="600">AGREE {"action": "game-report"}</text>
+
+    <!-- ===== CASO A: Respuesta correcta (y=223, h=95) ===== -->
+    <rect x="5" y="223" width="870" height="95" rx="5" fill="rgba(0,158,115,0.06)" stroke="#009E73" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="238" font-family="Crimson Pro, serif" font-size="11" fill="#007A59" font-weight="700">CASO A — Respuesta correcta: el tablero informa los datos de la partida</text>
+
+    <rect x="670" y="246" width="150" height="18" rx="3" fill="#E8F5E9" stroke="#4CAF50" stroke-width="0.5"/>
+    <text x="745" y="259" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#2E7D32">Prepara datos de la partida</text>
+
+    <path d="M730,271 L420,271" stroke="#0072B2" stroke-width="1.5" marker-end="url(#aS13b)"/>
+    <text x="575" y="266" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#005A8C" font-weight="600">INFORM {"action": "game-report", "result": "win",</text>
+    <text x="575" y="281" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#005A8C">"winner": "X", "players": {…}, "turns": 7, "board": […]}</text>
+
+    <rect x="338" y="291" width="155" height="18" rx="3" fill="#E8F5E9" stroke="#4CAF50" stroke-width="0.5"/>
+    <text x="415" y="304" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#2E7D32">Almacena en registro de sala</text>
+
+    <!-- ===== CASO A2: Partida abortada (y=323, h=70) ===== -->
+    <rect x="5" y="323" width="870" height="70" rx="5" fill="rgba(155,77,124,0.06)" stroke="#9B4D7C" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="338" font-family="Crimson Pro, serif" font-size="11" fill="#9B4D7C" font-weight="700">CASO A2 — Partida abortada: ningún jugador completó el juego correctamente</text>
+
+    <path d="M730,361 L420,361" stroke="#9B4D7C" stroke-width="1.5" marker-end="url(#aS13b)"/>
+    <text x="575" y="356" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#9B4D7C" font-weight="600">INFORM {"action": "game-report", "result": "aborted",</text>
+    <text x="575" y="371" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#9B4D7C">"reason": "both-timeout", "winner": null, "players": {…}, "turns": 3, "board": […]}</text>
+
+    <rect x="325" y="381" width="180" height="18" rx="3" fill="#F3E5F5" stroke="#9C27B0" stroke-width="0.5"/>
+    <text x="415" y="394" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#7B1FA2">Almacena con resultado «abortada»</text>
+
+    <!-- ===== CASO B: Tablero rechaza (y=418, h=60) ===== -->
+    <rect x="5" y="418" width="870" height="60" rx="5" fill="rgba(213,94,0,0.06)" stroke="#D55E00" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="433" font-family="Crimson Pro, serif" font-size="11" fill="#B34700" font-weight="700">CASO B — Rechazo: el tablero no ha terminado o no puede informar</text>
+
+    <path d="M730,453 L420,453" stroke="#C62828" stroke-width="1.5" stroke-dasharray="8,3,2,3" marker-end="url(#aS13r)"/>
+    <text x="575" y="448" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#C62828" font-weight="600">REFUSE {"action": "game-report", "reason": "not-finished"}</text>
+
+    <text x="415" y="473" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#666" font-style="italic">El supervisor ignora este rechazo; reintentará en el próximo cambio de estado</text>
+
+    <!-- ===== CASO C: Timeout (y=503, h=70) ===== -->
+    <rect x="5" y="503" width="870" height="70" rx="5" fill="rgba(204,121,167,0.08)" stroke="#CC79A7" stroke-width="0.8" stroke-dasharray="5,2"/>
+    <text x="15" y="518" font-family="Crimson Pro, serif" font-size="11" fill="#9B4D7C" font-weight="700">CASO C — Timeout: el tablero no responde (10 segundos)</text>
+
+    <rect x="330" y="530" width="200" height="18" rx="3" fill="#F3E5F5" stroke="#9C27B0" stroke-width="0.5"/>
+    <text x="430" y="543" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#7B1FA2">⏱ TIMEOUT: 10 segundos sin respuesta</text>
+
+    <rect x="318" y="554" width="225" height="18" rx="3" fill="#FFF3E0" stroke="#E6A000" stroke-width="0.5"/>
+    <text x="430" y="567" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8" fill="#C04000">Registra incidencia: tablero no colaborativo</text>
+
+    <!-- ===== LEYENDA (y=588) ===== -->
+    <rect x="5" y="588" width="870" height="30" rx="5" fill="#F5F5F5" stroke="#ddd" stroke-width="0.5"/>
+    <!-- REQUEST: cuadrado verde -->
+    <rect x="25" y="598" width="10" height="10" rx="2" fill="#009E73"/>
+    <text x="42" y="607" font-family="Source Sans 3, sans-serif" font-size="9" fill="#007A59" font-weight="600">REQUEST</text>
+    <!-- AGREE: triángulo verde claro -->
+    <polygon points="115,598 125,603 115,608" fill="#4CAF50"/>
+    <text x="132" y="607" font-family="Source Sans 3, sans-serif" font-size="9" fill="#2E7D32" font-weight="600">AGREE</text>
+    <!-- INFORM: círculo azul -->
+    <circle cx="210" cy="603" r="5" fill="#0072B2"/>
+    <text x="222" y="607" font-family="Source Sans 3, sans-serif" font-size="9" fill="#0072B2" font-weight="600">INFORM (informe)</text>
+    <!-- REFUSE: × rojo -->
+    <g transform="translate(350,603)">
+        <line x1="-5" y1="-5" x2="5" y2="5" stroke="#C62828" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="5" y1="-5" x2="-5" y2="5" stroke="#C62828" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <text x="362" y="607" font-family="Source Sans 3, sans-serif" font-size="9" fill="#C62828" font-weight="600">REFUSE</text>
+    <!-- TIMEOUT: rombo púrpura -->
+    <polygon points="440,598 445,603 440,608 435,603" fill="#9B4D7C"/>
+    <text x="452" y="607" font-family="Source Sans 3, sans-serif" font-size="9" fill="#9B4D7C" font-weight="600">TIMEOUT (10s sin respuesta)</text>
+
+    <!-- Nota al pie -->
+    <text x="440" y="638" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#888" font-style="italic">Los casos A, A2, B y C son mutuamente excluyentes. El supervisor no interfiere con los protocolos de juego.</text>
+</svg>

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+
+  <!-- Fondo -->
+  <rect width="820" height="520" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Panel de Clasificacion — Ranking dinamico de jugadores</text>
+
+  <!-- ═══ CABECERA DEL PANEL ═══ -->
+  <rect x="30" y="46" width="760" height="50" rx="6" fill="#FAFAFA" stroke="#ddd" stroke-width="0.8"/>
+  <text x="50" y="68" fill="#333" font-size="14" font-weight="700">Clasificacion — Sala principal</text>
+  <text x="50" y="84" fill="#888" font-size="10">Computada a partir de 8 informes recibidos</text>
+
+  <!-- ═══ CABECERA DE COLUMNAS ═══ -->
+  <rect x="30" y="106" width="760" height="28" rx="4" fill="#F5F5F5" stroke="#ddd" stroke-width="0.5"/>
+  <text x="60" y="124" fill="#888" font-size="10" font-weight="600">#</text>
+  <text x="110" y="124" fill="#888" font-size="10" font-weight="600">Alumno</text>
+  <text x="440" y="124" fill="#888" font-size="10" font-weight="600">V</text>
+  <text x="490" y="124" fill="#888" font-size="10" font-weight="600">D</text>
+  <text x="540" y="124" fill="#888" font-size="10" font-weight="600">E</text>
+  <text x="590" y="124" fill="#888" font-size="10" font-weight="600">A</text>
+  <text x="680" y="124" fill="#888" font-size="10" font-weight="600">% Vict.</text>
+
+  <!-- ═══ FILA 1: MEDALLA ORO ═══ -->
+  <rect x="30" y="140" width="760" height="52" rx="4" fill="#FFF" stroke="#ddd" stroke-width="0.5"/>
+  <!-- Medalla -->
+  <text x="55" y="172" fill="#333" font-size="20" text-anchor="middle">🥇</text>
+  <!-- Nombre -->
+  <text x="110" y="164" fill="#333" font-size="13" font-weight="600">ana</text>
+  <text x="110" y="180" fill="#888" font-size="10">5 partidas</text>
+  <!-- Stats V/D/E/A -->
+  <text x="440" y="168" fill="#4CAF50" font-size="14" font-weight="700">4</text>
+  <text x="440" y="182" fill="#888" font-size="8">V</text>
+  <text x="490" y="168" fill="#E53935" font-size="14" font-weight="700">0</text>
+  <text x="490" y="182" fill="#888" font-size="8">D</text>
+  <text x="540" y="168" fill="#9C27B0" font-size="14" font-weight="700">1</text>
+  <text x="540" y="182" fill="#888" font-size="8">E</text>
+  <text x="590" y="168" fill="#E65100" font-size="14" font-weight="700">0</text>
+  <text x="590" y="182" fill="#888" font-size="8">A</text>
+  <!-- Barra de porcentaje -->
+  <text x="648" y="162" fill="#333" font-size="12" font-weight="600">80%</text>
+  <rect x="648" y="170" width="130" height="8" rx="4" fill="#F5F5F5"/>
+  <rect x="648" y="170" width="104" height="8" rx="4" fill="#4CAF50"/>
+
+  <!-- ═══ FILA 2: MEDALLA PLATA ═══ -->
+  <rect x="30" y="198" width="760" height="52" rx="4" fill="#FFF" stroke="#ddd" stroke-width="0.5"/>
+  <text x="55" y="230" fill="#333" font-size="20" text-anchor="middle">🥈</text>
+  <text x="110" y="222" fill="#333" font-size="13" font-weight="600">marta</text>
+  <text x="110" y="238" fill="#888" font-size="10">4 partidas</text>
+  <text x="440" y="226" fill="#4CAF50" font-size="14" font-weight="700">2</text>
+  <text x="440" y="240" fill="#888" font-size="8">V</text>
+  <text x="490" y="226" fill="#E53935" font-size="14" font-weight="700">1</text>
+  <text x="490" y="240" fill="#888" font-size="8">D</text>
+  <text x="540" y="226" fill="#9C27B0" font-size="14" font-weight="700">1</text>
+  <text x="540" y="240" fill="#888" font-size="8">E</text>
+  <text x="590" y="226" fill="#E65100" font-size="14" font-weight="700">0</text>
+  <text x="590" y="240" fill="#888" font-size="8">A</text>
+  <text x="648" y="220" fill="#333" font-size="12" font-weight="600">50%</text>
+  <rect x="648" y="228" width="130" height="8" rx="4" fill="#F5F5F5"/>
+  <rect x="648" y="228" width="65" height="8" rx="4" fill="#F9A825"/>
+
+  <!-- ═══ FILA 3: MEDALLA BRONCE ═══ -->
+  <rect x="30" y="256" width="760" height="52" rx="4" fill="#FFF" stroke="#ddd" stroke-width="0.5"/>
+  <text x="55" y="288" fill="#333" font-size="20" text-anchor="middle">🥉</text>
+  <text x="110" y="280" fill="#333" font-size="13" font-weight="600">luis</text>
+  <text x="110" y="296" fill="#888" font-size="10">5 partidas</text>
+  <text x="440" y="284" fill="#4CAF50" font-size="14" font-weight="700">2</text>
+  <text x="440" y="298" fill="#888" font-size="8">V</text>
+  <text x="490" y="284" fill="#E53935" font-size="14" font-weight="700">2</text>
+  <text x="490" y="298" fill="#888" font-size="8">D</text>
+  <text x="540" y="284" fill="#9C27B0" font-size="14" font-weight="700">1</text>
+  <text x="540" y="298" fill="#888" font-size="8">E</text>
+  <text x="590" y="284" fill="#E65100" font-size="14" font-weight="700">0</text>
+  <text x="590" y="298" fill="#888" font-size="8">A</text>
+  <text x="648" y="278" fill="#333" font-size="12" font-weight="600">40%</text>
+  <rect x="648" y="286" width="130" height="8" rx="4" fill="#F5F5F5"/>
+  <rect x="648" y="286" width="52" height="8" rx="4" fill="#F9A825"/>
+
+  <!-- ═══ FILA 4: SIN MEDALLA ═══ -->
+  <rect x="30" y="314" width="760" height="52" rx="4" fill="#FFF" stroke="#ddd" stroke-width="0.5"/>
+  <text x="55" y="346" fill="#888" font-size="14" font-weight="700" text-anchor="middle">4</text>
+  <text x="110" y="338" fill="#333" font-size="13" font-weight="600">pablo</text>
+  <text x="110" y="354" fill="#888" font-size="10">3 partidas</text>
+  <text x="440" y="342" fill="#4CAF50" font-size="14" font-weight="700">0</text>
+  <text x="440" y="356" fill="#888" font-size="8">V</text>
+  <text x="490" y="342" fill="#E53935" font-size="14" font-weight="700">1</text>
+  <text x="490" y="356" fill="#888" font-size="8">D</text>
+  <text x="540" y="342" fill="#9C27B0" font-size="14" font-weight="700">1</text>
+  <text x="540" y="356" fill="#888" font-size="8">E</text>
+  <text x="590" y="342" fill="#E65100" font-size="14" font-weight="700">1</text>
+  <text x="590" y="356" fill="#888" font-size="8">A</text>
+  <text x="648" y="336" fill="#333" font-size="12" font-weight="600">0%</text>
+  <rect x="648" y="344" width="130" height="8" rx="4" fill="#F5F5F5"/>
+  <rect x="648" y="344" width="0" height="8" rx="4" fill="#E53935"/>
+
+  <!-- ═══ NOTAS PEDAGOGICAS ═══ -->
+  <rect x="30" y="386" width="760" height="120" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="0.8"/>
+  <text x="50" y="406" fill="#8B6914" font-size="11" font-weight="700">Aspectos pedagogicos del panel de clasificacion</text>
+
+  <text x="50" y="426" fill="#555" font-size="10">1. El ranking se calcula dinamicamente en el navegador con computarRanking(): no existe ranking precalculado en el backend.</text>
+  <text x="50" y="444" fill="#555" font-size="10">2. Ordenamiento multicritero: win_rate ↓ → victorias ↓ → menos abortadas ↑ → menos derrotas ↑.</text>
+  <text x="50" y="462" fill="#555" font-size="10">3. Las barras de porcentaje usan color semantico: verde (≥60%), amarillo (40-59%), rojo (&lt;40%).</text>
+  <text x="50" y="480" fill="#555" font-size="10">4. Las 3 primeras posiciones muestran medalla (🥇🥈🥉), el resto muestra el numero ordinal.</text>
+  <text x="50" y="498" fill="#555" font-size="10">5. Se separan 4 categorias (V/D/E/A) porque las abortadas no son ni victoria ni derrota: son un evento de fallo del sistema.</text>
+</svg>

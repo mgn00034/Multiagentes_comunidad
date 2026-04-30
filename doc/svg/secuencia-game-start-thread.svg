@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama de secuencia: game-start transporta el thread de partida,
+  y el tablero aplica cortesía de reintento SOLO en el primer CFP turn
+  para absorber la carrera de arranque con el registro del behaviour
+  de partida por parte del jugador.
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 760 680" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="760" height="680" fill="#f8f9fa" rx="8"/>
+  <defs>
+    <marker id="fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/>
+    </marker>
+    <marker id="fr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c05020"/>
+    </marker>
+    <marker id="fgray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a6a20"/>
+    </marker>
+  </defs>
+
+  <!-- Titulo en dos lineas para que no desborde -->
+  <text x="380" y="22" text-anchor="middle" fill="#1a3a52" font-weight="bold" font-size="13">game-start como puente entre inscripción y partida</text>
+  <text x="380" y="38" text-anchor="middle" fill="#1a3a52" font-weight="bold" font-size="11">(cortesía de reintento SOLO en el 1er CFP turn)</text>
+
+  <!-- Agentes -->
+  <rect x="100" y="50" width="110" height="24" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="155" y="66" text-anchor="middle" fill="#c05020" font-weight="bold">Jugador X</text>
+
+  <rect x="325" y="50" width="110" height="24" rx="4" fill="#f0f6ff" stroke="#2070b0" stroke-width="1.5"/>
+  <text x="380" y="66" text-anchor="middle" fill="#2070b0" font-weight="bold">Tablero</text>
+
+  <rect x="550" y="50" width="110" height="24" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="605" y="66" text-anchor="middle" fill="#c05020" font-weight="bold">Jugador O</text>
+
+  <!-- Lifelines -->
+  <line x1="155" y1="74" x2="155" y2="660" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="380" y1="74" x2="380" y2="660" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="605" y1="74" x2="605" y2="660" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Fase 1: inscripcion -->
+  <rect x="20" y="86" width="60" height="18" rx="3" fill="#e8f2ec" stroke="#2d8a6e"/>
+  <text x="50" y="99" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">Fase 1</text>
+  <text x="20" y="118" fill="#5c756a" font-size="9" font-style="italic">Inscripción</text>
+
+  <line x1="155" y1="110" x2="380" y2="110" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#fg)"/>
+  <text x="267" y="104" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">REQUEST join</text>
+  <text x="267" y="122" text-anchor="middle" fill="#5c756a" font-size="9">conversation-id=join · thread=join-X-t1</text>
+
+  <line x1="380" y1="142" x2="155" y2="142" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#fg)"/>
+  <text x="267" y="136" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">AGREE join-accepted</text>
+  <text x="267" y="154" text-anchor="middle" fill="#5c756a" font-size="9">body: {symbol: "X"}</text>
+
+  <line x1="605" y1="174" x2="380" y2="174" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#fg)"/>
+  <text x="492" y="168" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">REQUEST join</text>
+  <text x="492" y="186" text-anchor="middle" fill="#5c756a" font-size="9">thread=join-O-t2</text>
+
+  <line x1="380" y1="206" x2="605" y2="206" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#fg)"/>
+  <text x="492" y="200" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">AGREE join-accepted</text>
+  <text x="492" y="218" text-anchor="middle" fill="#5c756a" font-size="9">body: {symbol: "O"}</text>
+
+  <!-- Banda de transicion: el tablero genera el thread de partida -->
+  <rect x="40" y="238" width="700" height="36" rx="4" fill="#fff6e0" stroke="#b89040" stroke-width="1"/>
+  <text x="380" y="252" text-anchor="middle" fill="#6a4a10" font-size="10" font-weight="bold">Tablero: forma pareja → genera thread único de partida</text>
+  <text x="380" y="266" text-anchor="middle" fill="#6a4a10" font-size="10">thread_partida = crear_thread_unico(str(self.agent.jid), PREFIJO_THREAD_GAME)</text>
+
+  <!-- Fase 2: apertura de partida -->
+  <rect x="20" y="288" width="60" height="18" rx="3" fill="#e8f2ec" stroke="#2d8a6e"/>
+  <text x="50" y="301" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">Fase 2</text>
+  <text x="20" y="320" fill="#5c756a" font-size="9" font-style="italic">Apertura</text>
+
+  <line x1="380" y1="312" x2="155" y2="312" stroke="#2d8a6e" stroke-width="1.6" marker-end="url(#fg)"/>
+  <text x="267" y="306" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">INFORM game-start ★</text>
+  <text x="267" y="324" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">thread=game-tabX-U · body.thread=game-tabX-U</text>
+  <text x="267" y="336" text-anchor="middle" fill="#5c756a" font-size="9">body.opponent="jugador_o@localhost"</text>
+
+  <line x1="380" y1="356" x2="605" y2="356" stroke="#2d8a6e" stroke-width="1.6" marker-end="url(#fg)"/>
+  <text x="492" y="350" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">INFORM game-start ★</text>
+  <text x="492" y="368" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">thread=game-tabX-U · body.thread=game-tabX-U</text>
+  <text x="492" y="380" text-anchor="middle" fill="#5c756a" font-size="9">body.opponent="jugador_x@localhost"</text>
+
+  <!-- Banda: ambos jugadores crean su behaviour de partida (puede tardar un instante) -->
+  <rect x="40" y="394" width="700" height="58" rx="4" fill="#ece6f8" stroke="#6040b0" stroke-width="1"/>
+  <text x="380" y="410" text-anchor="middle" fill="#3a2070" font-size="10" font-weight="bold">Jugadores X e O: leen body.thread y registran</text>
+  <text x="380" y="423" text-anchor="middle" fill="#3a2070" font-size="10" font-weight="bold">su behaviour de partida (trabajo asíncrono: puede tardar un instante)</text>
+  <text x="380" y="437" text-anchor="middle" fill="#3a2070" font-size="10">Template(thread=body["thread"], metadata={"ontology": "tictactoe"})</text>
+  <text x="380" y="449" text-anchor="middle" fill="#6a4a10" font-size="9" font-style="italic">⚠ ventana de carrera: el 1er CFP turn puede adelantarse al registro del template</text>
+
+  <!-- Fase 3: primer turno con cortesía de reintento -->
+  <rect x="20" y="464" width="60" height="18" rx="3" fill="#e8f2ec" stroke="#2d8a6e"/>
+  <text x="50" y="477" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">Fase 3</text>
+  <text x="20" y="496" fill="#5c756a" font-size="9" font-style="italic">Juego</text>
+
+  <!-- Primer CFP turn (puede perderse por carrera) -->
+  <line x1="380" y1="490" x2="155" y2="490" stroke="#8a6a20" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#fgray)"/>
+  <text x="267" y="484" text-anchor="middle" fill="#6a4a10" font-size="10" font-weight="bold">CFP turn (intento 1)</text>
+  <text x="267" y="502" text-anchor="middle" fill="#6a4a10" font-size="9">thread=game-tabX-U · body.active_symbol="X"</text>
+  <text x="267" y="514" text-anchor="middle" fill="#a04040" font-size="9" font-style="italic">puede descartarse si el template no está aún registrado</text>
+
+  <!-- Indicador de timeout en el tablero -->
+  <rect x="350" y="524" width="60" height="16" rx="3" fill="#fff0e0" stroke="#c05020" stroke-width="1"/>
+  <text x="380" y="536" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">timeout</text>
+  <text x="420" y="536" fill="#6a4a10" font-size="9" font-style="italic">sin INFORM move en TIMEOUT_TURN</text>
+
+  <!-- Banda: ahora el template del jugador X ya está activo -->
+  <rect x="40" y="548" width="700" height="22" rx="4" fill="#ece6f8" stroke="#6040b0" stroke-width="1"/>
+  <text x="380" y="563" text-anchor="middle" fill="#3a2070" font-size="10" font-weight="bold">Ahora el behaviour de partida del jugador X ya está instalado y escuchando</text>
+
+  <!-- Reintento CFP turn (cortesía del tablero) -->
+  <line x1="380" y1="586" x2="155" y2="586" stroke="#2d8a6e" stroke-width="1.6" marker-end="url(#fg)"/>
+  <text x="267" y="580" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">CFP turn (intento 2 — reintento)</text>
+  <text x="267" y="598" text-anchor="middle" fill="#5c756a" font-size="9">mismo thread, mismo body — la 2ª vez ya hace match</text>
+
+  <!-- Respuesta del jugador: INFORM move -->
+  <line x1="155" y1="620" x2="380" y2="620" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#fg)"/>
+  <text x="267" y="614" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">INFORM move</text>
+  <text x="267" y="632" text-anchor="middle" fill="#5c756a" font-size="9">body.position=(r,c) · la partida arranca</text>
+
+  <!-- Notas finales en dos lineas -->
+  <text x="380" y="654" text-anchor="middle" fill="#5c756a" font-size="9" font-style="italic">★ = único punto donde el contrato incluye el thread también en el cuerpo del mensaje.</text>
+  <text x="380" y="668" text-anchor="middle" fill="#5c756a" font-size="9" font-style="italic">La cortesía (reintento 1×) solo aplica al 1er CFP turn. El Supervisor aplica la misma cortesía al pedir game-report.</text>
+</svg>

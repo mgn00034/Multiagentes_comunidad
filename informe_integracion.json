@@ -1,0 +1,66 @@
+{
+  "equipo": "PC_14_mgn00034",
+  "puesto": "pc14",
+  "timestamp_inicio": "2026-04-30T10:23:24.191779",
+  "timestamp_fin": "2026-04-30T10:24:01.071881",
+  "agentes_desplegados": [
+    {
+      "jid": "tablero_pc14@sinbad2.ujaen.es",
+      "rol": "tablero"
+    },
+    {
+      "jid": "judador_pc14_mgn00034_01@sinbad2.ujaen.es",
+      "rol": "jugador"
+    },
+    {
+      "jid": "judador_pc14_mgn00034_02@sinbad2.ujaen.es",
+      "rol": "jugador"
+    }
+  ],
+  "partidas_observadas": [
+    {
+      "tablero_jid": "tablero_pc14@sinbad2.ujaen.es",
+      "resultado": "draw",
+      "ganador_ficha": null,
+      "jugadores": {
+        "X": "jugador_pc14_minimax@sinbad2.ujaen.es",
+        "O": "jugador_pc14_nivel_2@sinbad2.ujaen.es"
+      },
+      "turnos": 9,
+      "tablero_final": [
+        "X",
+        "X",
+        "O",
+        "O",
+        "O",
+        "X",
+        "X",
+        "X",
+        "O"
+      ],
+      "timestamp": "10:24:01"
+    },
+    {
+      "tablero_jid": "tablero_pc14@sinbad2.ujaen.es",
+      "resultado": "draw",
+      "ganador_ficha": null,
+      "jugadores": {
+        "X": "jugador_pc14_nivel_2@sinbad2.ujaen.es",
+        "O": "jugador_pc14_minimax@sinbad2.ujaen.es"
+      },
+      "turnos": 9,
+      "tablero_final": [
+        "O",
+        "O",
+        "X",
+        "X",
+        "X",
+        "O",
+        "O",
+        "X",
+        "X"
+      ],
+      "timestamp": "10:24:01"
+    }
+  ]
+}

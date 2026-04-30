@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+
+  <!-- Fondo blanco -->
+  <rect x="0" y="0" width="640" height="440" rx="8" fill="#ffffff"/>
+
+  <!-- Marco exterior -->
+  <rect x="15" y="15" width="610" height="410" rx="10" fill="#f5f9ff" stroke="#1a73e8" stroke-width="2"/>
+
+  <!-- Cabecera -->
+  <rect x="15" y="15" width="610" height="44" rx="10" fill="#1a73e8"/>
+  <rect x="15" y="40" width="610" height="19" fill="#1a73e8"/>
+  <text x="320" y="44" text-anchor="middle" font-weight="bold" fill="white" font-size="17">FASE A — PRUEBAS INDIVIDUALES POR PUESTO</text>
+
+  <!-- Config -->
+  <text x="40" y="95" fill="#555" font-size="13">config.yaml:</text>
+  <text x="145" y="95" fill="#1a73e8" font-weight="bold" font-size="13" font-family="'JetBrains Mono','Courier New',monospace">perfil_activo: servidor</text>
+
+  <!-- Sala -->
+  <text x="40" y="132" fill="#333" font-weight="bold" font-size="14">SALA (segun vuestro puesto):</text>
+
+  <rect x="55" y="148" width="540" height="50" rx="8" fill="white" stroke="#1a73e8" stroke-width="0.8"/>
+  <text x="80" y="174" fill="#444" font-size="13">L2PC</text>
+  <text x="118" y="174" fill="#1a73e8" font-weight="bold" font-size="15" font-family="'JetBrains Mono','Courier New',monospace">nn</text>
+  <text x="148" y="174" fill="#444" font-size="13">→</text>
+  <text x="170" y="174" fill="#1a73e8" font-weight="bold" font-size="14" font-family="'JetBrains Mono','Courier New',monospace">sala_asignada: sala_pcnn</text>
+  <text x="80" y="192" fill="#999" font-size="11" font-style="italic">Ej: L2PC05 → sala_pc05</text>
+
+  <!-- Nombres -->
+  <text x="40" y="228" fill="#333" font-weight="bold" font-size="14">NOMBRES (prefijo del puesto pcNN):</text>
+
+  <rect x="55" y="242" width="540" height="74" rx="8" fill="white" stroke="#1a73e8" stroke-width="0.8"/>
+  <text x="80" y="266" fill="#444" font-size="13" font-family="'JetBrains Mono','Courier New',monospace">tablero_pcNN_mesa1 .. tablero_pcNN_mesa3</text>
+  <text x="80" y="288" fill="#444" font-size="13" font-family="'JetBrains Mono','Courier New',monospace">jugador_pcNN_j01   .. jugador_pcNN_j12</text>
+  <text x="80" y="308" fill="#999" font-size="11" font-style="italic">Ej: tablero_pc05_mesa1, jugador_pc05_j01</text>
+
+  <!-- Agentes -->
+  <text x="40" y="348" fill="#333" font-weight="bold" font-size="14">AGENTES:</text>
+  <text x="150" y="348" fill="#444" font-size="13">3 tableros + 12 jugadores por alumno (minimo)</text>
+
+  <!-- Separador -->
+  <line x1="35" y1="370" x2="605" y2="370" stroke="#1a73e8" stroke-width="1.5"/>
+
+  <!-- Nota final -->
+  <text x="40" y="396" fill="#555" font-size="13">Desactivar el supervisor en agents.yaml:</text>
+  <text x="420" y="396" fill="#1a73e8" font-size="13" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold">activo: false</text>
+</svg>

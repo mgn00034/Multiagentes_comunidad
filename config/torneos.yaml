@@ -1,0 +1,229 @@
+# torneos.yaml — Definición de salas MUC para pruebas en laboratorio
+#
+# Este fichero lo gestiona el profesor. Define las salas MUC que el
+# supervisor creará en el servicio de conferencias del servidor XMPP
+# (conference.{dominio}).
+#
+# USO:
+#   python supervisor_main.py --torneos config/torneos.yaml
+#
+# Los ordenadores del laboratorio siguen el patrón L2PCnn:
+#   L2PC00 = profesor (ejecuta el supervisor)
+#   L2PC01 a L2PC30 = alumnos (ejecutan sus agentes)
+#
+# Cada alumno usa como sala el identificador de su puesto:
+#   L2PCnn → sala_asignada: sala_pcnn
+#
+# CAMPOS:
+#   nombre:      Identificador único de la entrada
+#   sala:        Nombre de la sala MUC (parte local del JID)
+#   descripcion: Texto breve que describe la sala
+#   tableros:    (opcional) Lista informativa de tableros esperados
+#   jugadores:   (opcional) Lista informativa de jugadores esperados
+#
+# Las listas de tableros y jugadores son informativas en modo
+# distribuido (cada alumno decide su nombre al arrancar su agente).
+# En modo local sirven para inyectar sala_asignada automáticamente.
+
+
+# ══════════════════════════════════════════════════════════════════
+#  FASE A: Pruebas individuales por puesto
+# ══════════════════════════════════════════════════════════════════
+# Una sala por cada puesto de alumno del laboratorio (L2PC01-L2PC30).
+# El supervisor se une a todas y monitoriza cada una por separado.
+# Cada alumno ejecuta 3 tableros + 12 jugadores en su sala.
+
+torneos:
+  - nombre: pc01
+    sala: sala_pc01
+    descripcion: "Sala del puesto L2PC01"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc02
+    sala: sala_pc02
+    descripcion: "Sala del puesto L2PC02"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc03
+    sala: sala_pc03
+    descripcion: "Sala del puesto L2PC03"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc04
+    sala: sala_pc04
+    descripcion: "Sala del puesto L2PC04"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc05
+    sala: sala_pc05
+    descripcion: "Sala del puesto L2PC05"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc06
+    sala: sala_pc06
+    descripcion: "Sala del puesto L2PC06"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc07
+    sala: sala_pc07
+    descripcion: "Sala del puesto L2PC07"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc08
+    sala: sala_pc08
+    descripcion: "Sala del puesto L2PC08"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc09
+    sala: sala_pc09
+    descripcion: "Sala del puesto L2PC09"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc10
+    sala: sala_pc10
+    descripcion: "Sala del puesto L2PC10"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc11
+    sala: sala_pc11
+    descripcion: "Sala del puesto L2PC11"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc12
+    sala: sala_pc12
+    descripcion: "Sala del puesto L2PC12"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc13
+    sala: sala_pc13
+    descripcion: "Sala del puesto L2PC13"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc14
+    sala: sala_pc14
+    descripcion: "Sala del puesto L2PC14"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc15
+    sala: sala_pc15
+    descripcion: "Sala del puesto L2PC15"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc16
+    sala: sala_pc16
+    descripcion: "Sala del puesto L2PC16"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc17
+    sala: sala_pc17
+    descripcion: "Sala del puesto L2PC17"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc18
+    sala: sala_pc18
+    descripcion: "Sala del puesto L2PC18"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc19
+    sala: sala_pc19
+    descripcion: "Sala del puesto L2PC19"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc20
+    sala: sala_pc20
+    descripcion: "Sala del puesto L2PC20"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc21
+    sala: sala_pc21
+    descripcion: "Sala del puesto L2PC21"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc22
+    sala: sala_pc22
+    descripcion: "Sala del puesto L2PC22"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc23
+    sala: sala_pc23
+    descripcion: "Sala del puesto L2PC23"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc24
+    sala: sala_pc24
+    descripcion: "Sala del puesto L2PC24"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc25
+    sala: sala_pc25
+    descripcion: "Sala del puesto L2PC25"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc26
+    sala: sala_pc26
+    descripcion: "Sala del puesto L2PC26"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc27
+    sala: sala_pc27
+    descripcion: "Sala del puesto L2PC27"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc28
+    sala: sala_pc28
+    descripcion: "Sala del puesto L2PC28"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc29
+    sala: sala_pc29
+    descripcion: "Sala del puesto L2PC29"
+    tableros: []
+    jugadores: []
+
+  - nombre: pc30
+    sala: sala_pc30
+    descripcion: "Sala del puesto L2PC30"
+    tableros: []
+    jugadores: []
+
+
+# ══════════════════════════════════════════════════════════════════
+#  FASE B: Torneo conjunto en sala única
+# ══════════════════════════════════════════════════════════════════
+# Para activar la Fase B, comentar todas las entradas de la Fase A
+# y descomentar la siguiente entrada. Todos los alumnos cambiarán
+# su sala_asignada a "torneo_lab" en su agents.yaml.
+#
+#  - nombre: torneo_lab
+#    sala: torneo_lab
+#    descripcion: "Torneo de laboratorio — todos los puestos"
+#    tableros: []
+#    jugadores: []

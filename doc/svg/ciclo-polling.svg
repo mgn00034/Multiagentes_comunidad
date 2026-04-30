@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#555" stroke-width="1.2"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#009E73" stroke-width="1.2"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#0072B2" stroke-width="1.2"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#D55E00" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="820" height="580" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Ciclo de polling e interacciones — Flujo de datos frontend ↔ backend</text>
+
+  <!-- ═══ NAVEGADOR (izquierda) ═══ -->
+  <rect x="30" y="60" width="340" height="480" rx="8" fill="rgba(0,114,178,0.05)" stroke="#0072B2" stroke-width="1.2"/>
+  <text x="50" y="84" fill="#005A8C" font-size="14" font-weight="700" font-family="'Crimson Pro',serif">Navegador (JavaScript vanilla)</text>
+
+  <!-- DOMContentLoaded -->
+  <rect x="50" y="100" width="300" height="36" rx="6" fill="#E3F2FD" stroke="#0072B2" stroke-width="1"/>
+  <text x="60" y="116" fill="#005A8C" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">DOMContentLoaded</text>
+  <text x="60" y="130" fill="#666" font-size="9">Inicializa tema, reloj, listeners, primer fetch</text>
+
+  <!-- Polling cargarEstado -->
+  <rect x="50" y="150" width="300" height="42" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1.2"/>
+  <text x="60" y="168" fill="#007A59" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">setInterval(cargarEstado, 5000)</text>
+  <text x="60" y="184" fill="#666" font-size="9">Polling al /supervisor/api/state cada 5 s</text>
+
+  <!-- Flecha ciclica polling -->
+  <path d="M340,171 C360,171 360,171 360,190 C360,200 360,200 340,200" fill="none" stroke="#009E73" stroke-width="1.2" marker-end="url(#arr-green)"/>
+  <text x="370" y="190" fill="#009E73" font-size="8" font-weight="600">5 s</text>
+
+  <!-- cargarEjecuciones -->
+  <rect x="50" y="206" width="300" height="36" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="60" y="222" fill="#8B6914" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">setInterval(cargarEjecuciones, 30s)</text>
+  <text x="60" y="236" fill="#666" font-size="9">Refresco de lista de ejecuciones pasadas</text>
+
+  <!-- Arbol de renderizado -->
+  <rect x="50" y="260" width="300" height="110" rx="6" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="60" y="280" fill="#333" font-size="11" font-weight="600">renderTodo() — arbol de renderizado</text>
+  <text x="70" y="300" fill="#009E73" font-size="10" font-family="'JetBrains Mono',monospace">├── renderGlobalStats()</text>
+  <text x="70" y="316" fill="#009E73" font-size="10" font-family="'JetBrains Mono',monospace">├── renderSalas()</text>
+  <text x="70" y="332" fill="#009E73" font-size="10" font-family="'JetBrains Mono',monospace">├── renderStats()</text>
+  <text x="70" y="348" fill="#009E73" font-size="10" font-family="'JetBrains Mono',monospace">├── renderTabs()</text>
+  <text x="70" y="364" fill="#009E73" font-size="10" font-family="'JetBrains Mono',monospace">└── renderPanelActivo()</text>
+
+  <!-- Estado global -->
+  <rect x="50" y="384" width="300" height="78" rx="6" fill="rgba(0,114,178,0.06)" stroke="#0072B2" stroke-width="1"/>
+  <text x="60" y="404" fill="#005A8C" font-size="11" font-weight="600">Estado global (objeto JS)</text>
+  <text x="60" y="420" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">salas[], salaActivaId, tabActivo</text>
+  <text x="60" y="434" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">filtroResultado, tema, ejecucionActiva</text>
+  <text x="60" y="448" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">esHistorico, informeSeleccionado</text>
+
+  <!-- localStorage -->
+  <rect x="50" y="476" width="140" height="30" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="0.8"/>
+  <text x="120" y="496" fill="#7B1FA2" font-size="10" font-weight="600" text-anchor="middle">localStorage</text>
+  <text x="200" y="496" fill="#666" font-size="9">← tema persiste</text>
+
+  <!-- ═══ SERVIDOR (derecha) ═══ -->
+  <rect x="450" y="60" width="340" height="480" rx="8" fill="rgba(0,158,115,0.05)" stroke="#009E73" stroke-width="1.2"/>
+  <text x="470" y="84" fill="#1B5E20" font-size="14" font-weight="700" font-family="'Crimson Pro',serif">AgenteSupervisor (aiohttp)</text>
+
+  <!-- Endpoint state -->
+  <rect x="470" y="108" width="300" height="56" rx="6" fill="#E8F5E9" stroke="#009E73" stroke-width="1.2"/>
+  <text x="480" y="128" fill="#007A59" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">GET /supervisor/api/state</text>
+  <text x="480" y="144" fill="#666" font-size="9">Lee estado interno del agente</text>
+  <text x="480" y="158" fill="#666" font-size="9">(salas_muc, ocupantes, informes, log)</text>
+
+  <!-- Endpoint ejecuciones -->
+  <rect x="470" y="180" width="300" height="42" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="480" y="200" fill="#8B6914" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">GET /supervisor/api/ejecuciones</text>
+  <text x="480" y="216" fill="#666" font-size="9">Lee SQLite: lista de ejecuciones guardadas</text>
+
+  <!-- Endpoint ejecucion pasada -->
+  <rect x="470" y="236" width="300" height="42" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="480" y="256" fill="#8B6914" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">GET /supervisor/api/ejecuciones/{id}</text>
+  <text x="480" y="272" fill="#666" font-size="9">Lee SQLite: datos completos de ejecucion pasada</text>
+
+  <!-- Estado interno agente -->
+  <rect x="470" y="300" width="300" height="80" rx="6" fill="rgba(0,158,115,0.06)" stroke="#009E73" stroke-width="1"/>
+  <text x="480" y="320" fill="#1B5E20" font-size="11" font-weight="600">Estado interno del agente</text>
+  <text x="480" y="338" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">informes_por_sala (dict)</text>
+  <text x="480" y="352" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">ocupantes_por_sala (dict)</text>
+  <text x="480" y="366" fill="#666" font-size="9" font-family="'JetBrains Mono',monospace">log_por_sala (dict)</text>
+
+  <!-- SQLite -->
+  <rect x="470" y="396" width="300" height="50" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1"/>
+  <text x="480" y="416" fill="#7B1FA2" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">AlmacenSupervisor (SQLite)</text>
+  <text x="480" y="434" fill="#666" font-size="9">ejecuciones, informes, eventos persistidos</text>
+
+  <!-- Handlers -->
+  <rect x="470" y="462" width="300" height="36" rx="6" fill="#F5F5F5" stroke="#aaa" stroke-width="0.8"/>
+  <text x="480" y="480" fill="#555" font-size="11" font-weight="600" font-family="'JetBrains Mono',monospace">supervisor_handlers.py</text>
+  <text x="480" y="494" fill="#888" font-size="9">_convertir_informes(), _mapear_resultado()</text>
+
+  <!-- ═══ FLECHAS DE COMUNICACION ═══ -->
+
+  <!-- Polling state: navegador → servidor -->
+  <line x1="352" y1="170" x2="466" y2="132" stroke="#009E73" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="400" y="138" fill="#009E73" font-size="9" font-weight="600">fetch</text>
+
+  <!-- Respuesta JSON: servidor → navegador -->
+  <line x1="466" y1="148" x2="352" y2="184" stroke="#0072B2" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-blue)"/>
+  <text x="396" y="178" fill="#0072B2" font-size="9">JSON</text>
+
+  <!-- Polling ejecuciones -->
+  <line x1="352" y1="222" x2="466" y2="200" stroke="#F9A825" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+
+  <!-- Respuesta ejecuciones -->
+  <line x1="466" y1="210" x2="352" y2="232" stroke="#0072B2" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arr-blue)"/>
+
+  <!-- Estado interno → handler -->
+  <line x1="620" y1="384" x2="620" y2="458" stroke="#555" stroke-width="0.8" marker-end="url(#arr)"/>
+  <text x="628" y="430" fill="#888" font-size="8">request.app["agente"]</text>
+
+  <!-- SQLite → handler -->
+  <line x1="560" y1="448" x2="560" y2="458" stroke="#555" stroke-width="0.8" marker-end="url(#arr)"/>
+
+  <!-- ═══ NOTAS ═══ -->
+  <rect x="30" y="520" width="760" height="46" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="0.8"/>
+  <text x="50" y="538" fill="#8B6914" font-size="10" font-weight="600">Patron de comunicacion:</text>
+  <text x="224" y="538" fill="#555" font-size="10">El frontend hace polling cada 5 s al backend. No hay WebSocket ni SSE: se usa HTTP simple.</text>
+  <text x="50" y="556" fill="#8B6914" font-size="10" font-weight="600">Modo historico:</text>
+  <text x="224" y="556" fill="#555" font-size="10">Cuando esHistorico=true, el polling al estado en vivo se detiene y se lee de SQLite via /ejecuciones/{id}.</text>
+</svg>

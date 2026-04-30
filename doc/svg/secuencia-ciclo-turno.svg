@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama de secuencia: ciclo completo de un turno del juego
+  incluyendo el nuevo mensaje INFORM turn-result del jugador
+  activo hacia el tablero.
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="720" height="480" fill="#f8f9fa" rx="8"/>
+  <defs>
+    <marker id="flecha-verde" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/>
+    </marker>
+    <marker id="flecha-nuevo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b87020"/>
+    </marker>
+  </defs>
+
+  <!-- Título -->
+  <text x="360" y="24" text-anchor="middle" fill="#1a3a52" font-weight="bold" font-size="13">Ciclo de un turno — con el nuevo turn-result</text>
+
+  <!-- Cabeceras de los actores -->
+  <rect x="80" y="40" width="130" height="26" rx="4" fill="#f0f6ff" stroke="#2070b0" stroke-width="1.5"/>
+  <text x="145" y="58" text-anchor="middle" fill="#2070b0" font-weight="bold">Tablero</text>
+
+  <rect x="510" y="40" width="130" height="26" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="575" y="58" text-anchor="middle" fill="#c05020" font-weight="bold">Jugador X</text>
+
+  <!-- Lifelines -->
+  <line x1="145" y1="66" x2="145" y2="470" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="575" y1="66" x2="575" y2="470" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- 1) CFP turn (active_symbol="X") -->
+  <line x1="145" y1="102" x2="575" y2="102" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-verde)"/>
+  <text x="360" y="96" text-anchor="middle" fill="#1a6b50" font-size="11" font-weight="bold">CFP turn</text>
+  <text x="360" y="114" text-anchor="middle" fill="#5c756a" font-size="10">performative=cfp · body.active_symbol="X"</text>
+
+  <!-- 2) PROPOSE move (position=4) -->
+  <line x1="575" y1="146" x2="145" y2="146" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-verde)"/>
+  <text x="360" y="140" text-anchor="middle" fill="#1a6b50" font-size="11" font-weight="bold">PROPOSE move</text>
+  <text x="360" y="158" text-anchor="middle" fill="#5c756a" font-size="10">performative=propose · body.position=4</text>
+
+  <!-- 3) ACCEPT_PROPOSAL move (position=4, symbol="X") -->
+  <line x1="145" y1="190" x2="575" y2="190" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-verde)"/>
+  <text x="360" y="184" text-anchor="middle" fill="#1a6b50" font-size="11" font-weight="bold">ACCEPT_PROPOSAL move</text>
+  <text x="360" y="202" text-anchor="middle" fill="#5c756a" font-size="10">performative=accept_proposal · body: {position=4, symbol="X"}</text>
+
+  <!-- Nota: X aplica y evalúa -->
+  <rect x="470" y="222" width="210" height="44" rx="4" fill="#ece6f8" stroke="#6040b0" stroke-width="1"/>
+  <text x="575" y="238" text-anchor="middle" fill="#3a2070" font-size="10" font-weight="bold">X aplica el movimiento</text>
+  <text x="575" y="252" text-anchor="middle" fill="#3a2070" font-size="10">y evalúa su tablero local</text>
+
+  <!-- Conector del lifeline al recuadro de actividad (ya incluido por el propio recuadro) -->
+
+  <!-- 4) INFORM turn-result (result="continue") -->
+  <line x1="575" y1="298" x2="145" y2="298" stroke="#b87020" stroke-width="1.6" marker-end="url(#flecha-nuevo)"/>
+  <text x="360" y="292" text-anchor="middle" fill="#6a4a10" font-size="11" font-weight="bold">INFORM turn-result  ★ (nuevo)</text>
+  <text x="360" y="310" text-anchor="middle" fill="#6a4a10" font-size="10">performative=inform · body: {result="continue"}</text>
+
+  <!-- Banda «tablero decide» -->
+  <rect x="60" y="334" width="620" height="40" rx="4" fill="#fff6e0" stroke="#b87020" stroke-width="1"/>
+  <text x="360" y="350" text-anchor="middle" fill="#6a4a10" font-size="11" font-weight="bold">El tablero lee result</text>
+  <text x="360" y="365" text-anchor="middle" fill="#6a4a10" font-size="10">continue → nuevo CFP turn · win/draw → cerrar partida</text>
+
+  <!-- 5) CFP turn (active_symbol="O") -->
+  <line x1="145" y1="410" x2="575" y2="410" stroke="#2d8a6e" stroke-width="1.4" marker-end="url(#flecha-verde)"/>
+  <text x="360" y="404" text-anchor="middle" fill="#1a6b50" font-size="11" font-weight="bold">CFP turn</text>
+  <text x="360" y="422" text-anchor="middle" fill="#5c756a" font-size="10">performative=cfp · body.active_symbol="O" (ahora turno del otro jugador)</text>
+
+  <!-- Leyenda -->
+  <text x="360" y="460" text-anchor="middle" fill="#1a3a52" font-size="10" font-style="italic">★ = mensaje nuevo introducido en la actualización de 2026-04-14. Todos los mensajes comparten el mismo thread de partida.</text>
+</svg>

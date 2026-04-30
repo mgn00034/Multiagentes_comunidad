@@ -1,0 +1,107 @@
+# config.yaml — Configuración centralizada del sistema Tic-Tac-Toe Multiagente
+#
+# Este fichero define los perfiles de conexión para los dos servicios
+# que el sistema puede necesitar: el servidor XMPP (obligatorio para todos
+# los niveles de estrategia) y el servidor LLM (solo para estrategia nivel 4).
+#
+# USO:
+#   Cambiar los campos "perfil_activo" para alternar entre entornos
+#   sin modificar ningún fichero de código fuente.
+#
+# PERFILES XMPP:
+#   - local:    Prosody local mediante "spade run" (desarrollo individual)
+#   - servidor: Prosody de la asignatura en sinbad2.ujaen.es (laboratorio)
+#
+# PERFILES LLM (solo necesario para estrategia nivel 4):
+#   - local:    Ollama en Docker local (modelos ligeros, sin red UJA)
+#   - servidor: Ollama en sinbad2ia.ujaen.es (modelos potentes, requiere red UJA o VPN)
+
+
+# ══════════════════════════════════════════════════════════════════
+# PERFILES XMPP — Servidor de comunicación entre agentes
+# ══════════════════════════════════════════════════════════════════
+
+xmpp:
+  perfil_activo: local    # Cambiar a "local" para usar localhost
+
+  perfiles:
+    local:
+      host: localhost
+      puerto: 5222
+      dominio: localhost
+      servicio_muc: conference.localhost
+      sala_tictactoe: tictactoe
+      password_defecto: secret
+      auto_register: true
+      verify_security: false
+
+    servidor:
+      host: sinbad2.ujaen.es
+      puerto: 8022
+      dominio: sinbad2.ujaen.es
+      servicio_muc: conference.sinbad2.ujaen.es
+      sala_tictactoe: torneo_lab
+      password_defecto: secret
+      auto_register: true
+      verify_security: false
+
+
+# ══════════════════════════════════════════════════════════════════
+# PERFILES LLM — Servidor Ollama (solo para estrategia nivel 4)
+# ══════════════════════════════════════════════════════════════════
+# Si tu estrategia no usa LLM, esta sección se ignora.
+# Los modelos llevan prefijo "ollama/" cuando se usan con LiteLLM
+# (niveles 2-3 de la asignatura), pero para llamadas directas a la
+# API REST de Ollama no es necesario el prefijo.
+
+llm:
+  perfil_activo: local    # Cambiar a "servidor" para usar sinbad2ia
+
+  perfiles:
+    local:
+      url_base: "http://localhost:11434"
+      modelo: llama3.2:3b
+      modelos_disponibles:
+        - llama3.2:3b
+        - gemma3:4b
+      timeout_segundos: 120
+      descripcion: >
+        Ollama local en Docker. Modelos ligeros para desarrollo.
+        Instalar con: docker run -d -p 11434:11434 ollama/ollama
+        Descargar modelo: docker exec <contenedor> ollama pull llama3.2:3b
+
+    servidor:
+      url_base: "http://sinbad2ia.ujaen.es:8050"
+      modelo: llama3:8b
+      modelos_disponibles:
+        - llama3:8b
+        - qwen3:32b
+      timeout_segundos: 120
+      descripcion: >
+        Servidor Ollama de la asignatura. Modelos potentes con GPU.
+        Requiere conexión a la red de la UJA o VPN.
+
+
+# ══════════════════════════════════════════════════════════════════
+# PARÁMETROS GENERALES DEL SISTEMA
+# ══════════════════════════════════════════════════════════════════
+
+sistema:
+  # Intervalo en segundos entre consultas del jugador a la sala MUC
+  intervalo_busqueda_muc: 5
+
+  # Máximo de partidas simultáneas por jugador
+  max_partidas_simultaneas: 3
+
+  # Timeout de inscripción: segundos que un tablero espera al segundo jugador
+  timeout_inscripcion: 60
+
+  # Timeout de turno: segundos que un tablero espera la propuesta de un jugador
+  timeout_turno: 30
+
+  # Puerto base para la interfaz web de los tableros
+  # Cada tablero usará puerto_web_base + índice (0, 1, 2, ...)
+  puerto_web_base: 15000
+
+  # Nivel de logging (DEBUG, INFO, WARNING, ERROR)
+  nivel_log: INFO

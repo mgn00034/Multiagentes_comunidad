@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama: Capas de protección contra supervisores duplicados (S-02)
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 640 340" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="640" height="340" fill="#f8f9fa" rx="8"/>
+
+  <!-- Titulo -->
+  <text x="320" y="22" text-anchor="middle" fill="#334840" font-size="12" font-weight="bold">Proteccion contra supervisores duplicados</text>
+
+  <!-- Capa 1: Prosody (servidor) -->
+  <rect x="20" y="40" width="600" height="140" rx="8" fill="#f0fff5" stroke="#2d8a6e" stroke-width="2"/>
+  <rect x="30" y="48" width="360" height="20" rx="3" fill="#2d8a6e"/>
+  <text x="40" y="62" fill="#ffffff" font-weight="bold" font-size="11">Capa 1 — Prosody (inalterable por el alumno)</text>
+
+  <circle cx="45" cy="95" r="5" fill="#2d8a6e"/>
+  <text x="60" y="92" fill="#334840" font-size="10">JID no esta en muc_room_default_admins</text>
+  <text x="60" y="107" fill="#5c756a" font-size="10">→ afiliacion "none", rol "participant"</text>
+
+  <circle cx="45" cy="145" r="5" fill="#2d8a6e"/>
+  <text x="60" y="142" fill="#334840" font-size="10">Sala moderada: no puede enviar mensajes</text>
+  <text x="60" y="157" fill="#5c756a" font-size="10">→ REQUEST al tablero silenciosamente descartado</text>
+
+  <!-- Capa 2: Python (codigo del agente) -->
+  <rect x="20" y="200" width="600" height="120" rx="8" fill="#fff5f0" stroke="#c05020" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="30" y="208" width="400" height="20" rx="3" fill="#c05020"/>
+  <text x="40" y="222" fill="#ffffff" font-weight="bold" font-size="11">Capa 2 — Codigo Python (eludible, pero informativa)</text>
+
+  <circle cx="45" cy="260" r="5" fill="#c05020"/>
+  <text x="60" y="257" fill="#334840" font-size="10">Si afiliacion != admin/owner</text>
+  <text x="60" y="272" fill="#5c756a" font-size="10">→ self.stop() con mensaje explicativo</text>
+  <text x="60" y="287" fill="#5c756a" font-size="10">  en el log y el dashboard</text>
+
+  <!-- Leyenda borde discontinuo -->
+  <line x1="490" y1="304" x2="530" y2="304" stroke="#c05020" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="538" y="308" fill="#c05020" font-size="9">= eludible</text>
+</svg>

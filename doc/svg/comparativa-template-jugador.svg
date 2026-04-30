@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Comparativa: cómo el jugador registra el template de partida.
+  Antes (reactivo, propenso a race condition) vs. ahora (proactivo
+  + cortesía de reintento 1× del tablero en el primer CFP turn).
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="780" height="560" fill="#f8f9fa" rx="8"/>
+  <defs>
+    <marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/>
+    </marker>
+    <marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c05020"/>
+    </marker>
+    <marker id="mgray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a6a20"/>
+    </marker>
+  </defs>
+
+  <text x="390" y="24" text-anchor="middle" fill="#1a3a52" font-weight="bold" font-size="13">Cuándo puede el jugador registrar su behaviour de partida</text>
+
+  <!-- ========================================================= -->
+  <!--   COLUMNA IZQUIERDA — Antes                              -->
+  <!--   Columna:   x=20..390 (width 370)                        -->
+  <!--   Contenido: x=40..370 (width 330)                        -->
+  <!--   Lifelines: jugador x=100, tablero x=310                 -->
+  <!--   Centro:    x=205                                        -->
+  <!-- ========================================================= -->
+  <rect x="20" y="44" width="370" height="26" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="205" y="62" text-anchor="middle" fill="#c05020" font-weight="bold" font-size="11">Antes — modelo reactivo (race condition)</text>
+
+  <line x1="100" y1="82" x2="100" y2="510" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="310" y1="82" x2="310" y2="510" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <text x="100" y="94" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">Jugador</text>
+  <text x="310" y="94" text-anchor="middle" fill="#2070b0" font-size="10" font-weight="bold">Tablero</text>
+
+  <line x1="310" y1="120" x2="100" y2="120" stroke="#2d8a6e" stroke-width="1.3" marker-end="url(#mg)"/>
+  <text x="205" y="114" text-anchor="middle" fill="#1a6b50" font-size="9" font-weight="bold">game-start</text>
+  <text x="205" y="132" text-anchor="middle" fill="#5c756a" font-size="9">body solo tiene opponent</text>
+
+  <text x="205" y="152" text-anchor="middle" fill="#6a4a10" font-size="9" font-style="italic">jugador no conoce el thread,</text>
+  <text x="205" y="164" text-anchor="middle" fill="#6a4a10" font-size="9" font-style="italic">no puede crear el template aún</text>
+
+  <line x1="310" y1="192" x2="100" y2="192" stroke="#c05020" stroke-width="1.3" marker-end="url(#mr)"/>
+  <text x="205" y="186" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">CFP turn (primer mensaje de partida)</text>
+  <text x="205" y="204" text-anchor="middle" fill="#5c756a" font-size="9">msg.thread = game-tabX-U</text>
+
+  <rect x="40" y="220" width="330" height="58" rx="4" fill="#fff0f0" stroke="#c04040" stroke-width="1"/>
+  <text x="205" y="236" text-anchor="middle" fill="#7a1010" font-size="9" font-weight="bold">Ventana de riesgo</text>
+  <text x="205" y="252" text-anchor="middle" fill="#7a1010" font-size="9">si el tablero envía algo entre game-start</text>
+  <text x="205" y="264" text-anchor="middle" fill="#7a1010" font-size="9">y la creación del behaviour, se pierde</text>
+
+  <text x="205" y="296" text-anchor="middle" fill="#1a3a52" font-size="10" font-weight="bold">Recién aquí el jugador:</text>
+  <rect x="40" y="304" width="330" height="86" rx="4" fill="#ffffff" stroke="#b0b8b4"/>
+  <text x="52" y="322" fill="#1a3a52" font-size="10">hilo = msg.thread</text>
+  <text x="52" y="338" fill="#1a3a52" font-size="10">t = Template(thread=hilo,</text>
+  <text x="52" y="354" fill="#1a3a52" font-size="10">  metadata={"ontology": "tictactoe"})</text>
+  <text x="52" y="370" fill="#1a3a52" font-size="10">self.agent.add_behaviour(</text>
+  <text x="52" y="386" fill="#1a3a52" font-size="10">  BehaviourPartida(), t)</text>
+
+  <text x="205" y="414" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">Problema: el CFP turn ya está en cola</text>
+  <text x="205" y="430" text-anchor="middle" fill="#c05020" font-size="9">y se perdió porque el template aún no existía</text>
+
+  <!-- ========================================================= -->
+  <!--   COLUMNA DERECHA — Ahora                                -->
+  <!--   Columna:   x=400..770 (width 370)                       -->
+  <!--   Contenido: x=420..750 (width 330)                       -->
+  <!--   Lifelines: jugador x=480, tablero x=690                 -->
+  <!--   Centro:    x=585                                        -->
+  <!-- ========================================================= -->
+  <rect x="400" y="44" width="370" height="26" rx="4" fill="#e8f2ec" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="585" y="62" text-anchor="middle" fill="#1a6b50" font-weight="bold" font-size="11">Ahora — proactivo + cortesía 1× del tablero</text>
+
+  <line x1="480" y1="82" x2="480" y2="510" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="690" y1="82" x2="690" y2="510" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <text x="480" y="94" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">Jugador</text>
+  <text x="690" y="94" text-anchor="middle" fill="#2070b0" font-size="10" font-weight="bold">Tablero</text>
+
+  <!-- game-start del tablero al jugador -->
+  <line x1="690" y1="120" x2="480" y2="120" stroke="#2d8a6e" stroke-width="1.3" marker-end="url(#mg)"/>
+  <text x="585" y="114" text-anchor="middle" fill="#1a6b50" font-size="9" font-weight="bold">game-start</text>
+  <text x="585" y="132" text-anchor="middle" fill="#5c756a" font-size="9">body.opponent + body.thread</text>
+
+  <!-- El jugador inicia el registro del behaviour (async, en curso) -->
+  <rect x="420" y="146" width="330" height="60" rx="4" fill="#ffffff" stroke="#b0b8b4"/>
+  <text x="432" y="162" fill="#1a3a52" font-size="10">hilo = json.loads(msg.body)["thread"]</text>
+  <text x="432" y="178" fill="#1a3a52" font-size="10">t = Template(thread=hilo, ontology=...)</text>
+  <text x="432" y="194" fill="#1a3a52" font-size="10">self.agent.add_behaviour(BehaviourPartida(), t)</text>
+
+  <!-- Banda ámbar: contingencia = registro asíncrono aún en curso -->
+  <rect x="420" y="212" width="330" height="30" rx="4" fill="#fff6e0" stroke="#b89040" stroke-width="1"/>
+  <text x="585" y="226" text-anchor="middle" fill="#6a4a10" font-size="10" font-weight="bold">⚠ Contingencia: ejecución asíncrona</text>
+  <text x="585" y="238" text-anchor="middle" fill="#6a4a10" font-size="9">add_behaviour no termina instantáneamente</text>
+
+  <!-- 1er CFP turn: llega antes de que termine el registro → se descarta -->
+  <line x1="690" y1="262" x2="480" y2="262" stroke="#8a6a20" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#mgray)"/>
+  <text x="585" y="256" text-anchor="middle" fill="#6a4a10" font-size="9" font-weight="bold">CFP turn · intento 1</text>
+  <text x="585" y="274" text-anchor="middle" fill="#a04040" font-size="9" font-style="italic">template aún registrándose → el mensaje se descarta</text>
+
+  <!-- Timeout en el tablero -->
+  <rect x="660" y="286" width="60" height="16" rx="3" fill="#fff0e0" stroke="#c05020"/>
+  <text x="690" y="298" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">timeout</text>
+
+  <!-- Banda verde: el registro asíncrono ha terminado -->
+  <rect x="420" y="312" width="330" height="26" rx="4" fill="#e8f2ec" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="585" y="328" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">✓ Registro asíncrono terminado: template activo</text>
+
+  <!-- 2º CFP turn: reintento 1× del tablero → encaja -->
+  <line x1="690" y1="358" x2="480" y2="358" stroke="#2d8a6e" stroke-width="1.8" marker-end="url(#mg)"/>
+  <text x="585" y="352" text-anchor="middle" fill="#1a6b50" font-size="9" font-weight="bold">CFP turn · intento 2 (cortesía 1×)</text>
+  <text x="585" y="370" text-anchor="middle" fill="#1a6b50" font-size="9">mismo thread + mismo body → encaja con el template</text>
+
+  <!-- Anotación lateral: abrazadera visual que etiqueta los dos CFP turn como REINTENTO 1x -->
+  <path d="M 734 262 Q 758 262 758 282 L 758 344 Q 758 364 734 364" fill="none" stroke="#c05020" stroke-width="2"/>
+  <rect x="722" y="280" width="54" height="28" rx="5" fill="#c05020"/>
+  <text x="749" y="292" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">REINTENTO</text>
+  <text x="749" y="304" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">1×</text>
+
+  <!-- Respuesta del jugador: INFORM move -->
+  <line x1="480" y1="394" x2="690" y2="394" stroke="#2d8a6e" stroke-width="1.3" marker-end="url(#mg)"/>
+  <text x="585" y="388" text-anchor="middle" fill="#1a6b50" font-size="9" font-weight="bold">INFORM move</text>
+  <text x="585" y="406" text-anchor="middle" fill="#5c756a" font-size="9">la partida arranca con normalidad</text>
+
+  <!-- Caja resolución: la contingencia queda cubierta por el reintento -->
+  <rect x="420" y="420" width="330" height="60" rx="4" fill="#eef7f0" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="585" y="436" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">Resolución de la contingencia</text>
+  <text x="585" y="452" text-anchor="middle" fill="#3a6a52" font-size="9">la ejecución asíncrona del behaviour termina durante</text>
+  <text x="585" y="464" text-anchor="middle" fill="#3a6a52" font-size="9">el TIMEOUT_TURN del 1er intento → el 2º intento ya</text>
+  <text x="585" y="476" text-anchor="middle" fill="#3a6a52" font-size="9">encuentra el template listo y la partida arranca.</text>
+
+  <!-- Regla inferior -->
+  <line x1="40" y1="518" x2="740" y2="518" stroke="#b0b8b4" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="390" y="534" text-anchor="middle" fill="#1a3a52" font-size="10" font-style="italic">Clave: el body del game-start duplica el thread de la metadata y permite el registro proactivo.</text>
+  <text x="390" y="548" text-anchor="middle" fill="#1a3a52" font-size="10" font-style="italic">El reintento 1× del tablero solo aplica al 1er CFP turn; los turnos 2, 3, ... no se reintentan.</text>
+</svg>

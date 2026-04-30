@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Source Sans 3','Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M1,1 L7,3 L1,5" fill="none" stroke="#555" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="820" height="560" rx="8" fill="#FFFFFF"/>
+
+  <!-- Titulo -->
+  <text x="410" y="28" fill="#1B5E20" font-size="15" font-weight="700" text-anchor="middle"
+        font-family="'Crimson Pro',serif">Panel de Informes — Tarjetas de partida con filtros y detalle</text>
+
+  <!-- ═══ BARRA DE FILTROS ═══ -->
+  <rect x="30" y="46" width="760" height="44" rx="6" fill="#FAFAFA" stroke="#ddd" stroke-width="0.8"/>
+  <text x="50" y="63" fill="#888" font-size="9" font-weight="600">FILTROS POR RESULTADO</text>
+
+  <!-- Filtro Todos (activo) -->
+  <rect x="50" y="68" width="70" height="18" rx="9" fill="#009E7322" stroke="none"/>
+  <text x="85" y="81" fill="#009E73" font-size="10" font-weight="600" text-anchor="middle">Todos</text>
+
+  <!-- Filtro Victorias -->
+  <rect x="128" y="68" width="80" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="168" y="81" fill="#666" font-size="10" text-anchor="middle">Victorias</text>
+
+  <!-- Filtro Empates -->
+  <rect x="216" y="68" width="72" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="252" y="81" fill="#666" font-size="10" text-anchor="middle">Empates</text>
+
+  <!-- Filtro Abortadas -->
+  <rect x="296" y="68" width="80" height="18" rx="9" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="336" y="81" fill="#666" font-size="10" text-anchor="middle">Abortadas</text>
+
+  <!-- Contador -->
+  <text x="720" y="81" fill="#888" font-size="10" text-anchor="end">8 informe(s) recibido(s)</text>
+
+  <!-- ═══ TARJETA VICTORIA (detallada) ═══ -->
+  <rect x="30" y="104" width="240" height="250" rx="6" fill="#FFF" stroke="#4CAF50" stroke-width="1.2"/>
+  <rect x="30" y="104" width="4" height="250" rx="2" fill="#4CAF50"/>
+  <text x="38" y="98" fill="#1B5E20" font-size="10" font-weight="700">TARJETA: VICTORIA</text>
+
+  <!-- Badge -->
+  <rect x="46" y="116" width="90" height="20" rx="10" fill="#4CAF5014" stroke="none"/>
+  <text x="91" y="130" fill="#4CAF50" font-size="10" font-weight="600" text-anchor="middle">★ Victoria X</text>
+  <!-- Timestamp -->
+  <text x="250" y="130" fill="#888" font-size="9" text-anchor="end">14:32:50</text>
+
+  <!-- Tablero SVG miniatura -->
+  <rect x="86" y="144" width="96" height="96" rx="4" fill="#FAFAFA" stroke="#ddd" stroke-width="0.5"/>
+  <!-- Grid 3x3 -->
+  <line x1="118" y1="148" x2="118" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="150" y1="148" x2="150" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="90" y1="176" x2="178" y2="176" stroke="#ccc" stroke-width="1"/>
+  <line x1="90" y1="208" x2="178" y2="208" stroke="#ccc" stroke-width="1"/>
+  <!-- X en (0,0) -->
+  <line x1="98" y1="156" x2="110" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="156" x2="98" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <!-- O en (0,1) -->
+  <circle cx="134" cy="162" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <!-- X en (1,0) -->
+  <line x1="98" y1="186" x2="110" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="186" x2="98" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <!-- X en (1,1) -->
+  <line x1="128" y1="186" x2="140" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="140" y1="186" x2="128" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <!-- O en (2,0) -->
+  <circle cx="104" cy="222" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <!-- X en (2,2) -->
+  <line x1="158" y1="216" x2="170" y2="228" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="170" y1="216" x2="158" y2="228" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <!-- Linea ganadora diagonal -->
+  <line x1="104" y1="162" x2="164" y2="222" stroke="#0072B2" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Jugadores -->
+  <rect x="46" y="252" width="96" height="28" rx="4" fill="#0072B210" stroke="#0072B230" stroke-width="0.8"/>
+  <text x="54" y="268" fill="#0072B2" font-size="10" font-weight="600">X</text>
+  <text x="70" y="268" fill="#333" font-size="10">ana</text>
+  <text x="134" y="268" fill="#4CAF50" font-size="8">★ Ganador</text>
+
+  <rect x="150" y="252" width="96" height="28" rx="4" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="158" y="268" fill="#D55E00" font-size="10" font-weight="600">O</text>
+  <text x="174" y="268" fill="#333" font-size="10">luis</text>
+
+  <!-- Footer tarjeta -->
+  <text x="54" y="300" fill="#888" font-size="9">7 turnos</text>
+  <text x="210" y="300" fill="#888" font-size="9" text-anchor="end">mesa1</text>
+
+  <!-- Flecha de hover -->
+  <text x="134" y="340" fill="#555" font-size="10" text-anchor="middle" font-style="italic">
+    hover: translate(-2px) + sombra
+  </text>
+  <text x="134" y="354" fill="#555" font-size="10" text-anchor="middle" font-style="italic">
+    clic → abre modal de detalle
+  </text>
+
+  <!-- ═══ TARJETA EMPATE ═══ -->
+  <rect x="290" y="104" width="240" height="250" rx="6" fill="#FFF" stroke="#9C27B0" stroke-width="1.2"/>
+  <rect x="290" y="104" width="4" height="250" rx="2" fill="#9C27B0"/>
+  <text x="298" y="98" fill="#7B1FA2" font-size="10" font-weight="700">TARJETA: EMPATE</text>
+
+  <rect x="306" y="116" width="80" height="20" rx="10" fill="#9C27B014" stroke="none"/>
+  <text x="346" y="130" fill="#9C27B0" font-size="10" font-weight="600" text-anchor="middle">⬡ Empate</text>
+  <text x="510" y="130" fill="#888" font-size="9" text-anchor="end">14:35:12</text>
+
+  <!-- Tablero SVG miniatura empate -->
+  <rect x="346" y="144" width="96" height="96" rx="4" fill="#FAFAFA" stroke="#ddd" stroke-width="0.5"/>
+  <line x1="378" y1="148" x2="378" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="410" y1="148" x2="410" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="350" y1="176" x2="438" y2="176" stroke="#ccc" stroke-width="1"/>
+  <line x1="350" y1="208" x2="438" y2="208" stroke="#ccc" stroke-width="1"/>
+  <!-- Tablero completo empate -->
+  <line x1="358" y1="156" x2="370" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="370" y1="156" x2="358" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="394" cy="162" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <line x1="418" y1="156" x2="430" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="430" y1="156" x2="418" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="358" y1="186" x2="370" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="370" y1="186" x2="358" y2="198" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="394" cy="192" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <circle cx="364" cy="222" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <line x1="388" y1="216" x2="400" y2="228" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="400" y1="216" x2="388" y2="228" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="424" cy="222" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+
+  <!-- Jugadores empate -->
+  <rect x="306" y="252" width="96" height="28" rx="4" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="314" y="268" fill="#0072B2" font-size="10" font-weight="600">X</text>
+  <text x="330" y="268" fill="#333" font-size="10">marta</text>
+
+  <rect x="410" y="252" width="96" height="28" rx="4" fill="#F5F5F5" stroke="#ddd" stroke-width="0.8"/>
+  <text x="418" y="268" fill="#D55E00" font-size="10" font-weight="600">O</text>
+  <text x="434" y="268" fill="#333" font-size="10">pablo</text>
+
+  <text x="314" y="300" fill="#888" font-size="9">9 turnos</text>
+  <text x="470" y="300" fill="#888" font-size="9" text-anchor="end">mesa2</text>
+
+  <!-- ═══ TARJETA ABORTADA ═══ -->
+  <rect x="550" y="104" width="240" height="250" rx="6" fill="#FFF" stroke="#E65100" stroke-width="1.2"/>
+  <rect x="550" y="104" width="4" height="250" rx="2" fill="#E65100"/>
+  <text x="558" y="98" fill="#BF360C" font-size="10" font-weight="700">TARJETA: ABORTADA</text>
+
+  <rect x="566" y="116" width="90" height="20" rx="10" fill="#E6510014" stroke="none"/>
+  <text x="611" y="130" fill="#E65100" font-size="10" font-weight="600" text-anchor="middle">⚠ Abortada</text>
+  <text x="770" y="130" fill="#888" font-size="9" text-anchor="end">14:38:05</text>
+
+  <!-- Tablero parcial abortada -->
+  <rect x="606" y="144" width="96" height="96" rx="4" fill="#FAFAFA" stroke="#ddd" stroke-width="0.5"/>
+  <line x1="638" y1="148" x2="638" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="670" y1="148" x2="670" y2="236" stroke="#ccc" stroke-width="1"/>
+  <line x1="610" y1="176" x2="698" y2="176" stroke="#ccc" stroke-width="1"/>
+  <line x1="610" y1="208" x2="698" y2="208" stroke="#ccc" stroke-width="1"/>
+  <!-- Solo unas pocas fichas -->
+  <line x1="618" y1="156" x2="630" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="630" y1="156" x2="618" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="654" cy="162" r="8" fill="none" stroke="#D55E00" stroke-width="2"/>
+  <line x1="678" y1="156" x2="690" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="690" y1="156" x2="678" y2="168" stroke="#0072B2" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Jugadores abortada -->
+  <rect x="566" y="252" width="96" height="28" rx="4" fill="#E651000A" stroke="#E6510020" stroke-width="0.8"/>
+  <text x="574" y="268" fill="#0072B2" font-size="10" font-weight="600">X</text>
+  <text x="590" y="268" fill="#333" font-size="10">elena</text>
+
+  <rect x="670" y="252" width="96" height="28" rx="4" fill="#E651000A" stroke="#E6510020" stroke-width="0.8"/>
+  <text x="678" y="268" fill="#D55E00" font-size="10" font-weight="600">O</text>
+  <text x="694" y="268" fill="#333" font-size="10">carlos</text>
+
+  <text x="574" y="300" fill="#888" font-size="9">3 turnos</text>
+  <text x="680" y="300" fill="#E65100" font-size="9">both-timeout</text>
+  <text x="740" y="300" fill="#888" font-size="9" text-anchor="end">mesa3</text>
+
+  <!-- ═══ NOTAS PEDAGOGICAS ═══ -->
+  <rect x="30" y="380" width="760" height="164" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="0.8"/>
+  <text x="50" y="400" fill="#8B6914" font-size="11" font-weight="700">Aspectos pedagogicos del panel de informes</text>
+
+  <text x="50" y="422" fill="#555" font-size="10">1. Cada tarjeta resume visualmente una partida completa: el resultado, el tablero final SVG, los jugadores y los turnos.</text>
+  <text x="50" y="440" fill="#555" font-size="10">2. El color del borde izquierdo codifica el resultado: verde (victoria), purpura (empate), naranja (abortada).</text>
+  <text x="50" y="458" fill="#555" font-size="10">3. El tablero SVG se genera dinamicamente con renderBoardSVG(): dibuja la cuadricula, fichas X/O y linea ganadora.</text>
+  <text x="50" y="476" fill="#555" font-size="10">4. Los filtros permiten aislar un tipo de resultado, lo que facilita al profesor revisar solo las partidas abortadas.</text>
+  <text x="50" y="494" fill="#555" font-size="10">5. El motivo de la partida abortada (ej: "both-timeout") se muestra como metadata tecnica de la ontologia.</text>
+  <text x="50" y="512" fill="#555" font-size="10">6. Al hacer clic en una tarjeta se abre un modal con todos los detalles: tablero grande, jugadores y metadatos.</text>
+  <text x="50" y="530" fill="#555" font-size="10">7. Los datos provienen del INFORM FIPA-ACL que el tablero envia al supervisor tras finalizar la partida.</text>
+</svg>

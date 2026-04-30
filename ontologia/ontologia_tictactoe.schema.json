@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ontologia-tictactoe-v1",
+  "title": "Ontologia del Tic-Tac-Toe - SMA UJA",
+  "description": "Esquema JSON que define todos los mensajes validos del sistema multiagente Tic-Tac-Toe. Generado automaticamente por Pydantic desde los modelos de diseno.",
+  "oneOf": [
+    {
+      "description": "Solicitud de inscripcion (REQUEST Jugador -> Tablero).",
+      "properties": {
+        "action": {
+          "const": "join",
+          "default": "join",
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "title": "MensajeJoin",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Aceptacion con simbolo asignado (AGREE Tablero -> Jugador).",
+      "properties": {
+        "action": {
+          "const": "join-accepted",
+          "default": "join-accepted",
+          "title": "Action",
+          "type": "string"
+        },
+        "symbol": {
+          "enum": [
+            "X",
+            "O"
+          ],
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "MensajeJoinAccepted",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Rechazo de inscripcion (REFUSE Tablero -> Jugador).",
+      "properties": {
+        "action": {
+          "const": "join-refused",
+          "default": "join-refused",
+          "title": "Action",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "full",
+            "no opponent"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "MensajeJoinRefused",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Timeout esperando rival (FAILURE Tablero -> Jugador).",
+      "properties": {
+        "action": {
+          "const": "join-timeout",
+          "default": "join-timeout",
+          "title": "Action",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "full",
+            "no opponent"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "MensajeJoinTimeout",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Inicio de partida (INFORM Tablero -> Ambos jugadores).\n\nEste mensaje cierra la fase de inscripcion y abre la fase de juego.\nIncluye el identificador de thread de la partida para que el jugador\npueda preparar el template de su behaviour de partida inmediatamente,\nsin esperar al primer CFP turn del tablero.",
+      "properties": {
+        "action": {
+          "const": "game-start",
+          "default": "game-start",
+          "title": "Action",
+          "type": "string"
+        },
+        "opponent": {
+          "minLength": 1,
+          "title": "Opponent",
+          "type": "string"
+        },
+        "thread": {
+          "minLength": 1,
+          "title": "Thread",
+          "type": "string"
+        }
+      },
+      "required": [
+        "opponent",
+        "thread"
+      ],
+      "title": "MensajeGameStart",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Convocatoria de turno (CFP Tablero -> Ambos jugadores).",
+      "properties": {
+        "action": {
+          "const": "turn",
+          "default": "turn",
+          "title": "Action",
+          "type": "string"
+        },
+        "active_symbol": {
+          "enum": [
+            "X",
+            "O"
+          ],
+          "title": "Active Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "active_symbol"
+      ],
+      "title": "MensajeTurn",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Propuesta de movimiento (PROPOSE / ACCEPT_PROPOSAL).\n\nCuando el jugador propone: solo position es obligatorio.\nCuando el tablero confirma (ACCEPT_PROPOSAL): incluye symbol.",
+      "properties": {
+        "action": {
+          "const": "move",
+          "default": "move",
+          "title": "Action",
+          "type": "string"
+        },
+        "position": {
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Position",
+          "type": "integer"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "enum": [
+                "X",
+                "O"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol"
+        }
+      },
+      "required": [
+        "position"
+      ],
+      "title": "MensajeMove",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Confirmacion generica del jugador no activo (PROPOSE).",
+      "properties": {
+        "action": {
+          "const": "ok",
+          "default": "ok",
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "title": "MensajeOk",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Fin de partida por movimiento invalido o timeout (REJECT_PROPOSAL).\n\nEl campo winner es null cuando ambos pierden (both-timeout).",
+      "properties": {
+        "action": {
+          "const": "game-over",
+          "default": "game-over",
+          "title": "Action",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "invalid",
+            "timeout",
+            "both-timeout"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "winner": {
+          "anyOf": [
+            {
+              "enum": [
+                "X",
+                "O"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Winner"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "MensajeGameOver",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Resultado del turno evaluado por el jugador (INFORM Jugador -> Tablero).\n\nTras proponer su movimiento (y recibir la confirmacion del tablero),\nel jugador activo evalua su tablero local y notifica al tablero\nremoto si la partida debe continuar, ha terminado en victoria o en\nempate. El tablero puede usarlo como ACK final del turno.\n\nReglas cruzadas (verificadas en ontologia.py):\n  - result == \"win\"      -> winner obligatorio (X u O).\n  - result == \"draw\"     -> winner debe ser None.\n  - result == \"continue\" -> winner debe ser None.",
+      "properties": {
+        "action": {
+          "const": "turn-result",
+          "default": "turn-result",
+          "title": "Action",
+          "type": "string"
+        },
+        "result": {
+          "enum": [
+            "continue",
+            "win",
+            "draw"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "winner": {
+          "anyOf": [
+            {
+              "enum": [
+                "X",
+                "O"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Winner"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "title": "MensajeTurnResult",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Solicitud de informe del supervisor (REQUEST Supervisor -> Tablero).",
+      "properties": {
+        "action": {
+          "const": "game-report",
+          "default": "game-report",
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "title": "MensajeGameReportRequest",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Informe de partida finalizada (INFORM Tablero -> Supervisor).\n\nContiene todos los datos necesarios para la evaluacion:\nresultado, ganador, jugadores, turnos y estado final del tablero.",
+      "properties": {
+        "action": {
+          "const": "game-report",
+          "default": "game-report",
+          "title": "Action",
+          "type": "string"
+        },
+        "result": {
+          "enum": [
+            "win",
+            "draw",
+            "aborted"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "winner": {
+          "anyOf": [
+            {
+              "enum": [
+                "X",
+                "O"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Winner"
+        },
+        "players": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Players",
+          "type": "object"
+        },
+        "turns": {
+          "maximum": 9,
+          "minimum": 1,
+          "title": "Turns",
+          "type": "integer"
+        },
+        "board": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 9,
+          "minItems": 9,
+          "title": "Board",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "invalid",
+                "timeout",
+                "both-timeout"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "result",
+        "players",
+        "turns",
+        "board"
+      ],
+      "title": "MensajeGameReport",
+      "type": "object",
+      "additionalProperties": false
+    },
+    {
+      "description": "Rechazo de solicitud de informe (REFUSE Tablero -> Supervisor).",
+      "properties": {
+        "action": {
+          "const": "game-report",
+          "default": "game-report",
+          "title": "Action",
+          "type": "string"
+        },
+        "reason": {
+          "const": "not-finished",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "MensajeGameReportRefused",
+      "type": "object",
+      "additionalProperties": false
+    }
+  ]
+}

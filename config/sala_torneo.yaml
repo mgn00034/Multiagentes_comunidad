@@ -1,0 +1,15 @@
+# sala_torneo.yaml — Sala MUC única para el torneo conjunto
+#
+# Todos los alumnos conectan sus agentes a una única sala compartida.
+# Con 30 tableros y 30 jugadores se producen partidas cruzadas entre
+# las implementaciones de diferentes alumnos.
+#
+# Uso:
+#   python supervisor_main.py --modo torneo
+
+torneos:
+  - nombre: torneo_lab
+    sala: torneo_lab
+    descripcion: "Torneo de laboratorio — todos los alumnos"
+    tableros: []
+    jugadores: []

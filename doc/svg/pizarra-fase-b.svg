@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="13">
+
+  <!-- Fondo blanco -->
+  <rect x="0" y="0" width="620" height="300" rx="8" fill="#ffffff"/>
+
+  <!-- Marco exterior -->
+  <rect x="15" y="15" width="590" height="270" rx="10" fill="#fef5f4" stroke="#c5221f" stroke-width="2"/>
+
+  <!-- Cabecera -->
+  <rect x="15" y="15" width="590" height="44" rx="10" fill="#c5221f"/>
+  <rect x="15" y="40" width="590" height="19" fill="#c5221f"/>
+  <text x="310" y="44" text-anchor="middle" font-weight="bold" fill="white" font-size="17">FASE B — TORNEO CONJUNTO</text>
+
+  <!-- Instruccion principal -->
+  <text x="40" y="100" fill="#333" font-size="14">Cambiad <tspan font-weight="bold">TODOS</tspan> los agentes a la sala unica:</text>
+
+  <rect x="55" y="118" width="430" height="38" rx="6" fill="white" stroke="#c5221f" stroke-width="1"/>
+  <text x="270" y="143" text-anchor="middle" fill="#c5221f" font-size="16" font-weight="bold" font-family="'JetBrains Mono','Courier New',monospace">sala_asignada: torneo_lab</text>
+
+  <!-- Notas -->
+  <text x="40" y="192" fill="#555" font-size="13">Mantened vuestro <tspan font-weight="bold">tablero_USUARIO</tspan> y <tspan font-weight="bold">jugador_USUARIO</tspan>.</text>
+
+  <text x="40" y="220" fill="#555" font-size="13">Solo cambia la sala, no los nombres de agentes.</text>
+
+  <!-- Nota pie -->
+  <rect x="40" y="248" width="540" height="28" rx="5" fill="#c5221f" fill-opacity="0.06"/>
+  <text x="310" y="267" text-anchor="middle" fill="#888" font-size="11">30 alumnos = 30 tableros + 30 jugadores → partidas cruzadas entre todos</text>
+</svg>

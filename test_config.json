@@ -1,0 +1,73 @@
+{
+  "entorno": "local",
+
+  "servidores": {
+    "local": {
+      "xmpp_host": "localhost",
+      "xmpp_port": 5222,
+      "servicio_muc": "conference.localhost",
+      "password_defecto": "secret"
+    },
+    "servidor": {
+      "xmpp_host": "sinbad2.ujaen.es",
+      "xmpp_port": 8022,
+      "servicio_muc": "conference.sinbad2.ujaen.es",
+      "password_defecto": "[proporcionada en clase]"
+    }
+  },
+
+  "agentes_individuales": [
+    {
+      "modulo": "agentes.agente_tablero",
+      "clase": "AgenteTablero",
+      "jid_local": "tablero_test@localhost",
+      "jid_servidor": "tablero_pcXX@sinbad2.ujaen.es",
+      "parametros": {}
+    },
+    {
+      "modulo": "agentes.agente_jugador",
+      "clase": "AgenteJugador",
+      "jid_local": "jugador_test_x@localhost",
+      "jid_servidor": "jugador_pcXX_x@sinbad2.ujaen.es",
+      "parametros": { "ficha": "X" }
+    },
+    {
+      "modulo": "agentes.agente_jugador",
+      "clase": "AgenteJugador",
+      "jid_local": "jugador_test_o@localhost",
+      "jid_servidor": "jugador_pcXX_o@sinbad2.ujaen.es",
+      "parametros": { "ficha": "O" }
+    }
+  ],
+
+  "agentes_grupo": [
+    {
+      "modulo": "agentes.agente_tablero",
+      "clase": "AgenteTablero",
+      "jid_local": "tablero@localhost"
+    },
+    {
+      "modulo": "agentes.agente_jugador",
+      "clase": "AgenteJugador",
+      "jid_local": "jugador_x@localhost",
+      "parametros": { "ficha": "X" }
+    },
+    {
+      "modulo": "agentes.agente_jugador",
+      "clase": "AgenteJugador",
+      "jid_local": "jugador_o@localhost",
+      "parametros": { "ficha": "O" }
+    }
+  ],
+
+  "prueba_colectiva": {
+    "sala_muc": "sala_pc14",
+    "agentes_propios": [
+      "tablero_pc14@sinbad2.ujaen.es",
+      "jugador_pc14_x@sinbad2.ujaen.es",
+      "jugador_pc14_o@sinbad2.ujaen.es"
+    ],
+    "timeout_partida": 60,
+    "informe_salida": "informe_integracion.json"
+  }
+}

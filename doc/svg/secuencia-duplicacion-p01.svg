@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Diagrama: Secuencia de la duplicación de solicitudes (P-01)
+  Sistemas Multiagente — Universidad de Jaén
+-->
+<svg viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="11">
+  <rect width="620" height="420" fill="#f8f9fa" rx="8"/>
+
+  <!-- Actores -->
+  <rect x="40" y="8" width="90" height="22" rx="4" fill="#f0f6ff" stroke="#2070b0" stroke-width="1.5"/>
+  <text x="85" y="23" text-anchor="middle" fill="#2070b0" font-weight="bold">Tablero T1</text>
+  <rect x="250" y="8" width="120" height="22" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1.5"/>
+  <text x="310" y="23" text-anchor="middle" fill="#c05020" font-weight="bold">Servidor MUC</text>
+  <rect x="480" y="8" width="100" height="22" rx="4" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1.5"/>
+  <text x="530" y="23" text-anchor="middle" fill="#1a6b50" font-weight="bold">Supervisor</text>
+
+  <!-- Lineas de vida -->
+  <line x1="85" y1="30" x2="85" y2="410" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="310" y1="30" x2="310" y2="410" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="530" y1="30" x2="530" y2="410" stroke="#b0b8b4" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Marcador de flecha -->
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2d8a6e"/></marker>
+  <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c05020"/></marker></defs>
+
+  <!-- t1: Cambio real -->
+  <rect x="4" y="48" width="22" height="16" rx="3" fill="#2d8a6e"/>
+  <text x="15" y="60" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">t1</text>
+
+  <line x1="85" y1="56" x2="310" y2="56" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="197" y="51" text-anchor="middle" fill="#1a6b50" font-size="10">status="finished"</text>
+  <text x="197" y="70" text-anchor="middle" fill="#5c756a" font-size="9">playing → finished (CAMBIO REAL)</text>
+
+  <line x1="310" y1="84" x2="530" y2="84" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="420" y="79" text-anchor="middle" fill="#1a6b50" font-size="10">redistribuye stanza</text>
+
+  <!-- Nota: acciones del supervisor en t1 -->
+  <rect x="440" y="100" width="180" height="68" rx="4" fill="#f0fff5" stroke="#2d8a6e" stroke-width="1"/>
+  <text x="530" y="114" text-anchor="middle" fill="#334840" font-size="9">estado_anterior = "playing"</text>
+  <text x="530" y="127" text-anchor="middle" fill="#334840" font-size="9">tableros_consultados.add(T1)</text>
+  <text x="530" y="140" text-anchor="middle" fill="#1a6b50" font-size="9" font-weight="bold">FSM-1 → REQUEST (thread-A)</text>
+  <text x="530" y="155" text-anchor="middle" fill="#c05020" font-size="9">tableros_consultados.discard(T1)</text>
+
+  <!-- Linea de separacion t1/t2 -->
+  <line x1="10" y1="185" x2="610" y2="185" stroke="#b0b8b4" stroke-width="0.5" stroke-dasharray="8,4"/>
+  <text x="310" y="200" text-anchor="middle" fill="#8a9a94" font-size="10" font-style="italic">evento XMPP incidental (keepalive, probe, presencia de otro ocupante)</text>
+
+  <!-- t2: Redistribucion -->
+  <rect x="4" y="216" width="22" height="16" rx="3" fill="#c05020"/>
+  <text x="15" y="228" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">t2</text>
+
+  <line x1="310" y1="224" x2="530" y2="224" stroke="#c05020" stroke-width="1.5" marker-end="url(#arrR)"/>
+  <text x="420" y="219" text-anchor="middle" fill="#c05020" font-size="10">redistribuye presencia T1</text>
+  <text x="420" y="240" text-anchor="middle" fill="#5c756a" font-size="9">finished → finished (NO ES CAMBIO)</text>
+
+  <!-- Nota: acciones del supervisor en t2 -->
+  <rect x="440" y="254" width="180" height="56" rx="4" fill="#fff5f0" stroke="#c05020" stroke-width="1"/>
+  <text x="530" y="268" text-anchor="middle" fill="#334840" font-size="9">estado_anterior = "finished"</text>
+  <text x="530" y="281" text-anchor="middle" fill="#c05020" font-size="9">T1 en tableros_consultados? NO</text>
+  <text x="530" y="297" text-anchor="middle" fill="#c05020" font-size="9" font-weight="bold">FSM-2 → REQUEST (thread-B)</text>
+
+  <!-- Respuestas -->
+  <line x1="10" y1="325" x2="610" y2="325" stroke="#b0b8b4" stroke-width="0.5" stroke-dasharray="8,4"/>
+
+  <line x1="85" y1="345" x2="530" y2="345" stroke="#2d8a6e" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="310" y="340" text-anchor="middle" fill="#1a6b50" font-size="10" font-weight="bold">INFORM → FSM-1 (thread-A)</text>
+
+  <line x1="85" y1="375" x2="530" y2="375" stroke="#c05020" stroke-width="1.5" marker-end="url(#arrR)"/>
+  <text x="310" y="370" text-anchor="middle" fill="#c05020" font-size="10" font-weight="bold">REFUSE → FSM-2 (thread-B)</text>
+  <text x="310" y="395" text-anchor="middle" fill="#c05020" font-size="9">solicitud duplicada innecesaria</text>
+</svg>
