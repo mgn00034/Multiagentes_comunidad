@@ -7,6 +7,7 @@ import os
 import random
 import signal
 import sys
+import json
 from typing import Any
 from datetime import datetime
 
@@ -16,10 +17,17 @@ def new_getaddrinfo(*args, **kwargs):
     if args[0] == 'localhost':
         return old_getaddrinfo('127.0.0.1', *args[1:], **kwargs)
     return old_getaddrinfo(*args, **kwargs)
+
 socket.getaddrinfo = new_getaddrinfo
 
 from spade.agent import Agent
-from config.configuracion import cargar_agentes, cargar_configuracion, construir_jid, cargar_torneos
+from config.configuracion import (
+    cargar_configuracion,
+    cargar_plantillas,
+    generar_agentes,
+    cargar_torneos,
+    construir_jid
+)
 from utils import crear_agente, arrancar_agente
 from generador_informe import generar_informe_automatico
 
@@ -31,11 +39,13 @@ logging.basicConfig(
 logger = logging.getLogger("main")
 logging.getLogger("aiohttp.access").setLevel(logging.WARNING)
 
+
 def parsear_argumentos() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Lanzador del sistema Tic-Tac-Toe Multiagente")
     parser.add_argument("--config", default="config/config.yaml", help="Ruta al fichero de configuración")
     parser.add_argument("--agents", default="config/agents.yaml", help="Ruta al fichero de agentes")
     return parser.parse_args()
+
 
 def importar_clase_agente(modulo_ruta: str, clase_nombre: str) -> type:
     try:
@@ -44,6 +54,7 @@ def importar_clase_agente(modulo_ruta: str, clase_nombre: str) -> type:
     except Exception as error:
         logger.error("No se pudo importar '%s': %s", modulo_ruta, error)
         raise
+
 
 async def crear_salas_torneos(torneos: list[dict[str, Any]], config_xmpp: dict[str, Any]) -> dict[str, str]:
     asignaciones: dict[str, str] = {}
@@ -71,6 +82,7 @@ async def crear_salas_torneos(torneos: list[dict[str, Any]], config_xmpp: dict[s
     await agente_temporal.stop()
     return asignaciones
 
+
 async def arrancar_sistema(ruta_config: str, ruta_agentes: str) -> None:
     hora_inicio_sistema = datetime.now().isoformat()
 
@@ -88,8 +100,9 @@ async def arrancar_sistema(ruta_config: str, ruta_agentes: str) -> None:
         torneos = cargar_torneos(ruta_torneos)
         asignaciones_salas = await crear_salas_torneos(torneos, config_xmpp)
 
-    logger.info("Cargando agentes desde: %s", ruta_agentes)
-    definiciones = cargar_agentes(ruta_agentes, solo_activos=True)
+    logger.info("Cargando plantillas de agentes desde: %s", ruta_agentes)
+    plantillas = cargar_plantillas(ruta_agentes)
+    definiciones = generar_agentes(config, plantillas)
     if not definiciones: return
 
     supervisores = [d for d in definiciones if d["clase"] == "AgenteSupervisor"]
@@ -136,7 +149,8 @@ async def arrancar_sistema(ruta_config: str, ruta_agentes: str) -> None:
         try:
             signal.signal(signal.SIGINT, manejar_senal)
             signal.signal(signal.SIGTERM, manejar_senal)
-        except NotImplementedError: pass
+        except NotImplementedError:
+            pass
 
         try:
             await evento_parada.wait()
@@ -162,11 +176,12 @@ async def arrancar_sistema(ruta_config: str, ruta_agentes: str) -> None:
                             partes = str(agente_tablero_principal.jid).split('@')[0].split('_')
                             for p in partes:
                                 if p.startswith("pc"): puesto_id = p
-                        except: pass
+                        except:
+                            pass
 
                     generar_informe_automatico(
                         partidas_brutas=todas_las_partidas,
-                        equipo="PC_14_mgn00034",
+                        equipo="Equipo_Tableros",
                         puesto=puesto_id,
                         hora_inicio=hora_inicio_sistema,
                         dominio_servidor="sinbad2.ujaen.es",
@@ -191,6 +206,7 @@ async def arrancar_sistema(ruta_config: str, ruta_agentes: str) -> None:
 
             logger.info("Sistema detenido correctamente.")
 
+
 def main() -> None:
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -202,6 +218,7 @@ def main() -> None:
     except Exception as error:
         logger.error("Error inesperado en main: %s", error)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

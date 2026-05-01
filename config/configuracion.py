@@ -4,6 +4,18 @@ Lee los ficheros config.yaml y agents.yaml, resuelve el perfil activo
 y devuelve diccionarios con los parámetros listos para usar tanto por
 el lanzador (main.py) como por los fixtures de tests (conftest.py).
 
+Para el perfil LLM activo se preparan automáticamente las variables
+de entorno que LiteLLM/ADK necesitan según el ``proveedor`` declarado
+en ``config.yaml``:
+
+* ``ollama``: se fija ``OLLAMA_API_BASE`` con la ``url_base`` del
+  perfil para que LiteLLM enrute las peticiones al servidor Ollama
+  correcto.
+* ``gemini``: se comprueba que la variable indicada en
+  ``api_key_env`` (por defecto ``GOOGLE_API_KEY``) está definida en
+  el entorno; si no, se lanza un error didáctico que indica cómo
+  obtener la clave gratuita.
+
 Ejemplo de uso:
     from config.configuracion import cargar_configuracion, cargar_agentes
 
@@ -11,12 +23,14 @@ Ejemplo de uso:
     perfil_xmpp = config["xmpp"]
     perfil_llm = config["llm"]
 
-    agentes = cargar_agentes()
+    plantillas = cargar_plantillas()
+    agentes = generar_agentes(config, plantillas)
     for agente in agentes:
         print(agente["nombre"], agente["clase"])
 """
 
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +43,47 @@ logger = logging.getLogger(__name__)
 _DIRECTORIO_CONFIG = Path(__file__).parent
 _RUTA_CONFIG = _DIRECTORIO_CONFIG / "config.yaml"
 _RUTA_AGENTES = _DIRECTORIO_CONFIG / "agents.yaml"
+
+
+def _preparar_entorno_llm(datos_llm: dict[str, Any]) -> None:
+    """Fija las variables de entorno que LiteLLM/ADK necesitan según
+    el proveedor del perfil LLM activo.
+
+    * ``ollama``  → exporta ``OLLAMA_API_BASE`` con la ``url_base``
+      del perfil (sin sobrescribir un valor previo del entorno).
+    * ``gemini``  → comprueba que la variable indicada en
+      ``api_key_env`` (por defecto ``GOOGLE_API_KEY``) está definida.
+      Si no lo está, lanza ``RuntimeError`` con un mensaje didáctico
+      que indica dónde obtener la clave gratuita.
+
+    Si el perfil no declara ``proveedor`` se asume ``ollama`` por
+    compatibilidad con configuraciones anteriores.
+
+    Args:
+        datos_llm: Diccionario con los datos del perfil LLM activo.
+
+    Raises:
+        RuntimeError: Si el perfil ``gemini`` está activo pero la
+            variable de entorno con la API key no está definida.
+    """
+    proveedor = datos_llm.get("proveedor", "ollama")
+
+    if proveedor == "ollama":
+        url_base = datos_llm.get("url_base")
+        if url_base:
+            os.environ.setdefault("OLLAMA_API_BASE", url_base)
+    elif proveedor == "gemini":
+        nombre_var = datos_llm.get("api_key_env", "GOOGLE_API_KEY")
+        if not os.environ.get(nombre_var):
+            raise RuntimeError(
+                f"El perfil LLM 'gemini' requiere la variable de "
+                f"entorno '{nombre_var}' con una API key de Google "
+                f"AI Studio.\n"
+                f"  Obtén una clave gratuita en "
+                f"https://aistudio.google.com/apikey\n"
+                f"  Y expórtala antes de ejecutar:\n"
+                f'      export {nombre_var}="tu-api-key"'
+            )
 
 
 def cargar_configuracion(ruta: str | Path = _RUTA_CONFIG) -> dict[str, Any]:
@@ -104,10 +159,17 @@ def cargar_configuracion(ruta: str | Path = _RUTA_CONFIG) -> dict[str, Any]:
             datos_llm["perfil"] = perfil_llm_activo
             resultado["llm"] = datos_llm
 
+            # Preparar variables de entorno según el proveedor activo
+            # para que LiteLLM/ADK conecten con el backend correcto.
+            _preparar_entorno_llm(datos_llm)
+
+            proveedor = datos_llm.get("proveedor", "ollama")
+            destino = datos_llm.get("url_base") or f"<{proveedor} cloud>"
             logger.info(
-                "Perfil LLM activo: '%s' → %s (modelo: %s)",
+                "Perfil LLM activo: '%s' (%s) → %s (modelo: %s)",
                 perfil_llm_activo,
-                datos_llm["url_base"],
+                proveedor,
+                destino,
                 datos_llm["modelo"],
             )
         else:
@@ -116,6 +178,14 @@ def cargar_configuracion(ruta: str | Path = _RUTA_CONFIG) -> dict[str, Any]:
 
         # ── Parámetros generales del sistema ───────────────────
         resultado["sistema"] = config_completa.get("sistema", {})
+
+        # ── Parámetros del bloque "verificacion" (opcional) ────
+        resultado["verificacion"] = config_completa.get("verificacion", {})
+
+        # ── Datos del alumno y modalidad de ejecución ──────────
+        # Se propagan tal cual para que generar_agentes() los
+        # consulte sin tener que volver a leer el YAML.
+        resultado["alumno"] = config_completa.get("alumno", {})
 
     except FileNotFoundError:
         logger.error("Fichero de configuración no encontrado: %s", ruta)
@@ -127,66 +197,297 @@ def cargar_configuracion(ruta: str | Path = _RUTA_CONFIG) -> dict[str, Any]:
     return resultado
 
 
-def cargar_agentes(
+def cargar_plantillas(
     ruta: str | Path = _RUTA_AGENTES,
-    solo_activos: bool = True,
-) -> list[dict[str, Any]]:
-    """Carga la lista de agentes desde agents.yaml.
+) -> dict[str, Any]:
+    """Carga el fichero de plantillas de agentes (agents.yaml).
 
-    Lee el fichero de definición de agentes y devuelve una lista de
-    diccionarios, cada uno con los campos: nombre, clase, modulo,
-    nivel, descripcion, parametros y activo.
+    El fichero ya no contiene una lista de agentes concretos, sino
+    plantillas (``plantilla_tablero`` y ``plantilla_jugador``) y la
+    cantidad de cada uno por modalidad (``modalidades.laboratorio``,
+    ``modalidades.torneo``).  Los agentes concretos se generan en
+    tiempo de ejecución mediante :func:`generar_agentes`.
 
     Args:
-        ruta: Ruta al fichero agents.yaml. Por defecto usa el que
-            está en el mismo directorio que este módulo.
-        solo_activos: Si es True (por defecto), filtra y devuelve
-            solo los agentes con activo=true. Si es False, devuelve
-            todos los agentes definidos.
+        ruta: Ruta al fichero agents.yaml.
 
     Returns:
-        Lista de diccionarios con la definición de cada agente.
+        Diccionario con las claves ``modalidades``,
+        ``plantilla_tablero`` y ``plantilla_jugador``.
 
     Raises:
         FileNotFoundError: Si el fichero agents.yaml no existe.
-        ValueError: Si el fichero no contiene una lista válida.
+        ValueError: Si el fichero no contiene un diccionario válido
+            o le faltan claves obligatorias.
+    """
+    ruta = Path(ruta)
+    plantillas = {}
+
+    try:
+        contenido_yaml = ruta.read_text(encoding="utf-8")
+        datos = yaml.safe_load(contenido_yaml)
+
+        if not isinstance(datos, dict):
+            raise ValueError(
+                f"El fichero {ruta} debe contener un diccionario YAML "
+                f"con plantillas (encontrado: {type(datos).__name__})"
+            )
+
+        claves_obligatorias = (
+            "modalidades", "plantilla_tablero", "plantilla_jugador",
+        )
+        for clave in claves_obligatorias:
+            if clave not in datos:
+                raise ValueError(
+                    f"El fichero {ruta} debe contener la clave '{clave}'"
+                )
+
+        plantillas = datos
+        logger.info("Plantillas de agentes cargadas desde: %s", ruta)
+
+    except FileNotFoundError:
+        logger.error("Fichero de plantillas no encontrado: %s", ruta)
+        raise
+    except yaml.YAMLError as error_yaml:
+        logger.error("Error al parsear %s: %s", ruta, error_yaml)
+        raise ValueError(
+            f"Error de sintaxis YAML en {ruta}: {error_yaml}"
+        ) from error_yaml
+
+    return plantillas
+
+
+def generar_agentes(
+    config: dict[str, Any],
+    plantillas: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Genera la lista de agentes concretos a partir de las plantillas.
+
+    Construye los agentes propios del alumno (tableros y jugadores)
+    según la modalidad activa.  El nombre de cada agente se forma
+    como ``tablero_<usuario>_NN`` o ``jugador_<usuario>_NN``, con
+    NN = ``01``, ``02``, …  El puerto web de cada tablero se
+    asigna automáticamente como ``puerto_web_base + índice`` (con
+    índice 0, 1, 2, …) para evitar colisiones.
+
+    El nivel de estrategia se toma de ``config["alumno"]
+    ["nivel_estrategia"]`` y se aplica a todos los jugadores
+    generados.
+
+    Args:
+        config: Configuración resuelta (resultado de
+            :func:`cargar_configuracion`).  Debe contener una sección
+            ``alumno`` con ``usuario_uja``, ``modalidad`` y
+            ``nivel_estrategia``.
+        plantillas: Plantillas cargadas con :func:`cargar_plantillas`.
+
+    Returns:
+        Lista de definiciones de agentes con la misma estructura que
+        la antigua salida de ``cargar_agentes``: cada elemento es un
+        diccionario con ``nombre``, ``clase``, ``modulo``, ``nivel``,
+        ``descripcion``, ``parametros`` y ``activo``.
+
+    Raises:
+        ValueError: Si la modalidad indicada en ``config`` no existe
+            en las plantillas, o si falta algún dato del alumno.
+    """
+    seccion_alumno = config.get("alumno", {})
+    usuario = seccion_alumno.get("usuario_uja", "").strip()
+    modalidad = seccion_alumno.get("modalidad", "").strip()
+
+    # Lista de niveles a probar.  Compatibilidad: si alguien aún tiene
+    # el campo antiguo "nivel_estrategia" (escalar) se acepta también.
+    niveles_estrategia = seccion_alumno.get("niveles_estrategia")
+    if niveles_estrategia is None:
+        nivel_legacy = seccion_alumno.get("nivel_estrategia")
+        niveles_estrategia = [nivel_legacy] if nivel_legacy is not None else []
+
+    if not usuario:
+        raise ValueError(
+            "Falta 'alumno.usuario_uja' en config.yaml. "
+            "Indica tu usuario UJA para generar los agentes."
+        )
+
+    if not niveles_estrategia:
+        raise ValueError(
+            "Falta 'alumno.niveles_estrategia' en config.yaml "
+            "(lista de niveles de estrategia a probar)."
+        )
+
+    modalidades = plantillas.get("modalidades", {})
+    if modalidad not in modalidades:
+        raise ValueError(
+            f"Modalidad '{modalidad}' no definida en agents.yaml. "
+            f"Modalidades disponibles: {list(modalidades.keys())}"
+        )
+
+    cantidades = modalidades[modalidad]
+    num_tableros = int(cantidades.get("num_tableros", 0))
+    num_jugadores = int(cantidades.get("num_jugadores", 0))
+
+    plantilla_tablero = plantillas["plantilla_tablero"]
+    plantilla_jugador = plantillas["plantilla_jugador"]
+
+    # Puerto web base para los tableros (para asignación automática)
+    parametros_tablero_base = plantilla_tablero.get("parametros", {})
+    puerto_web_base = int(parametros_tablero_base.get("puerto_web_base", 10080))
+
+    agentes: list[dict[str, Any]] = []
+
+    # ── Generar agentes tablero ────────────────────────────────
+    for indice in range(num_tableros):
+        sufijo = f"{indice + 1:02d}"
+        nombre_tablero = f"tablero_{usuario}_{sufijo}"
+        parametros = {
+            "id_tablero": f"mesa{sufijo}",
+            "puerto_web": puerto_web_base + indice,
+        }
+        agentes.append({
+            "nombre": nombre_tablero,
+            "clase": plantilla_tablero["clase"],
+            "modulo": plantilla_tablero["modulo"],
+            "nivel": plantilla_tablero.get("nivel", 1),
+            "descripcion": plantilla_tablero.get("descripcion", ""),
+            "parametros": parametros,
+            "activo": True,
+        })
+
+    # ── Reparto uniforme de jugadores entre niveles de estrategia ──
+    # En LABORATORIO se distribuye num_jugadores entre todos los
+    # niveles indicados (4-4-4 con 12 jugadores y 3 niveles).  Si la
+    # división no es exacta, los primeros niveles reciben uno más.
+    # En TORNEO solo hay un jugador y se usa el primer nivel.
+    niveles_normalizados = [int(n) for n in niveles_estrategia]
+    if modalidad == "torneo":
+        plan_distribucion = [(niveles_normalizados[0], num_jugadores)]
+    else:
+        plan_distribucion = _repartir_uniformemente(
+            num_jugadores, niveles_normalizados,
+        )
+
+    parametros_jugador_base = plantilla_jugador.get("parametros", {})
+    max_partidas = int(parametros_jugador_base.get("max_partidas", 3))
+
+    for nivel, cantidad in plan_distribucion:
+        for indice_local in range(cantidad):
+            sufijo = f"{indice_local + 1:02d}"
+            # Sufijo 'n<nivel>' embebido en el nombre para que el
+            # nivel sea visible a simple vista en logs y JIDs.
+            nombre_jugador = f"jugador_{usuario}_n{nivel}_{sufijo}"
+            parametros = {
+                "nivel_estrategia": nivel,
+                "max_partidas": max_partidas,
+            }
+            agentes.append({
+                "nombre": nombre_jugador,
+                "clase": plantilla_jugador["clase"],
+                "modulo": plantilla_jugador["modulo"],
+                "nivel": plantilla_jugador.get("nivel", 1),
+                "descripcion": plantilla_jugador.get("descripcion", ""),
+                "parametros": parametros,
+                "activo": True,
+            })
+
+    logger.info(
+        "Generados %d agentes para modalidad '%s' (usuario '%s'): "
+        "%d tableros + %d jugadores (niveles %s)",
+        len(agentes), modalidad, usuario, num_tableros, num_jugadores,
+        niveles_normalizados,
+    )
+
+    return agentes
+
+
+def _repartir_uniformemente(
+    total: int,
+    niveles: list[int],
+) -> list[tuple[int, int]]:
+    """Reparte ``total`` jugadores uniformemente entre los niveles dados.
+
+    Si la división no es exacta, los primeros niveles de la lista
+    reciben un jugador extra hasta agotar el resto.
+
+    Args:
+        total: Número total de jugadores a repartir.
+        niveles: Lista de niveles de estrategia entre los que repartir.
+
+    Returns:
+        Lista de tuplas ``(nivel, cantidad)`` que indica cuántos
+        jugadores se generan para cada nivel.  Mantiene el orden de
+        ``niveles`` para que el resultado sea reproducible.
+    """
+    distribucion: list[tuple[int, int]] = []
+
+    if not niveles or total <= 0:
+        return distribucion
+
+    base = total // len(niveles)
+    resto = total % len(niveles)
+
+    for posicion, nivel in enumerate(niveles):
+        cantidad = base + (1 if posicion < resto else 0)
+        if cantidad > 0:
+            distribucion.append((nivel, cantidad))
+
+    return distribucion
+
+
+def cargar_torneos(ruta: str | Path = "config/torneos.yaml") -> list[dict[str, Any]]:
+    """Carga la configuración de torneos desde torneos.yaml.
+
+    Si el fichero no existe o está vacío, devuelve una lista vacía
+    sin lanzar excepciones (los torneos son opcionales).
+
+    Args:
+        ruta: Ruta al fichero torneos.yaml.
+
+    Returns:
+        Lista de diccionarios con la definición de cada torneo
+        (nombre, sala, descripcion, tableros, jugadores).
+        Lista vacía si no hay torneos configurados.
     """
     ruta = Path(ruta)
     resultado = []
 
+    if not ruta.exists():
+        logger.debug("Fichero de torneos no encontrado: %s (opcional)", ruta)
+        return resultado
+
     try:
         contenido_yaml = ruta.read_text(encoding="utf-8")
-        lista_agentes = yaml.safe_load(contenido_yaml)
+        datos = yaml.safe_load(contenido_yaml)
 
-        if not isinstance(lista_agentes, list):
-            raise ValueError(
-                f"El fichero {ruta} debe contener una lista YAML de agentes "
-                f"(encontrado: {type(lista_agentes).__name__})"
+        if datos is None:
+            return resultado
+
+        # El fichero puede contener un dict con clave "torneos"
+        # o directamente una lista
+        lista_torneos = datos
+        if isinstance(datos, dict):
+            lista_torneos = datos.get("torneos", [])
+
+        if not isinstance(lista_torneos, list):
+            logger.warning(
+                "El fichero %s no contiene una lista de torneos válida",
+                ruta,
             )
+            return resultado
 
-        for definicion in lista_agentes:
-            # Asegurar que los campos opcionales tienen valores por defecto
-            definicion.setdefault("parametros", {})
-            definicion.setdefault("activo", True)
-            definicion.setdefault("nivel", 1)
+        for torneo in lista_torneos:
+            if torneo is None:
+                continue
+            torneo.setdefault("tableros", [])
+            torneo.setdefault("jugadores", [])
+            torneo.setdefault("descripcion", "")
+            resultado.append(torneo)
 
-            if solo_activos and not definicion.get("activo", True):
-                logger.debug("Agente '%s' desactivado, se omite", definicion["nombre"])
-            else:
-                resultado.append(definicion)
+        logger.info("Torneos cargados: %d desde %s", len(resultado), ruta)
 
-        logger.info(
-            "Agentes cargados: %d activos de %d definidos",
-            len(resultado),
-            len(lista_agentes),
-        )
-
-    except FileNotFoundError:
-        logger.error("Fichero de agentes no encontrado: %s", ruta)
-        raise
     except yaml.YAMLError as error_yaml:
-        logger.error("Error al parsear %s: %s", ruta, error_yaml)
-        raise ValueError(f"Error de sintaxis YAML en {ruta}: {error_yaml}") from error_yaml
+        logger.warning(
+            "Error al parsear %s: %s. Se continúa sin torneos.",
+            ruta, error_yaml,
+        )
 
     return resultado
 

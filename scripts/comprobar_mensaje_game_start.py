@@ -22,7 +22,6 @@ from ontologia import (
     PREFIJO_THREAD_GAME,
     crear_cuerpo_game_start,
     crear_thread_unico,
-    obtener_performativa,
 )
 
 # Parametros de ejemplo ----------------------------------------------
@@ -37,16 +36,15 @@ def construir_game_start(
     jid_destino: str, jid_oponente: str, thread_partida: str,
 ) -> Message:
     """Construye el INFORM game-start tal como lo emitiria el tablero."""
+    contenido = crear_cuerpo_game_start(
+        oponente=jid_oponente, thread_partida=thread_partida,
+    )
     mensaje = Message(to=jid_destino)
     mensaje.sender = JID_TABLERO
     mensaje.set_metadata("ontology", ONTOLOGIA)
-    mensaje.set_metadata(
-        "performative", obtener_performativa("game-start"),
-    )
+    mensaje.set_metadata("performative", contenido.performativa)
     mensaje.thread = thread_partida
-    mensaje.body = crear_cuerpo_game_start(
-        oponente=jid_oponente, thread_partida=thread_partida,
-    )
+    mensaje.body = contenido.cuerpo
     return mensaje
 
 

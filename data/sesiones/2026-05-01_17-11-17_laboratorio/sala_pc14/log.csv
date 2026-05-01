@@ -1,0 +1,19 @@
+timestamp,tipo,origen,detalle
+17:11:17,advertencia,supervisor,Torneo finalizado desde el dashboard
+17:11:14,presencia,tablero_pc14_01,Cambio de estado: waiting → playing
+17:11:10,presencia,tablero_pc14_01,Cambio de estado: finished → waiting
+17:11:05,informe,tablero_pc14_01,Victoria de O (pc14_n2_01) contra pc14_n1_01 · 6 turnos
+17:11:05,solicitud,tablero_pc14_01,Informe de partida solicitado
+17:11:05,presencia,tablero_pc14_01,Partida finalizada
+17:11:05,presencia,tablero_pc14_01,Cambio de estado: playing → finished
+17:11:02,presencia,tablero_pc14_01,Cambio de estado: waiting → playing
+17:10:57,presencia,tablero_pc14_01,Cambio de estado: finished → waiting
+17:10:52,informe,tablero_pc14_01,Victoria de X (pc14_n2_01) contra pc14_n1_01 · 7 turnos
+17:10:52,solicitud,tablero_pc14_01,Informe de partida solicitado
+17:10:52,presencia,tablero_pc14_01,Partida finalizada
+17:10:52,presencia,tablero_pc14_01,Cambio de estado: playing → finished
+17:10:49,presencia,tablero_pc14_01,Cambio de estado: waiting → playing
+17:10:48,entrada,jugador_pc14_n1_01,Se ha unido a la sala (jugador)
+17:10:47,entrada,jugador_pc14_n2_01,Se ha unido a la sala (jugador)
+17:10:46,presencia,tablero_pc14_01,Cambio de estado: chat → waiting
+17:10:45,entrada,tablero_pc14_01,Se ha unido a la sala (tablero)

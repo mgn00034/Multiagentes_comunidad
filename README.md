@@ -253,33 +253,50 @@ La ontología del sistema se proporciona como un módulo Python reutilizable en 
 | Fichero | Descripción |
 |---------|-------------|
 | `ontologia/ontologia.py` | Módulo runtime con constructores y validador (4 niveles) |
-| `ontologia/ontologia_tictactoe.schema.json` | JSON Schema con 12 subesquemas (`oneOf`) |
+| `ontologia/ontologia_tictactoe.schema.json` | JSON Schema con 13 subesquemas (`oneOf`) |
 | `ontologia/ontologia_campos.json` | Mapa acción → campos obligatorios |
 | `ontologia/__init__.py` | Re-exportaciones para import limpio |
-| `tests/test_ontologia.py` | 60 tests en 7 grupos (referencia) |
+| `tests/test_ontologia.py` | 116 tests en 11 grupos (referencia) |
 
 ### 5.2. Uso desde los agentes
 
 ```python
 from ontologia import (
     ONTOLOGIA,
+    # Vocabulario de performativas FIPA (constantes simbólicas)
+    PERFORMATIVA_REQUEST, PERFORMATIVA_AGREE, PERFORMATIVA_REFUSE,
+    PERFORMATIVA_FAILURE, PERFORMATIVA_INFORM, PERFORMATIVA_CFP,
+    PERFORMATIVA_PROPOSE, PERFORMATIVA_ACCEPT_PROPOSAL,
+    PERFORMATIVA_REJECT_PROPOSAL, PERFORMATIVAS_VALIDAS,
+    # Tipo de retorno (performativa + body)
+    ContenidoMensaje,
+    # Constructores
     crear_cuerpo_join,
     crear_cuerpo_move,
     crear_cuerpo_join_accepted,
     crear_cuerpo_game_start,
     crear_cuerpo_turn,
+    crear_cuerpo_turn_result,
     crear_cuerpo_move_confirmado,
     crear_cuerpo_ok,
     crear_cuerpo_game_over,
     crear_cuerpo_game_report,
     crear_cuerpo_game_report_request,
     crear_cuerpo_game_report_refused,
+    # Validador y utilidades
     validar_cuerpo,
-    obtener_performativa,
 )
 ```
 
 Todos los constructores validan antes de serializar. Si los datos son inválidos, lanzan `ValueError`. El validador `validar_cuerpo(cuerpo)` realiza 4 niveles de comprobación: presencia de `action`, JSON Schema, campos obligatorios según acción, y reglas condicionales cruzadas.
+
+**Tipo de retorno** (a partir de 2026-04-30): los `crear_cuerpo_*` devuelven una `ContenidoMensaje(performativa, cuerpo)`, no una `str`. La performativa siempre va emparejada con el body para que el alumno no pueda desincronizarlas:
+
+```python
+contenido = crear_cuerpo_turn("X")
+mensaje.set_metadata("performative", contenido.performativa)  # PERFORMATIVA_CFP
+mensaje.body = contenido.cuerpo
+```
 
 ### 5.3. Inventario completo de mensajes
 
@@ -312,6 +329,8 @@ Todos los constructores validan antes de serializar. Si los datos son inválidos
 - **No saltarte la validación.** Usa siempre `validar_cuerpo()` al recibir mensajes.
 - **No inventar acciones.** Solo las 9+3 definidas en la ontología son válidas.
 - **No usar `json.dumps()` directamente.** Usa los constructores, que validan automáticamente.
+- **No escribir performativas FIPA como cadenas literales** (`"request"`, `"inform"`, …). Importa siempre la constante simbólica (`PERFORMATIVA_REQUEST`, `PERFORMATIVA_INFORM`, …) o, mejor, usa `contenido.performativa` del valor que devuelven los `crear_cuerpo_*`.
+- **No asignar `mensaje.body = crear_cuerpo_X(...)`** directamente. Desde 2026-04-30 los constructores devuelven `ContenidoMensaje`; usa `mensaje.body = contenido.cuerpo`.
 
 ---
 

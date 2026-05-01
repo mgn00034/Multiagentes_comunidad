@@ -1,0 +1,19 @@
+timestamp,tipo,origen,detalle
+10:24:00,advertencia,supervisor,Torneo finalizado desde el dashboard
+10:23:53,salida,jugador_pc14_nivel_2,Ha abandonado la sala
+10:23:52,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+10:23:47,informe,tablero_pc14_mesa1,Empate · pc14_nivel_2 contra pc14_minimax · 9 turnos
+10:23:47,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+10:23:47,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+10:23:47,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+10:23:43,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+10:23:39,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+10:23:34,informe,tablero_pc14_mesa1,Empate · pc14_minimax contra pc14_nivel_2 · 9 turnos
+10:23:34,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+10:23:34,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+10:23:34,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+10:23:29,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+10:23:29,entrada,jugador_pc14_nivel_2,Se ha unido a la sala (jugador)
+10:23:27,entrada,jugador_pc14_minimax,Se ha unido a la sala (jugador)
+10:23:26,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: chat → waiting
+10:23:25,entrada,tablero_tablero_pc14_mesa1,Se ha unido a la sala (tablero)

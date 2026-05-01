@@ -46,7 +46,7 @@ class AgenteTablero(Agent):
         servicio = self.config_xmpp.get("servicio_muc", "conference.localhost")
         self.sala_muc = f"{sala}@{servicio}"
 
-        self.muc = configurar_muc(self, self.sala_muc, f"tablero_{self.id_tablero}")
+        self.muc = configurar_muc(self, self.sala_muc, self.jid.local)
         await asyncio.sleep(1)
 
         t_join = Template()
@@ -77,11 +77,12 @@ class AgenteTablero(Agent):
 
         self.add_behaviour(fsm, plantilla_fsm)
 
-        plantilla_report = Template()
-        plantilla_report.set_metadata("ontology", "tictactoe")
-        plantilla_report.set_metadata("performative", "request")
+        plantilla_reporte = Template()
+        plantilla_reporte.set_metadata("ontology", "tictactoe")
+        plantilla_reporte.set_metadata("conversation-id", "game-report")
+        plantilla_reporte.set_metadata("performative", "request")
 
-        self.add_behaviour(MandarReporte(), plantilla_report)
+        self.add_behaviour(MandarReporte(), plantilla_reporte)
 
         puerto_web = self.config_parametros.get("puerto_web", 10001)
 

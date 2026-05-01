@@ -1,166 +1,70 @@
-# agents.yaml — Definición de los agentes del sistema Tic-Tac-Toe
+# agents.yaml — Plantillas para la generación automática de agentes
 #
-# Cada entrada define un agente que el lanzador (main.py) instanciará
-# dinámicamente mediante importlib. El JID se construye automáticamente
-# como: nombre@dominio_del_perfil_xmpp_activo
+# Este fichero NO contiene una lista de agentes concretos.  Define las
+# plantillas (clase, módulo, parámetros base) y la cantidad de agentes
+# por modalidad.  El lanzador (main.py) construye en tiempo de
+# ejecución la lista concreta a partir de los datos del alumno
+# definidos en config.yaml (sección "alumno"):
 #
-# CAMPOS:
-#   nombre:      Identificador único del agente (se usa como parte local del JID)
-#   clase:       Nombre de la clase Python que implementa el agente
-#   modulo:      Ruta del módulo Python donde reside la clase (notación de puntos)
-#   nivel:       Nivel de la asignatura al que pertenece (1, 2 o 3)
-#   descripcion: Texto breve que describe el propósito del agente
-#   parametros:  Diccionario con parámetros específicos del agente (opcionales)
-#   activo:      true/true — permite desactivar agentes sin borrarlos
+#   usuario_uja  →  parte local del JID
+#   modalidad    →  "laboratorio" o "torneo"
 #
-# CONVENCIONES:
-#   - Los tableros usan nombres con prefijo "tablero_" (para el apodo MUC)
-#   - Los jugadores usan nombres con prefijo "jugador_" (para el apodo MUC)
-#   - El campo "parametros" se inyecta en el constructor del agente
-#   - Para pruebas rápidas, desactiva agentes poniendo activo: true
+# Patrón de nombres generados:
+#   tablero_<usuario_uja>_NN     (NN = 01, 02, …)
+#   jugador_<usuario_uja>_NN
+#
+# El agente supervisor NO aparece en este fichero porque se ejecuta
+# por separado mediante:
+#   python supervisor_main.py --modo laboratorio | torneo | consulta
 
 
 # ══════════════════════════════════════════════════════════════════
-# AGENTES TABLERO
+# CANTIDAD DE AGENTES POR MODALIDAD
 # ══════════════════════════════════════════════════════════════════
-# Cada tablero gestiona una única partida. Para demostrar partidas
-# simultáneas del jugador, se necesitan al menos 3 tableros activos.
+# laboratorio: pruebas de concurrencia en el puesto del alumno.
+# torneo:      competición conjunta (un único tablero/jugador propio).
 
-- nombre: tablero_pc14_mesa1
+modalidades:
+  laboratorio:
+    num_tableros: 4
+    num_jugadores: 12
+  torneo:
+    num_tableros: 1
+    num_jugadores: 1
+  prueba_local:
+    num_tableros: 1
+    num_jugadores: 2
+
+# ══════════════════════════════════════════════════════════════════
+# PLANTILLA DE AGENTE TABLERO
+# ══════════════════════════════════════════════════════════════════
+# Cada tablero gestiona una única partida.  El puerto del dashboard
+# web se asigna automáticamente: puerto_web_base + índice (0, 1, …).
+
+plantilla_tablero:
   clase: AgenteTablero
   modulo: agentes.agente_tablero
   nivel: 1
-  descripcion: "Mesa de juego 1 — gestiona una partida de Tic-Tac-Toe"
+  descripcion: "Tablero de Tic-Tac-Toe — gestiona una partida"
   parametros:
-    id_tablero: pc14_mesa1
-    puerto_web: 15000
-  activo: true
-
-- nombre: tablero_pc14_mesa2
-  clase: AgenteTablero
-  modulo: agentes.agente_tablero
-  nivel: 1
-  descripcion: "Mesa de juego 2 — gestiona una partida de Tic-Tac-Toe"
-  parametros:
-    id_tablero: pc14_mesa2
-    puerto_web: 15001
-  activo: false
-
-- nombre: tablero_pc14_mesa3
-  clase: AgenteTablero
-  modulo: agentes.agente_tablero
-  nivel: 1
-  descripcion: "Mesa de juego 3 — gestiona una partida de Tic-Tac-Toe"
-  parametros:
-    id_tablero: pc14_mesa3
-    puerto_web: 15002
-  activo: false
+    # Puerto base para la visualización web.  Cada tablero generado
+    # recibe puerto_web = puerto_web_base + índice del tablero, de
+    # modo que no se solapan entre sí.
+    puerto_web_base: 15000
 
 
 # ══════════════════════════════════════════════════════════════════
-# AGENTES JUGADOR
+# PLANTILLA DE AGENTE JUGADOR
 # ══════════════════════════════════════════════════════════════════
-# Cada jugador busca tableros disponibles en la sala MUC y se inscribe
-# en partidas. Debe gestionar al menos 3 partidas simultáneas.
-# El campo "nivel_estrategia" indica qué estrategia usará:
-#   1 = Posicional, 2 = Reglas, 3 = Minimax, 4 = LLM
+# Cada jugador busca tableros disponibles y juega partidas en
+# paralelo.  El nivel de estrategia se toma de config.yaml
+# (alumno.nivel_estrategia) para que sea idéntico en todos los
+# jugadores generados.
 
-- nombre: jugador_pc14_Minimax
+plantilla_jugador:
   clase: AgenteJugador
   modulo: agentes.agente_jugador
   nivel: 1
-  descripcion: "Jugador busca tableros y juega partidas"
+  descripcion: "Jugador de Tic-Tac-Toe — busca tableros y juega partidas"
   parametros:
-    nivel_estrategia: 3
     max_partidas: 3
-  activo: true
-
-- nombre: jugador_pc14_Nivel_2
-  clase: AgenteJugador
-  modulo: agentes.agente_jugador
-  nivel: 1
-  descripcion: "Jugador busca tableros y juega partidas"
-  parametros:
-    nivel_estrategia: 2
-    max_partidas: 3
-  activo: true
-
-- nombre: jugador_pc14_Nivel_1
-  clase: AgenteJugador
-  modulo: agentes.agente_jugador
-  nivel: 1
-  descripcion: "Jugador busca tableros y juega partidas"
-  parametros:
-    nivel_estrategia: 1
-    max_partidas: 3
-  activo: false
-
-- nombre: jugador_pc14_LLM
-  clase: AgenteJugador
-  modulo: agentes.agente_jugador
-  nivel: 1
-  descripcion: "Jugador busca tableros y juega partidas"
-  parametros:
-    nivel_estrategia: 4
-    max_partidas: 3
-  activo: false
-
-
-# ══════════════════════════════════════════════════════════════════
-# AGENTES AUXILIARES (opcionales)
-# ══════════════════════════════════════════════════════════════════
-# Añade aquí agentes adicionales para pruebas: más tableros para
-# demostrar concurrencia, jugadores con distintas estrategias, etc.
-#
-# Ejemplo de jugador con estrategia LLM (requiere perfil LLM activo):
-#
-# - nombre: jugador_carol
-#   clase: AgenteJugador
-#   modulo: agentes.agente_jugador
-#   nivel: 1
-#   descripcion: "Jugadora Carol — estrategia LLM con Ollama"
-#   parametros:
-#     nivel_estrategia: 4
-#     max_partidas: 3
-#   activo: true
-
-
-# ══════════════════════════════════════════════════════════════════
-# AGENTE SUPERVISOR
-# ══════════════════════════════════════════════════════════════════
-# Observa la sala MUC para detectar tableros con partidas finalizadas
-# y les solicita un informe (game-report).  No participa en las
-# partidas; solo recopila estadísticas para el profesor.
-
-- nombre: supervisor
-  clase: AgenteSupervisor
-  modulo: agentes.agente_supervisor
-  nivel: 1
-  descripcion: "Supervisor — observa salas MUC y solicita informes de partida"
-  parametros:
-    intervalo_consulta: 10
-    puerto_web: 10090
-
-    # ── Descubrimiento de salas MUC ──────────────────────────
-    # descubrimiento_salas controla cómo se localizan las salas:
-    #
-    #   "auto"   (por defecto) — Descubre las salas automáticamente
-    #            consultando el servicio conference.{dominio} mediante
-    #            XEP-0030 (Service Discovery). No requiere configurar
-    #            salas_muc. Si el descubrimiento no encuentra salas,
-    #            usa la sala por defecto del perfil XMPP.
-    #
-    #   "manual" — Usa exclusivamente la lista salas_muc indicada
-    #            más abajo. Útil para pruebas locales con salas
-    #            conocidas.
-    #
-    # descubrimiento_salas: auto
-
-    # Lista de salas MUC para modo manual. Si se omite o está vacía
-    # con modo "auto", se aplica el descubrimiento automático.
-    # Ejemplo para pruebas sencillas con salas conocidas:
-    # descubrimiento_salas: manual
-    # salas_muc:
-    #   - tictactoe
-    #   - torneo
-  activo: true

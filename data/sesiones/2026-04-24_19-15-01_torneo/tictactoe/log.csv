@@ -1,0 +1,35 @@
+timestamp,tipo,origen,detalle
+19:15:01,advertencia,supervisor,Torneo finalizado desde el dashboard
+19:14:57,informe,tablero_pc14_mesa1,Empate · judador_pc14_mgn00034_02 contra judador_pc14_mgn00034_01 · 9 turnos
+19:14:57,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+19:14:57,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+19:14:57,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+19:14:52,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+19:14:50,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+19:14:45,informe,tablero_pc14_mesa1,Empate · judador_pc14_mgn00034_01 contra judador_pc14_mgn00034_02 · 9 turnos
+19:14:45,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+19:14:45,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+19:14:45,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+19:14:41,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+19:14:37,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+19:14:32,informe,tablero_pc14_mesa1,Empate · judador_pc14_mgn00034_02 contra judador_pc14_mgn00034_01 · 9 turnos
+19:14:32,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+19:14:32,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+19:14:32,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+19:14:27,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+19:14:25,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+19:14:20,informe,tablero_pc14_mesa1,Empate · judador_pc14_mgn00034_01 contra judador_pc14_mgn00034_02 · 9 turnos
+19:14:20,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+19:14:20,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+19:14:20,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+19:14:16,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+19:14:12,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: finished → waiting
+19:14:07,informe,tablero_pc14_mesa1,Empate · judador_pc14_mgn00034_02 contra judador_pc14_mgn00034_01 · 9 turnos
+19:14:07,solicitud,tablero_pc14_mesa1,Informe de partida solicitado
+19:14:07,presencia,tablero_tablero_pc14_mesa1,Partida finalizada
+19:14:07,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: jugando → finished
+19:14:02,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: waiting → jugando
+19:14:00,entrada,judador_pc14_mgn00034_02,Se ha unido a la sala (jugador)
+19:13:59,presencia,tablero_tablero_pc14_mesa1,Cambio de estado: chat → waiting
+19:13:58,entrada,tablero_tablero_pc14_mesa1,Se ha unido a la sala (tablero)
+19:13:57,entrada,judador_pc14_mgn00034_01,Se ha unido a la sala (jugador)

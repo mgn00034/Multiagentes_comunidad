@@ -23,7 +23,7 @@ class EstadoJugando(State):
 
     async def on_start(self):
         self.agent.estado_fsm = ESTADO_JUGANDO
-        self.agent.client.send_presence(pto=f"{self.agent.sala_muc}/tablero_{self.agent.id_tablero}", pstatus="jugando")
+        self.agent.client.send_presence(pto=f"{self.agent.sala_muc}/{self.agent.jid.local}", pstatus="playing")
 
     async def run(self) -> None:
         retorno = None
@@ -39,11 +39,15 @@ class EstadoJugando(State):
                     perf = mensaje_residual.metadata.get("performative", "").upper().replace("_", "-")
                     if validar_cuerpo(cuerpo)["valido"] and perf == "REQUEST" and cuerpo.get("action") == "join":
                         resp = mensaje_residual.make_reply()
-                        resp.set_metadata("performative", "refuse")
                         resp.set_metadata("ontology", "tictactoe")
-                        resp.body = crear_cuerpo_join_refused("game started")
 
-                        logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando REFUSE residual a {resp.to}")
+                        # Cambios Tanda 2026-04-30: Uso de la tupla ContenidoMensaje
+                        contenido = crear_cuerpo_join_refused("game started")
+                        resp.set_metadata("performative", contenido.performativa)
+                        resp.body = contenido.cuerpo
+
+                        logging.info(
+                            f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} residual a {resp.to}")
                         await self.send(resp)
                 except:
                     pass
@@ -128,11 +132,15 @@ class EstadoJugando(State):
                 jid_destino = self.agent.jugadores[s]
                 cfp = Message(to=jid_destino)
                 cfp.thread = self.agent.hilo_partida
-                cfp.set_metadata("performative", "cfp")
                 cfp.set_metadata("ontology", "tictactoe")
-                cfp.body = crear_cuerpo_turn(self.agent.turno_actual)
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando CFP (turn) a {cfp.to}")
+                # Cambios Tanda 2026-04-30: Uso de la tupla ContenidoMensaje
+                contenido = crear_cuerpo_turn(self.agent.turno_actual)
+                cfp.set_metadata("performative", contenido.performativa)
+                cfp.body = contenido.cuerpo
+
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} (turn) a {cfp.to}")
                 await self.send(cfp)
         except Exception as e:
             logging.error(f"Error al solicitar turno: {e}")
@@ -205,11 +213,14 @@ class EstadoJugando(State):
 
                     if perf == "REQUEST" and cuerpo.get("action") == "join":
                         resp = mensaje.make_reply()
-                        resp.set_metadata("performative", "refuse")
                         resp.set_metadata("ontology", "tictactoe")
-                        resp.body = crear_cuerpo_join_refused("game started")
 
-                        logging.info(f"[{origen_log}] 📤 Enviando REFUSE (late join) a {resp.to}")
+                        contenido = crear_cuerpo_join_refused("game started")
+                        resp.set_metadata("performative", contenido.performativa)
+                        resp.body = contenido.cuerpo
+
+                        logging.info(
+                            f"[{origen_log}] 📤 Enviando {contenido.performativa.upper()} (late join) a {resp.to}")
                         await self.send(resp)
                         continue
                 except:
@@ -266,21 +277,19 @@ class EstadoJugando(State):
                 jid_destino = self.agent.jugadores[simbolo]
                 respuesta = Message(to=jid_destino)
                 respuesta.thread = self.agent.hilo_partida
-                respuesta.set_metadata("performative", performativa.lower())
                 respuesta.set_metadata("ontology", "tictactoe")
 
                 if performativa.lower() == "accept-proposal":
-                    respuesta.body = crear_cuerpo_move_confirmado(posicion, self.agent.turno_actual)
+                    contenido = crear_cuerpo_move_confirmado(posicion, self.agent.turno_actual)
                 else:
-                    cuerpo_original = crear_cuerpo_game_over(razon, self.agent.ganador)
-                    diccionario = json.loads(cuerpo_original)
-                    diccionario_limpio = {
-                        k: v for k, v in diccionario.items()
-                        if v not in [None, "", "None", "normal"]
-                    }
-                    respuesta.body = json.dumps(diccionario_limpio)
+                    razon_fin = razon if razon else "unknown"
+                    contenido = crear_cuerpo_game_over(razon_fin, self.agent.ganador)
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {performativa.upper()} a {respuesta.to}")
+                respuesta.set_metadata("performative", contenido.performativa)
+                respuesta.body = contenido.cuerpo
+
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} a {respuesta.to}")
                 await self.send(respuesta)
         except Exception as e:
             logging.error(f"Error al enviar veredicto: {e}")
@@ -293,11 +302,3 @@ class EstadoJugando(State):
             await self.enviar_veredicto_movimiento("reject-proposal", razon=razon)
         except:
             pass
-
-    def comprobar_resultado_partida(self) -> str:
-        t = self.agent.tablero
-        lineas = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]
-        for a, b, c in lineas:
-            if t[a] != "" and t[a] == t[b] == t[c]: return "win"
-        if "" not in t: return "draw"
-        return "continue"

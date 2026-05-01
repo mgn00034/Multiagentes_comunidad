@@ -23,8 +23,9 @@ from spade.message import Message
 
 # Re-exportar las funciones de configuración para acceso centralizado
 from config.configuracion import (   # noqa: F401
-    cargar_agentes,
     cargar_configuracion,
+    cargar_plantillas,
+    generar_agentes,
     cargar_torneos,
     construir_jid,
 )

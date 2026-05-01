@@ -10,8 +10,6 @@ Dependencias: json (stdlib), jsonschema, spade.
   (solo necesitan jsonschema).
 - El constructor ``crear_mensaje_join`` genera un Message SPADE
   completo con toda la metadata (necesita spade).
-- Los constructores ``crear_plantilla_*`` generan Templates SPADE
-  listas para registrar behaviours en el tablero (necesitan spade).
 
 Uso desde los agentes::
 
@@ -19,7 +17,6 @@ Uso desde los agentes::
         ONTOLOGIA, crear_cuerpo_join, crear_mensaje_join,
         crear_cuerpo_move, validar_cuerpo,
         obtener_performativa, obtener_conversation_id,
-        crear_plantilla_join, crear_plantilla_game_report,
         crear_thread_unico, PREFIJO_THREAD_GAME,
     )
 """
@@ -27,11 +24,10 @@ import json
 import logging
 import pathlib
 import uuid
-from typing import Any
+from typing import Any, NamedTuple
 
 import jsonschema
 from spade.message import Message
-from spade.template import Template
 
 logger = logging.getLogger(__name__)
 
@@ -61,19 +57,77 @@ CONVERSATION_ID_POR_ACCION: dict[str, str] = {
     "game-report": "game-report",
 }
 
+# == Vocabulario de performativas FIPA ====================================
+# Estas constantes simbolicas son la UNICA forma admitida en el sistema
+# de referirse a las performativas FIPA-ACL. Tanto si el alumno usa los
+# constructores ``crear_cuerpo_*`` (que ya emparejan performativa+body)
+# como si configura el ``performative`` de un Message a mano o construye
+# un Template, debe importar estas constantes en lugar de escribir las
+# cadenas literales ("request", "agree", ...). Asi se garantiza que
+# todos los agentes del torneo usen exactamente la misma representacion
+# y se evitan inconsistencias por mayusculas, guiones o erratas.
+PERFORMATIVA_REQUEST = "request"
+PERFORMATIVA_AGREE = "agree"
+PERFORMATIVA_REFUSE = "refuse"
+PERFORMATIVA_FAILURE = "failure"
+PERFORMATIVA_INFORM = "inform"
+PERFORMATIVA_CFP = "cfp"
+PERFORMATIVA_PROPOSE = "propose"
+PERFORMATIVA_ACCEPT_PROPOSAL = "accept_proposal"
+PERFORMATIVA_REJECT_PROPOSAL = "reject_proposal"
+
+# Conjunto con todas las performativas validas del sistema, util para
+# tests y validaciones genericas (p. ej. comprobar que un mensaje
+# entrante trae una performativa reconocida).
+PERFORMATIVAS_VALIDAS: frozenset[str] = frozenset({
+    PERFORMATIVA_REQUEST,
+    PERFORMATIVA_AGREE,
+    PERFORMATIVA_REFUSE,
+    PERFORMATIVA_FAILURE,
+    PERFORMATIVA_INFORM,
+    PERFORMATIVA_CFP,
+    PERFORMATIVA_PROPOSE,
+    PERFORMATIVA_ACCEPT_PROPOSAL,
+    PERFORMATIVA_REJECT_PROPOSAL,
+})
+
 PERFORMATIVA_POR_ACCION: dict[str, str] = {
-    "join": "request",
-    "join-accepted": "agree",
-    "join-refused": "refuse",
-    "join-timeout": "failure",
-    "game-start": "inform",
-    "turn": "cfp",
-    "move": "propose",
-    "ok": "propose",
-    "game-over": "reject_proposal",
-    "turn-result": "inform",
-    "game-report": "request",
+    "join": PERFORMATIVA_REQUEST,
+    "join-accepted": PERFORMATIVA_AGREE,
+    "join-refused": PERFORMATIVA_REFUSE,
+    "join-timeout": PERFORMATIVA_FAILURE,
+    "game-start": PERFORMATIVA_INFORM,
+    "turn": PERFORMATIVA_CFP,
+    "move": PERFORMATIVA_PROPOSE,
+    "ok": PERFORMATIVA_PROPOSE,
+    "game-over": PERFORMATIVA_REJECT_PROPOSAL,
+    "turn-result": PERFORMATIVA_INFORM,
+    "game-report": PERFORMATIVA_REQUEST,
 }
+
+
+class ContenidoMensaje(NamedTuple):
+    """Contenido completo de un mensaje FIPA: performativa + body JSON.
+
+    Las funciones ``crear_cuerpo_*`` devuelven esta tupla nombrada para
+    que la performativa siempre viaje EMPAREJADA con su cuerpo. Asi el
+    alumno no puede desincronizarlas por accidente (escribir manualmente
+    una performativa con erratas o usando una accion incorrecta).
+
+    Atributos:
+        performativa: Cadena FIPA-ACL ("request", "inform", ...). Siempre
+            es uno de los valores del vocabulario ``PERFORMATIVA_*``.
+        cuerpo: Body JSON serializado, listo para asignar a
+            ``mensaje.body``.
+
+    Uso tipico::
+
+        contenido = crear_cuerpo_join()
+        mensaje.set_metadata("performative", contenido.performativa)
+        mensaje.body = contenido.cuerpo
+    """
+    performativa: str
+    cuerpo: str
 
 
 def obtener_performativa(accion: str) -> str:
@@ -174,38 +228,51 @@ def validar_cuerpo(cuerpo: dict[str, Any]) -> dict[str, Any]:
 # == Guardian interno ======================================================
 
 
-def _validar_y_serializar(contenido: dict[str, Any]) -> str:
-    """Valida contra el esquema y serializa a JSON.
+def _validar_y_serializar(contenido: dict[str, Any]) -> ContenidoMensaje:
+    """Valida contra el esquema, serializa a JSON y empareja con la
+    performativa FIPA correspondiente a la accion.
+
+    Devolver la performativa junto al body garantiza que el alumno no
+    pueda desincronizar ambos campos: la performativa siempre se
+    obtiene del vocabulario centralizado ``PERFORMATIVA_POR_ACCION``.
 
     Args:
-        contenido: Diccionario con los campos del mensaje.
+        contenido: Diccionario con los campos del mensaje. Debe
+            incluir la clave ``"action"`` para poder resolver la
+            performativa asociada.
 
     Returns:
-        Cadena JSON lista para usar como body FIPA.
+        ``ContenidoMensaje`` con la performativa FIPA y el body JSON.
 
     Raises:
-        ValueError: Si el contenido no cumple el JSON Schema.
+        ValueError: Si el contenido no cumple el JSON Schema o si su
+            ``action`` no tiene performativa registrada.
     """
     errores = validar_cuerpo(contenido)
     if not errores["valido"]:
         raise ValueError(
             f"Mensaje invalido: {'; '.join(errores['errores'])}"
         )
-    resultado = json.dumps(contenido, ensure_ascii=False)
+    accion = contenido["action"]
+    performativa = obtener_performativa(accion)
+    cuerpo_json = json.dumps(contenido, ensure_ascii=False)
+    resultado = ContenidoMensaje(
+        performativa=performativa, cuerpo=cuerpo_json,
+    )
     return resultado
 
 
 # == Constructores =========================================================
 
 
-def crear_cuerpo_join() -> str:
-    """Crea el body JSON para inscripcion (REQUEST)."""
+def crear_cuerpo_join() -> ContenidoMensaje:
+    """Crea contenido para inscripcion (performativa REQUEST + body)."""
     resultado = _validar_y_serializar({"action": "join"})
     return resultado
 
 
-def crear_cuerpo_join_accepted(simbolo: str) -> str:
-    """Crea el body JSON de aceptacion (AGREE).
+def crear_cuerpo_join_accepted(simbolo: str) -> ContenidoMensaje:
+    """Crea contenido de aceptacion (performativa AGREE + body).
 
     Args:
         simbolo: 'X' u 'O', el simbolo asignado al jugador.
@@ -215,8 +282,8 @@ def crear_cuerpo_join_accepted(simbolo: str) -> str:
     return resultado
 
 
-def crear_cuerpo_join_refused(razon: str) -> str:
-    """Crea el body JSON de rechazo de inscripcion (REFUSE).
+def crear_cuerpo_join_refused(razon: str) -> ContenidoMensaje:
+    """Crea contenido de rechazo de inscripcion (performativa REFUSE + body).
 
     Args:
         razon: 'full' o 'no opponent'.
@@ -226,8 +293,8 @@ def crear_cuerpo_join_refused(razon: str) -> str:
     return resultado
 
 
-def crear_cuerpo_join_timeout(razon: str) -> str:
-    """Crea el body JSON de timeout esperando rival (FAILURE).
+def crear_cuerpo_join_timeout(razon: str) -> ContenidoMensaje:
+    """Crea contenido de timeout esperando rival (performativa FAILURE + body).
 
     Args:
         razon: 'full' o 'no opponent'.
@@ -237,8 +304,10 @@ def crear_cuerpo_join_timeout(razon: str) -> str:
     return resultado
 
 
-def crear_cuerpo_game_start(oponente: str, thread_partida: str) -> str:
-    """Crea el body JSON de inicio de partida (INFORM).
+def crear_cuerpo_game_start(
+    oponente: str, thread_partida: str,
+) -> ContenidoMensaje:
+    """Crea contenido de inicio de partida (performativa INFORM + body).
 
     El ``game-start`` cierra la fase de inscripcion y abre la fase
     de juego. Incluye el ``thread_partida`` en el body para que el
@@ -264,8 +333,8 @@ def crear_cuerpo_game_start(oponente: str, thread_partida: str) -> str:
     return resultado
 
 
-def crear_cuerpo_turn(simbolo_activo: str) -> str:
-    """Crea el body JSON de convocatoria de turno (CFP).
+def crear_cuerpo_turn(simbolo_activo: str) -> ContenidoMensaje:
+    """Crea contenido de convocatoria de turno (performativa CFP + body).
 
     Args:
         simbolo_activo: 'X' u 'O', quien tiene el turno.
@@ -275,8 +344,8 @@ def crear_cuerpo_turn(simbolo_activo: str) -> str:
     return resultado
 
 
-def crear_cuerpo_move(posicion: int) -> str:
-    """Crea el body JSON para proponer movimiento (PROPOSE).
+def crear_cuerpo_move(posicion: int) -> ContenidoMensaje:
+    """Crea contenido para proponer movimiento (performativa PROPOSE + body).
 
     Args:
         posicion: Entero entre 0 y 8.
@@ -289,26 +358,40 @@ def crear_cuerpo_move(posicion: int) -> str:
     return resultado
 
 
-def crear_cuerpo_move_confirmado(posicion: int, simbolo: str) -> str:
-    """Crea el body JSON de movimiento confirmado (ACCEPT_PROPOSAL).
+def crear_cuerpo_move_confirmado(
+    posicion: int, simbolo: str,
+) -> ContenidoMensaje:
+    """Crea contenido de movimiento confirmado.
+
+    El ``move`` confirmado por el tablero usa la performativa
+    ACCEPT_PROPOSAL (en lugar de PROPOSE) para distinguir, en el
+    template del receptor, la propuesta original del jugador de la
+    confirmacion del tablero. Por eso esta funcion sobreescribe la
+    performativa de ``move`` con ``PERFORMATIVA_ACCEPT_PROPOSAL``.
 
     Args:
         posicion: Entero entre 0 y 8.
         simbolo: 'X' u 'O', simbolo del jugador que movio.
     """
     contenido = {"action": "move", "position": posicion, "symbol": simbolo}
-    resultado = _validar_y_serializar(contenido)
+    base = _validar_y_serializar(contenido)
+    resultado = ContenidoMensaje(
+        performativa=PERFORMATIVA_ACCEPT_PROPOSAL,
+        cuerpo=base.cuerpo,
+    )
     return resultado
 
 
-def crear_cuerpo_ok() -> str:
-    """Crea el body JSON de confirmacion generica (PROPOSE no activo)."""
+def crear_cuerpo_ok() -> ContenidoMensaje:
+    """Crea contenido de confirmacion generica (performativa PROPOSE)."""
     resultado = _validar_y_serializar({"action": "ok"})
     return resultado
 
 
-def crear_cuerpo_game_over(razon: str, ganador: str | None = None) -> str:
-    """Crea el body JSON para fin de partida (REJECT_PROPOSAL).
+def crear_cuerpo_game_over(
+    razon: str, ganador: str | None = None,
+) -> ContenidoMensaje:
+    """Crea contenido para fin de partida (performativa REJECT_PROPOSAL).
 
     Args:
         razon: 'invalid', 'timeout' o 'both-timeout'.
@@ -324,8 +407,8 @@ def crear_cuerpo_game_over(razon: str, ganador: str | None = None) -> str:
 def crear_cuerpo_turn_result(
     resultado_turno: str,
     ganador: str | None = None,
-) -> str:
-    """Crea el body JSON del resultado del turno (INFORM Jugador -> Tablero).
+) -> ContenidoMensaje:
+    """Crea contenido del resultado del turno (performativa INFORM + body).
 
     El jugador activo informa al tablero del estado de la partida despues
     de aplicar su movimiento: continua, victoria o empate.
@@ -343,8 +426,8 @@ def crear_cuerpo_turn_result(
     return resultado
 
 
-def crear_cuerpo_game_report_request() -> str:
-    """Crea el body JSON para solicitar informe (REQUEST del supervisor)."""
+def crear_cuerpo_game_report_request() -> ContenidoMensaje:
+    """Crea contenido para solicitar informe (performativa REQUEST + body)."""
     resultado = _validar_y_serializar({"action": "game-report"})
     return resultado
 
@@ -356,8 +439,14 @@ def crear_cuerpo_game_report(
     turnos: int,
     tablero: list[str],
     razon: str | None = None,
-) -> str:
-    """Crea el body JSON del informe de partida (INFORM tablero -> supervisor).
+) -> ContenidoMensaje:
+    """Crea contenido del informe de partida (performativa INFORM + body).
+
+    El supervisor envia el ``game-report`` como REQUEST y el tablero
+    responde con esta funcion. Para que el supervisor pueda distinguir
+    su propio REQUEST de la respuesta del tablero por la performativa,
+    esta funcion sobreescribe la performativa por defecto del action
+    ``game-report`` (REQUEST) por ``PERFORMATIVA_INFORM``.
 
     Args:
         resultado_partida: 'win', 'draw' o 'aborted'.
@@ -377,14 +466,27 @@ def crear_cuerpo_game_report(
     }
     if razon is not None:
         contenido["reason"] = razon
-    resultado = _validar_y_serializar(contenido)
+    base = _validar_y_serializar(contenido)
+    resultado = ContenidoMensaje(
+        performativa=PERFORMATIVA_INFORM, cuerpo=base.cuerpo,
+    )
     return resultado
 
 
-def crear_cuerpo_game_report_refused() -> str:
-    """Crea el body JSON de rechazo de solicitud de informe (REFUSE)."""
+def crear_cuerpo_game_report_refused() -> ContenidoMensaje:
+    """Crea contenido de rechazo de solicitud de informe (REFUSE).
+
+    El tablero usa este mensaje para responder al REQUEST del
+    supervisor cuando aun no tiene un informe que entregar (la
+    partida no ha terminado). Sobreescribe la performativa por
+    defecto del action ``game-report`` (REQUEST) por
+    ``PERFORMATIVA_REFUSE``.
+    """
     contenido = {"action": "game-report", "reason": "not-finished"}
-    resultado = _validar_y_serializar(contenido)
+    base = _validar_y_serializar(contenido)
+    resultado = ContenidoMensaje(
+        performativa=PERFORMATIVA_REFUSE, cuerpo=base.cuerpo,
+    )
     return resultado
 
 
@@ -497,86 +599,15 @@ def crear_mensaje_join(jid_tablero: str, jid_jugador: str) -> Message:
         mensaje = crear_mensaje_join(jid_tablero, str(self.agent.jid))
         await self.send(mensaje)
     """
+    contenido = crear_cuerpo_join()
     mensaje = Message(to=jid_tablero)
     mensaje.set_metadata("ontology", ONTOLOGIA)
-    mensaje.set_metadata(
-        "performative", obtener_performativa("join"),
-    )
+    mensaje.set_metadata("performative", contenido.performativa)
     mensaje.set_metadata(
         "conversation-id", obtener_conversation_id("join"),
     )
     mensaje.thread = crear_thread_unico(
         jid_jugador, PREFIJO_THREAD_JOIN,
     )
-    mensaje.body = crear_cuerpo_join()
+    mensaje.body = contenido.cuerpo
     return mensaje
-
-
-# == Plantillas (Templates) para behaviours del tablero ==================
-#
-# Estas funciones generan Templates SPADE listas para que los tableros
-# las registren en sus behaviours. Cada plantilla filtra los mensajes
-# entrantes por ontologia, performativa y conversation-id, de forma
-# que el behaviour solo reciba los mensajes del protocolo correcto.
-
-
-def crear_plantilla_join() -> Template:
-    """Crea la plantilla SPADE que el tablero debe registrar para
-    aceptar solicitudes de inscripcion (REQUEST join) de los jugadores.
-
-    La plantilla filtra por tres campos de metadata:
-
-    - ``ontology``: ``"tictactoe"``
-    - ``performative``: ``"request"``
-    - ``conversation-id``: ``"join"``
-
-    Returns:
-        Template SPADE lista para usar en ``add_behaviour(behaviour, template)``.
-
-    Ejemplo de uso en el setup del tablero::
-
-        from ontologia.ontologia import crear_plantilla_join
-
-        plantilla = crear_plantilla_join()
-        self.add_behaviour(mi_behaviour_inscripcion, plantilla)
-    """
-    plantilla = Template()
-    plantilla.set_metadata("ontology", ONTOLOGIA)
-    plantilla.set_metadata(
-        "performative", obtener_performativa("join"),
-    )
-    plantilla.set_metadata(
-        "conversation-id", obtener_conversation_id("join"),
-    )
-    return plantilla
-
-
-def crear_plantilla_game_report() -> Template:
-    """Crea la plantilla SPADE que el tablero debe registrar para
-    aceptar solicitudes de informe (REQUEST game-report) del supervisor.
-
-    La plantilla filtra por tres campos de metadata:
-
-    - ``ontology``: ``"tictactoe"``
-    - ``performative``: ``"request"``
-    - ``conversation-id``: ``"game-report"``
-
-    Returns:
-        Template SPADE lista para usar en ``add_behaviour(behaviour, template)``.
-
-    Ejemplo de uso en el setup del tablero::
-
-        from ontologia.ontologia import crear_plantilla_game_report
-
-        plantilla = crear_plantilla_game_report()
-        self.add_behaviour(mi_behaviour_informe, plantilla)
-    """
-    plantilla = Template()
-    plantilla.set_metadata("ontology", ONTOLOGIA)
-    plantilla.set_metadata(
-        "performative", obtener_performativa("game-report"),
-    )
-    plantilla.set_metadata(
-        "conversation-id", obtener_conversation_id("game-report"),
-    )
-    return plantilla

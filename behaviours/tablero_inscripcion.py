@@ -10,7 +10,8 @@ from ontologia import (
     crear_cuerpo_join_timeout,
     crear_cuerpo_game_start,
     validar_cuerpo,
-    crear_thread_unico
+    crear_thread_unico,
+    PREFIJO_THREAD_GAME
 )
 
 ESTADO_INSCRIPCION = "ESTADO_INSCRIPCION"
@@ -21,7 +22,7 @@ class EstadoInscripcion(State):
 
     async def on_start(self):
         self.agent.estado_fsm = ESTADO_INSCRIPCION
-        self.agent.client.send_presence(pto=f"{self.agent.sala_muc}/tablero_{self.agent.id_tablero}", pstatus="waiting")
+        self.agent.client.send_presence(pto=f"{self.agent.sala_muc}/{self.agent.jid.local}", pstatus="waiting")
         logging.info(f"[TABLERO {self.agent.id_tablero}] ⏳ Esperando jugadores...")
 
     async def run(self) -> None:
@@ -88,29 +89,45 @@ class EstadoInscripcion(State):
             respuesta.set_metadata("ontology", "tictactoe")
             jugadores_base = [j.split('/')[0] for j in self.agent.jugadores.values()]
 
-            if len(self.agent.jugadores) < 2 and remitente not in jugadores_base:
+            if remitente in jugadores_base:
+                simbolo_asignado = "X" if self.agent.jugadores.get("X", "").split('/')[0] == remitente else "O"
+                contenido = crear_cuerpo_join_accepted(simbolo_asignado)
+                respuesta.set_metadata("performative", contenido.performativa)
+                respuesta.body = contenido.cuerpo
+
+                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Reenviando AGREE al jugador impaciente {remitente}")
+                await self.send(respuesta)
+                return ESTADO_JUGANDO if len(self.agent.jugadores) == 2 else ESTADO_INSCRIPCION
+
+            if len(self.agent.jugadores) < 2:
                 simbolo_asignado = "X" if len(self.agent.jugadores) == 0 else "O"
                 self.agent.jugadores[simbolo_asignado] = str(mensaje.sender)
-
                 self.agent.hilos[simbolo_asignado] = mensaje.thread
 
-                respuesta.set_metadata("performative", "agree")
-                respuesta.body = crear_cuerpo_join_accepted(simbolo_asignado)
+                contenido = crear_cuerpo_join_accepted(simbolo_asignado)
+                respuesta.set_metadata("performative", contenido.performativa)
+                respuesta.body = contenido.cuerpo
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando AGREE (join-accepted) a {respuesta.to}")
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} (join-accepted) a {respuesta.to}")
                 await self.send(respuesta)
 
                 if len(self.agent.jugadores) == 2:
                     await self.iniciar_partida()
                     retorno_estado = ESTADO_JUGANDO
-            else:
-                respuesta.set_metadata("performative", "refuse")
-                respuesta.body = crear_cuerpo_join_refused("full")
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando REFUSE (join-refused) a {respuesta.to}")
+            else:
+                contenido = crear_cuerpo_join_refused("full")
+                respuesta.set_metadata("performative", contenido.performativa)
+                respuesta.body = contenido.cuerpo
+
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} (join-refused) a {respuesta.to}")
                 await self.send(respuesta)
+
         except Exception as e:
             logging.error(f"[TABLERO] Error en procesar_peticion_join: {e}")
+
         return retorno_estado
 
     async def enviar_failure_timeout(self) -> None:
@@ -119,18 +136,22 @@ class EstadoInscripcion(State):
                 jid_jugador = self.agent.jugadores["X"]
                 respuesta = Message(to=jid_jugador)
                 respuesta.thread = self.agent.hilos.get("X", "timeout")
-                respuesta.set_metadata("performative", "failure")
                 respuesta.set_metadata("ontology", "tictactoe")
-                respuesta.body = crear_cuerpo_join_timeout("no opponent")
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando FAILURE (join-timeout) a {respuesta.to}")
+                # Cambios Tanda 2026-04-30: Uso de la tupla ContenidoMensaje
+                contenido = crear_cuerpo_join_timeout("no opponent")
+                respuesta.set_metadata("performative", contenido.performativa)
+                respuesta.body = contenido.cuerpo
+
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} (join-timeout) a {respuesta.to}")
                 await self.send(respuesta)
         except Exception as e:
             logging.error(f"[TABLERO] Error en enviar_failure_timeout: {e}")
 
     async def iniciar_partida(self) -> None:
         try:
-            self.agent.hilo_partida = crear_thread_unico(self.agent.id_tablero, "game")
+            self.agent.hilo_partida = crear_thread_unico(str(self.agent.jid), PREFIJO_THREAD_GAME)
 
             simbolos = ["X", "O"]
             for mi_simbolo in simbolos:
@@ -140,12 +161,14 @@ class EstadoInscripcion(State):
 
                 notificacion = Message(to=jid_destino)
                 notificacion.thread = self.agent.hilos[mi_simbolo]
-                notificacion.set_metadata("performative", "inform")
                 notificacion.set_metadata("ontology", "tictactoe")
 
-                notificacion.body = crear_cuerpo_game_start(jid_rival, self.agent.hilo_partida)
+                contenido = crear_cuerpo_game_start(jid_rival, self.agent.hilo_partida)
+                notificacion.set_metadata("performative", contenido.performativa)
+                notificacion.body = contenido.cuerpo
 
-                logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando INFORM (game-start) a {notificacion.to}")
+                logging.info(
+                    f"[TABLERO {self.agent.id_tablero}] 📤 Enviando {contenido.performativa.upper()} (game-start) a {notificacion.to}")
                 await self.send(notificacion)
 
             self.agent.estado_partida = "playing"

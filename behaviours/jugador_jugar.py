@@ -95,7 +95,6 @@ class Jugar(CyclicBehaviour):
     async def gestionar_turno(self, simbolo_activo: str) -> None:
         m = Message(to=self.jid_tablero)
         m.thread = self.hilo_inicial
-        m.set_metadata("performative", "propose")
         m.set_metadata("ontology", "tictactoe")
 
         if simbolo_activo == self.mi_simbolo:
@@ -122,16 +121,22 @@ class Jugar(CyclicBehaviour):
 
             if pos != -1:
                 logging.info(f"[{self.agent.jid.local}] 🚀 Muevo a la casilla {pos}")
-                m.body = crear_cuerpo_move(pos)
+                contenido = crear_cuerpo_move(pos)
             else:
-                m.body = crear_cuerpo_ok()
+                contenido = crear_cuerpo_ok()
 
-            logging.info(f"[JUGADOR {self.agent.jid.local}] 📤 Enviando PROPOSE a {m.to}")
+            m.set_metadata("performative", contenido.performativa)
+            m.body = contenido.cuerpo
+            logging.info(f"[JUGADOR {self.agent.jid.local}] 📤 Enviando {contenido.performativa.upper()} a {m.to}")
             await self.send(m)
         else:
             logging.info(f"[{self.agent.jid.local}] ⏳ Turno de '{simbolo_activo}'. Envío 'OK'.")
-            m.body = crear_cuerpo_ok()
-            logging.info(f"[JUGADOR {self.agent.jid.local}] 📤 Enviando PROPOSE (OK) a {m.to}")
+
+            contenido = crear_cuerpo_ok()
+            m.set_metadata("performative", contenido.performativa)
+            m.body = contenido.cuerpo
+
+            logging.info(f"[JUGADOR {self.agent.jid.local}] 📤 Enviando {contenido.performativa.upper()} (OK) a {m.to}")
             await self.send(m)
 
     def evaluar_estado_local(self) -> str:
@@ -145,13 +150,16 @@ class Jugar(CyclicBehaviour):
     async def enviar_informe_resultado(self, res: str) -> None:
         m = Message(to=self.jid_tablero)
         m.thread = self.hilo_inicial
-        m.set_metadata("performative", "inform")
         m.set_metadata("ontology", "tictactoe")
 
         ganador = self.turno_actual if res == "win" else None
-        m.body = crear_cuerpo_turn_result(res, ganador)
 
-        logging.info(f"[{self.agent.jid.local}] 📤 Enviando INFORM (turn-result: '{res}') a {m.to}")
+        contenido = crear_cuerpo_turn_result(res, ganador)
+        m.set_metadata("performative", contenido.performativa)
+        m.body = contenido.cuerpo
+
+        logging.info(
+            f"[{self.agent.jid.local}] 📤 Enviando {contenido.performativa.upper()} (turn-result: '{res}') a {m.to}")
         await self.send(m)
 
     def finalizar_partida(self) -> None:

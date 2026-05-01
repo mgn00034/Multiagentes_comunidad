@@ -22,7 +22,7 @@
 # ══════════════════════════════════════════════════════════════════
 
 xmpp:
-  perfil_activo: local    # Cambiar a "local" para usar localhost
+  perfil_activo: local    # "local" (Prosody Docker) | "servidor" (sinbad2)
 
   perfiles:
     local:
@@ -30,7 +30,7 @@ xmpp:
       puerto: 5222
       dominio: localhost
       servicio_muc: conference.localhost
-      sala_tictactoe: tictactoe
+      sala_tictactoe: sala_pc14
       password_defecto: secret
       auto_register: true
       verify_security: false
@@ -40,46 +40,118 @@ xmpp:
       puerto: 8022
       dominio: sinbad2.ujaen.es
       servicio_muc: conference.sinbad2.ujaen.es
-      sala_tictactoe: torneo_lab
+      sala_tictactoe: tictactoe
       password_defecto: secret
       auto_register: true
       verify_security: false
 
 
 # ══════════════════════════════════════════════════════════════════
-# PERFILES LLM — Servidor Ollama (solo para estrategia nivel 4)
+# PERFILES LLM — Backends para la estrategia nivel 4 (jugador LLM)
 # ══════════════════════════════════════════════════════════════════
 # Si tu estrategia no usa LLM, esta sección se ignora.
-# Los modelos llevan prefijo "ollama/" cuando se usan con LiteLLM
-# (niveles 2-3 de la asignatura), pero para llamadas directas a la
-# API REST de Ollama no es necesario el prefijo.
+#
+# Se definen tres perfiles: "local" (Ollama en Docker), "servidor"
+# (Ollama del laboratorio en sinbad2ia.ujaen.es) y "gemini" (API de
+# Google AI Studio en la nube; nivel gratuito con API key personal).
+#
+# Campo "proveedor": indica el tipo de backend del perfil.
+#   - "ollama"  → servidor Ollama (local o remoto). Usa "url_base" y
+#                 modelos con prefijo "ollama_chat/".
+#   - "gemini"  → API de Google AI Studio. Usa "api_key_env" para
+#                 indicar el nombre de la variable de entorno con la
+#                 clave (la clave NO se guarda en el YAML por
+#                 seguridad). No requiere "url_base".
+#
+# NOTA sobre el prefijo del modelo:
+#   - "ollama_chat/" es obligatorio para ADK + LiteLlm con Ollama
+#     (usa el endpoint chat completion necesario para tool calling).
+#     NO usar "ollama/" sin _chat: puede provocar bucles infinitos.
+#   - Para Gemini, ADK soporta el modelo de forma nativa (sin
+#     LiteLlm); el nombre va sin prefijo: "gemini-2.5-flash", etc.
+#     Si se usa LiteLLM para verificación, el prefijo es "gemini/".
 
 llm:
-  perfil_activo: local    # Cambiar a "servidor" para usar sinbad2ia
+  perfil_activo: local    # "local" | "servidor" | "gemini"
 
   perfiles:
     local:
+      proveedor: "ollama"
       url_base: "http://localhost:11434"
-      modelo: llama3.2:3b
-      modelos_disponibles:
-        - llama3.2:3b
-        - gemma3:4b
-      timeout_segundos: 120
-      descripcion: >
-        Ollama local en Docker. Modelos ligeros para desarrollo.
-        Instalar con: docker run -d -p 11434:11434 ollama/ollama
-        Descargar modelo: docker exec <contenedor> ollama pull llama3.2:3b
+      modelo: "ollama_chat/llama3.2:3b"
 
     servidor:
+      proveedor: "ollama"
       url_base: "http://sinbad2ia.ujaen.es:8050"
-      modelo: llama3:8b
-      modelos_disponibles:
-        - llama3:8b
-        - qwen3:32b
-      timeout_segundos: 120
-      descripcion: >
-        Servidor Ollama de la asignatura. Modelos potentes con GPU.
-        Requiere conexión a la red de la UJA o VPN.
+      modelo: "ollama_chat/llama3:8b"
+
+    gemini:
+      proveedor: "gemini"
+      modelo: "gemini-2.5-flash"
+      # Nombre de la variable de entorno donde el código lee la clave.
+      # Obtener clave gratuita en https://aistudio.google.com/apikey
+      # y exportar antes de arrancar:  export GOOGLE_API_KEY="..."
+      api_key_env: "GOOGLE_API_KEY"
+
+
+# ══════════════════════════════════════════════════════════════════
+# VERIFICACIÓN DE CONEXIÓN LLM
+# ══════════════════════════════════════════════════════════════════
+# Parámetros usados por scripts de comprobación para validar la pila
+# configuración → LiteLLM → proveedor activo. Centralizados aquí
+# para que ningún script los hardcodee.
+
+verificacion:
+  mensaje_prueba: >-
+    Responde en español con dos o tres frases. Define brevemente qué
+    es un sistema multiagente y menciona una característica que lo
+    distinga de un programa secuencial tradicional.
+  temperatura: 0.2
+  # Gemini 2.5/3 son modelos "thinking" — consumen parte del
+  # presupuesto de tokens en cadena de pensamiento interna. Por eso
+  # el límite es generoso, para que quede margen para la respuesta.
+  max_tokens: 1024
+
+
+# ══════════════════════════════════════════════════════════════════
+# DATOS DEL ALUMNO Y MODALIDAD DE EJECUCIÓN
+# ══════════════════════════════════════════════════════════════════
+# Estos datos son los que usa el lanzador (main.py) para construir
+# automáticamente el conjunto de agentes propios del alumno.  El
+# nombre de los agentes se forma con el patrón:
+#     tablero_<usuario_uja>_NN   (NN = 01, 02, …)
+#     jugador_<usuario_uja>_NN
+#
+# MODALIDADES:
+#   laboratorio — 4 tableros + 12 jugadores (pruebas de concurrencia
+#                 en el puesto del laboratorio).
+#   torneo      — 1 tablero  + 1 jugador   (competición conjunta).
+#
+# La cantidad concreta de agentes por modalidad y los parámetros
+# base (clase, módulo, puerto web base, etc.) se definen en
+# config/agents.yaml como plantillas.
+
+alumno:
+  # Nombre de usuario UJA del alumno (parte local del JID).  Debe
+  # coincidir con un usuario válido del servidor XMPP de la asignatura.
+  usuario_uja: pc14
+
+  # Modalidad activa: "laboratorio" o "torneo".
+  modalidad: prueba_local
+
+  # Lista de niveles de estrategia que se desean probar.
+  #   1 = Posicional   2 = Reglas   3 = Minimax   4 = LLM
+  #
+  # En modalidad LABORATORIO los jugadores se reparten de forma
+  # uniforme entre los niveles indicados (con 12 jugadores y la
+  # lista [1, 2, 3] se generan 4 jugadores de cada estrategia).
+  # En modalidad TORNEO se usa solo el primer nivel de la lista
+  # (la estrategia con la que el alumno compite).
+  #
+  # El nivel asignado se incorpora al nombre del agente como sufijo
+  # 'n<nivel>' para identificarlo a simple vista, p. ej.:
+  #     jugador_<usuario>_n2_03
+  niveles_estrategia: [1,2,3,4]
 
 
 # ══════════════════════════════════════════════════════════════════

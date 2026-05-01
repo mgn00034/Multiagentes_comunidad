@@ -14,10 +14,7 @@ class EstadoFinalizado(State):
             self.agent.estado_fsm = ESTADO_FINALIZADO
             self.agent.estado_partida = "finished"
 
-            self.agent.client.send_presence(
-                pto=f"{self.agent.sala_muc}/tablero_{self.agent.id_tablero}",
-                pstatus="finished"
-            )
+            self.agent.client.send_presence(pto=f"{self.agent.sala_muc}/{self.agent.jid.local}", pstatus="finished")
 
             razon_termino = getattr(self.agent, "razon_fin", None)
 
@@ -45,10 +42,11 @@ class EstadoFinalizado(State):
 
                         razon_fin = razon_termino if razon_termino and razon_termino not in ["finished",
                                                                                              "normal"] else "unknown"
-                        msg.body = crear_cuerpo_game_over(razon_fin, self.agent.ganador)
+                        contenido = crear_cuerpo_game_over(razon_fin, self.agent.ganador)
+                        msg.set_metadata("performative", contenido.performativa)
+                        msg.body = contenido.cuerpo
 
-                        logging.info(
-                            f"[TABLERO {self.agent.id_tablero}] 📤 Enviando REJECT-PROPOSAL (game-over abortado) a {msg.to}")
+                        logging.info(f"[TABLERO {self.agent.id_tablero}] 📤 Enviando REJECT-PROPOSAL (game-over abortado) a {msg.to}")
                         await self.send(msg)
 
             logging.info(f"\n============================================================")

@@ -14,7 +14,18 @@ from ontologia.ontologia import (
     CONVERSATION_ID_POR_ACCION,
     ESQUEMA_ONTOLOGIA,
     ONTOLOGIA,
+    PERFORMATIVA_ACCEPT_PROPOSAL,
+    PERFORMATIVA_AGREE,
+    PERFORMATIVA_CFP,
+    PERFORMATIVA_FAILURE,
+    PERFORMATIVA_INFORM,
     PERFORMATIVA_POR_ACCION,
+    PERFORMATIVA_PROPOSE,
+    PERFORMATIVA_REFUSE,
+    PERFORMATIVA_REJECT_PROPOSAL,
+    PERFORMATIVA_REQUEST,
+    PERFORMATIVAS_VALIDAS,
+    ContenidoMensaje,
     crear_cuerpo_game_over,
     crear_cuerpo_game_report,
     crear_cuerpo_game_report_refused,
@@ -92,26 +103,28 @@ class TestConstructoresGeneranJsonValido:
     """Los constructores deben producir JSON que pasa la validacion."""
 
     def test_join_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_join())
+        cuerpo = json.loads(crear_cuerpo_join().cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_join_accepted_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_join_accepted("X"))
+        cuerpo = json.loads(crear_cuerpo_join_accepted("X").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_join_refused_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_join_refused("full"))
+        cuerpo = json.loads(crear_cuerpo_join_refused("full").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_join_timeout_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_join_timeout("no opponent"))
+        cuerpo = json.loads(
+            crear_cuerpo_join_timeout("no opponent").cuerpo,
+        )
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_game_start_es_valido(self) -> None:
         cuerpo = json.loads(
             crear_cuerpo_game_start(
                 "jugador2@localhost", THREAD_PARTIDA_TEST,
-            )
+            ).cuerpo
         )
         assert validar_cuerpo(cuerpo)["valido"]
 
@@ -122,7 +135,7 @@ class TestConstructoresGeneranJsonValido:
         cuerpo = json.loads(
             crear_cuerpo_game_start(
                 "jugador2@localhost", THREAD_PARTIDA_TEST,
-            )
+            ).cuerpo
         )
         assert cuerpo["thread"] == THREAD_PARTIDA_TEST
 
@@ -132,46 +145,48 @@ class TestConstructoresGeneranJsonValido:
         El body resultante debe seguir siendo valido."""
         thread = crear_thread_unico("tablero_01@localhost")
         cuerpo = json.loads(
-            crear_cuerpo_game_start("jugador2@localhost", thread)
+            crear_cuerpo_game_start(
+                "jugador2@localhost", thread,
+            ).cuerpo
         )
         assert validar_cuerpo(cuerpo)["valido"]
         assert cuerpo["thread"] == thread
 
     def test_turn_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_turn("O"))
+        cuerpo = json.loads(crear_cuerpo_turn("O").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_move_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_move(4))
+        cuerpo = json.loads(crear_cuerpo_move(4).cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_move_confirmado_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_move_confirmado(0, "X"))
+        cuerpo = json.loads(crear_cuerpo_move_confirmado(0, "X").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_ok_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_ok())
+        cuerpo = json.loads(crear_cuerpo_ok().cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_game_over_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_game_over("timeout", "X"))
+        cuerpo = json.loads(crear_cuerpo_game_over("timeout", "X").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_turn_result_continue_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_turn_result("continue"))
+        cuerpo = json.loads(crear_cuerpo_turn_result("continue").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_turn_result_win_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_turn_result("win", "X"))
+        cuerpo = json.loads(crear_cuerpo_turn_result("win", "X").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_turn_result_draw_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_turn_result("draw"))
+        cuerpo = json.loads(crear_cuerpo_turn_result("draw").cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     @pytest.mark.parametrize("posicion", range(9))
     def test_todas_posiciones_validas(self, posicion: int) -> None:
-        cuerpo = json.loads(crear_cuerpo_move(posicion))
+        cuerpo = json.loads(crear_cuerpo_move(posicion).cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
 
@@ -397,22 +412,22 @@ class TestProtocoloSupervisor:
     """Tests para los mensajes del supervisor."""
 
     def test_game_report_request_es_valido(self) -> None:
-        cuerpo = json.loads(crear_cuerpo_game_report_request())
+        cuerpo = json.loads(crear_cuerpo_game_report_request().cuerpo)
         assert cuerpo["action"] == "game-report"
 
     def test_game_report_completo_es_valido(self) -> None:
-        body = crear_cuerpo_game_report(
+        contenido = crear_cuerpo_game_report(
             resultado_partida="win", ganador="X",
             jugadores={"X": "j1@localhost", "O": "j2@localhost"},
             turnos=7,
             tablero=["X", "O", "X", "O", "X", "O", "X", "", ""],
         )
-        cuerpo = json.loads(body)
+        cuerpo = json.loads(contenido.cuerpo)
         assert validar_cuerpo(cuerpo)["valido"]
 
     def test_game_report_refused_es_valido(self) -> None:
-        body = crear_cuerpo_game_report_refused()
-        cuerpo = json.loads(body)
+        contenido = crear_cuerpo_game_report_refused()
+        cuerpo = json.loads(contenido.cuerpo)
         assert cuerpo["action"] == "game-report"
         assert cuerpo["reason"] == "not-finished"
 
@@ -551,3 +566,187 @@ class TestCrearMensajeJoin:
         msg1 = crear_mensaje_join(self.JID_TABLERO, self.JID_JUGADOR)
         msg2 = crear_mensaje_join(self.JID_TABLERO, self.JID_JUGADOR)
         assert msg1.thread != msg2.thread
+
+
+# =====================================================================
+# 10. TESTS DEL VOCABULARIO DE PERFORMATIVAS
+# =====================================================================
+
+
+class TestVocabularioPerformativas:
+    """Verifica que las constantes del vocabulario de performativas
+    existen y contienen los valores FIPA-ACL canonicos. Estas
+    constantes son la unica forma admitida de referirse a las
+    performativas en el sistema, asi todos los agentes del torneo
+    usan exactamente la misma cadena."""
+
+    def test_constantes_tienen_valores_fipa_canonicos(self) -> None:
+        """Cada constante debe ser exactamente la cadena FIPA-ACL en
+        minusculas (sin guiones, sin variantes)."""
+        assert PERFORMATIVA_REQUEST == "request"
+        assert PERFORMATIVA_AGREE == "agree"
+        assert PERFORMATIVA_REFUSE == "refuse"
+        assert PERFORMATIVA_FAILURE == "failure"
+        assert PERFORMATIVA_INFORM == "inform"
+        assert PERFORMATIVA_CFP == "cfp"
+        assert PERFORMATIVA_PROPOSE == "propose"
+        assert PERFORMATIVA_ACCEPT_PROPOSAL == "accept_proposal"
+        assert PERFORMATIVA_REJECT_PROPOSAL == "reject_proposal"
+
+    def test_conjunto_validas_contiene_todas(self) -> None:
+        """PERFORMATIVAS_VALIDAS debe agrupar las nueve
+        performativas que usa el sistema."""
+        esperadas = {
+            PERFORMATIVA_REQUEST, PERFORMATIVA_AGREE,
+            PERFORMATIVA_REFUSE, PERFORMATIVA_FAILURE,
+            PERFORMATIVA_INFORM, PERFORMATIVA_CFP,
+            PERFORMATIVA_PROPOSE, PERFORMATIVA_ACCEPT_PROPOSAL,
+            PERFORMATIVA_REJECT_PROPOSAL,
+        }
+        assert PERFORMATIVAS_VALIDAS == esperadas
+
+    def test_mapa_accion_performativa_usa_constantes(self) -> None:
+        """Todos los valores del mapa PERFORMATIVA_POR_ACCION deben
+        pertenecer al vocabulario PERFORMATIVAS_VALIDAS (garantia de
+        que no haya cadenas literales sueltas)."""
+        for accion, perf in PERFORMATIVA_POR_ACCION.items():
+            assert perf in PERFORMATIVAS_VALIDAS, (
+                f"La performativa de '{accion}' ({perf!r}) no esta "
+                "en el vocabulario PERFORMATIVAS_VALIDAS"
+            )
+
+
+# =====================================================================
+# 11. TESTS DEL CONTRATO ContenidoMensaje (performativa + body)
+# =====================================================================
+
+
+class TestContratoContenidoMensaje:
+    """Verifica que los constructores ``crear_cuerpo_*`` devuelven
+    una tupla (performativa, cuerpo) coherente. El objetivo es que
+    el alumno no pueda usar accidentalmente una performativa
+    distinta de la que la ontologia asocia con la accion."""
+
+    def test_join_devuelve_request(self) -> None:
+        """``join`` lleva siempre PERFORMATIVA_REQUEST."""
+        contenido = crear_cuerpo_join()
+        assert isinstance(contenido, ContenidoMensaje)
+        assert contenido.performativa == PERFORMATIVA_REQUEST
+
+    def test_join_accepted_devuelve_agree(self) -> None:
+        contenido = crear_cuerpo_join_accepted("X")
+        assert contenido.performativa == PERFORMATIVA_AGREE
+
+    def test_join_refused_devuelve_refuse(self) -> None:
+        contenido = crear_cuerpo_join_refused("full")
+        assert contenido.performativa == PERFORMATIVA_REFUSE
+
+    def test_join_timeout_devuelve_failure(self) -> None:
+        contenido = crear_cuerpo_join_timeout("no opponent")
+        assert contenido.performativa == PERFORMATIVA_FAILURE
+
+    def test_game_start_devuelve_inform(self) -> None:
+        contenido = crear_cuerpo_game_start(
+            "jugador2@localhost", THREAD_PARTIDA_TEST,
+        )
+        assert contenido.performativa == PERFORMATIVA_INFORM
+
+    def test_turn_devuelve_cfp(self) -> None:
+        contenido = crear_cuerpo_turn("X")
+        assert contenido.performativa == PERFORMATIVA_CFP
+
+    def test_move_devuelve_propose(self) -> None:
+        """``move`` (propuesta del jugador) lleva PROPOSE."""
+        contenido = crear_cuerpo_move(4)
+        assert contenido.performativa == PERFORMATIVA_PROPOSE
+
+    def test_move_confirmado_devuelve_accept_proposal(self) -> None:
+        """``move`` confirmado por el tablero usa ACCEPT_PROPOSAL
+        para distinguirlo de la propuesta original del jugador en
+        el template del receptor."""
+        contenido = crear_cuerpo_move_confirmado(4, "X")
+        assert contenido.performativa == PERFORMATIVA_ACCEPT_PROPOSAL
+
+    def test_ok_devuelve_propose(self) -> None:
+        contenido = crear_cuerpo_ok()
+        assert contenido.performativa == PERFORMATIVA_PROPOSE
+
+    def test_game_over_devuelve_reject_proposal(self) -> None:
+        contenido = crear_cuerpo_game_over("timeout", "X")
+        assert contenido.performativa == PERFORMATIVA_REJECT_PROPOSAL
+
+    def test_turn_result_devuelve_inform(self) -> None:
+        contenido = crear_cuerpo_turn_result("continue")
+        assert contenido.performativa == PERFORMATIVA_INFORM
+
+    def test_game_report_request_devuelve_request(self) -> None:
+        """La SOLICITUD del supervisor lleva REQUEST."""
+        contenido = crear_cuerpo_game_report_request()
+        assert contenido.performativa == PERFORMATIVA_REQUEST
+
+    def test_game_report_devuelve_inform(self) -> None:
+        """La RESPUESTA del tablero al supervisor lleva INFORM,
+        no REQUEST. Asi el receptor distingue su propia peticion de
+        la respuesta por la performativa, sin tener que parsear el
+        body."""
+        contenido = crear_cuerpo_game_report(
+            resultado_partida="win", ganador="X",
+            jugadores={"X": "j1@localhost", "O": "j2@localhost"},
+            turnos=7,
+            tablero=["X", "O", "X", "O", "X", "O", "X", "", ""],
+        )
+        assert contenido.performativa == PERFORMATIVA_INFORM
+
+    def test_game_report_refused_devuelve_refuse(self) -> None:
+        """El RECHAZO del tablero a entregar el informe lleva REFUSE
+        (la partida aun no ha terminado), no REQUEST."""
+        contenido = crear_cuerpo_game_report_refused()
+        assert contenido.performativa == PERFORMATIVA_REFUSE
+
+    def test_namedtuple_es_iterable_como_tupla(self) -> None:
+        """Por compatibilidad, debe poder hacerse unpacking de la
+        tupla nombrada (performativa, cuerpo = contenido)."""
+        performativa, cuerpo = crear_cuerpo_join()
+        assert performativa == PERFORMATIVA_REQUEST
+        assert isinstance(cuerpo, str)
+
+    def test_cuerpo_es_json_valido(self) -> None:
+        """El campo .cuerpo sigue siendo un JSON serializado valido,
+        para mantener la compatibilidad con ``mensaje.body``."""
+        contenido = crear_cuerpo_move(0)
+        cuerpo_dict = json.loads(contenido.cuerpo)
+        assert validar_cuerpo(cuerpo_dict)["valido"]
+
+    def test_performativa_coincide_con_mapa_accion(self) -> None:
+        """La performativa devuelta por crear_cuerpo_* DEBE coincidir
+        con el mapa PERFORMATIVA_POR_ACCION para las acciones cuyo
+        constructor no la sobreescribe (todas excepto move-confirmado,
+        game-report-INFORM y game-report-REFUSE)."""
+        casos = [
+            (crear_cuerpo_join(), "join"),
+            (crear_cuerpo_join_accepted("X"), "join-accepted"),
+            (crear_cuerpo_join_refused("full"), "join-refused"),
+            (
+                crear_cuerpo_join_timeout("no opponent"),
+                "join-timeout",
+            ),
+            (
+                crear_cuerpo_game_start(
+                    "j2@localhost", THREAD_PARTIDA_TEST,
+                ),
+                "game-start",
+            ),
+            (crear_cuerpo_turn("X"), "turn"),
+            (crear_cuerpo_move(4), "move"),
+            (crear_cuerpo_ok(), "ok"),
+            (crear_cuerpo_game_over("timeout", "X"), "game-over"),
+            (crear_cuerpo_turn_result("draw"), "turn-result"),
+            (crear_cuerpo_game_report_request(), "game-report"),
+        ]
+        for contenido, accion in casos:
+            esperada = PERFORMATIVA_POR_ACCION[accion]
+            assert contenido.performativa == esperada, (
+                f"Constructor de '{accion}' devolvio "
+                f"{contenido.performativa!r} pero el mapa indica "
+                f"{esperada!r}"
+            )

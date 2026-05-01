@@ -265,15 +265,20 @@ Leyendo el diagrama de arriba abajo:
 ```python
 from ontologia import crear_cuerpo_game_start
 
-body = crear_cuerpo_game_start(
+contenido = crear_cuerpo_game_start(
     oponente=str(jid_jugador_o),
     thread_partida=thread_partida,
 )
+# contenido.performativa == PERFORMATIVA_INFORM ("inform")
+# contenido.cuerpo es el JSON serializado, listo para mensaje.body
 ```
 
 El constructor valida internamente que `oponente` y `thread_partida`
 no sean cadenas vacías, así que un tablero que se olvide de pasar el
-thread falla en construcción (nunca en recepción).
+thread falla en construcción (nunca en recepción). Desde 2026-04-30
+devuelve una `ContenidoMensaje(performativa, cuerpo)` para garantizar
+que la performativa correcta (`inform`) viaja siempre emparejada con
+su body.
 
 ---
 
@@ -394,7 +399,6 @@ el thread de partida y lo usa para emitir los dos `game-start`:
 from ontologia import (
     ONTOLOGIA, PREFIJO_THREAD_GAME,
     crear_cuerpo_game_start, crear_thread_unico,
-    obtener_performativa,
 )
 
 
@@ -403,16 +407,15 @@ thread_partida = crear_thread_unico(
 )
 
 for jid_jugador, jid_oponente in ((jid_x, jid_o), (jid_o, jid_x)):
-    mensaje = Message(to=str(jid_jugador))
-    mensaje.set_metadata("ontology", ONTOLOGIA)
-    mensaje.set_metadata(
-        "performative", obtener_performativa("game-start"),
-    )
-    mensaje.thread = thread_partida
-    mensaje.body = crear_cuerpo_game_start(
+    contenido = crear_cuerpo_game_start(
         oponente=str(jid_oponente),
         thread_partida=thread_partida,
     )
+    mensaje = Message(to=str(jid_jugador))
+    mensaje.set_metadata("ontology", ONTOLOGIA)
+    mensaje.set_metadata("performative", contenido.performativa)
+    mensaje.thread = thread_partida
+    mensaje.body = contenido.cuerpo
     await self.send(mensaje)
 ```
 
@@ -589,9 +592,10 @@ referencia más apropiada en lugar de releer la guía entera.
 
 ### Documentación relacionada
 
-- `ACTUALIZACION-ONTOLOGIA.md` — registro histórico de los cambios de
-  la ontología, incluida la nota de 2026-04-23 que enlaza con esta
-  guía. Consúltalo si necesitas saber **qué** ha cambiado desde una
+- `CAMBIOS-A-IMPLEMENTAR.md` — registro histórico de los cambios de
+  la ontología, configuración y lanzador, incluida la nota de
+  2026-04-23 que enlaza con esta guía. Consúltalo si necesitas saber
+  **qué** ha cambiado desde una
   versión previa del proyecto.
 - `doc/GUIA_TABLERO_TORNEO.md` — guía específica del agente Tablero.
   Incluye la tabla resumen de metadatos por tipo de mensaje y los

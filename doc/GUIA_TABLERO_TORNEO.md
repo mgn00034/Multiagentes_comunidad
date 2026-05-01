@@ -85,57 +85,37 @@ antes de que se ejecute ninguna logica de negocio.
 ### Cambios obligatorios en el tablero del alumno
 
 El tablero debe registrar **dos behaviours separados**, cada uno
-con un template que incluya el `conversation-id` correspondiente.
-La ontologia proporciona dos funciones que construyen las
-plantillas con toda la metadata ya configurada:
-
-```python
-from ontologia.ontologia import (
-    crear_plantilla_join,
-    crear_plantilla_game_report,
-)
-
-async def setup(self):
-    # ── Behaviour 1: inscripciones de jugadores ──────────
-    self.add_behaviour(
-        GestionarInscripcionBehaviour(),
-        crear_plantilla_join(),
-    )
-
-    # ── Behaviour 2: informes para el supervisor ─────────
-    self.add_behaviour(
-        ResponderGameReportBehaviour(),
-        crear_plantilla_game_report(),
-    )
-```
-
-Cada funcion devuelve un `Template` SPADE con los tres campos
-de metadata necesarios (`ontology`, `performative`,
-`conversation-id`), garantizando que todos los tableros usen
-exactamente los mismos valores. Esto evita errores por omision
-o por valores incorrectos en la metadata.
-
-Cada behaviour solo recibe los mensajes de **su** protocolo. No
-hay ambiguedad y no es necesario parsear el body para distinguir
-el tipo de REQUEST.
-
-Si el alumno prefiere construir las plantillas manualmente (no
-recomendado), debe incluir **todos** los campos de metadata:
+con un template que incluya el `conversation-id` correspondiente:
 
 ```python
 from spade.template import Template
 from ontologia.ontologia import ONTOLOGIA
 
-plantilla_join = Template()
-plantilla_join.set_metadata("ontology", ONTOLOGIA)
-plantilla_join.set_metadata("performative", "request")
-plantilla_join.set_metadata("conversation-id", "join")
+async def setup(self):
+    # ── Behaviour 1: inscripciones de jugadores ──────────
+    plantilla_join = Template()
+    plantilla_join.set_metadata("ontology", ONTOLOGIA)
+    plantilla_join.set_metadata("performative", "request")
+    plantilla_join.set_metadata("conversation-id", "join")
 
-plantilla_report = Template()
-plantilla_report.set_metadata("ontology", ONTOLOGIA)
-plantilla_report.set_metadata("performative", "request")
-plantilla_report.set_metadata("conversation-id", "game-report")
+    self.add_behaviour(
+        GestionarInscripcionBehaviour(), plantilla_join,
+    )
+
+    # ── Behaviour 2: informes para el supervisor ─────────
+    plantilla_report = Template()
+    plantilla_report.set_metadata("ontology", ONTOLOGIA)
+    plantilla_report.set_metadata("performative", "request")
+    plantilla_report.set_metadata("conversation-id", "game-report")
+
+    self.add_behaviour(
+        ResponderGameReportBehaviour(), plantilla_report,
+    )
 ```
+
+Cada behaviour solo recibe los mensajes de **su** protocolo. No
+hay ambiguedad y no es necesario parsear el body para distinguir
+el tipo de REQUEST.
 
 ---
 
@@ -169,14 +149,15 @@ from ontologia.ontologia import (
     crear_cuerpo_join, crear_thread_unico,
 )
 
+contenido = crear_cuerpo_join()
 mensaje = Message(to=jid_tablero)
 mensaje.set_metadata("ontology", ONTOLOGIA)
-mensaje.set_metadata("performative", "request")
+mensaje.set_metadata("performative", contenido.performativa)
 mensaje.set_metadata("conversation-id", "join")
 mensaje.thread = crear_thread_unico(
     str(self.agent.jid), PREFIJO_THREAD_JOIN,
 )
-mensaje.body = crear_cuerpo_join()
+mensaje.body = contenido.cuerpo
 await self.send(mensaje)
 ```
 
@@ -201,10 +182,11 @@ automaticamente:
 
 ```python
 # En el behaviour del tablero, al responder:
+contenido = crear_cuerpo_join_accepted("X")
 respuesta = mensaje.make_reply()  # copia thread, sender -> to
 respuesta.set_metadata("ontology", ONTOLOGIA)
-respuesta.set_metadata("performative", "agree")
-respuesta.body = crear_cuerpo_join_accepted("X")
+respuesta.set_metadata("performative", contenido.performativa)  # PERFORMATIVA_AGREE
+respuesta.body = contenido.cuerpo
 await self.send(respuesta)
 ```
 
@@ -328,16 +310,10 @@ pytest tests/ -v
 
 #### Utilidades comunes para los tests
 
-La ontologia proporciona funciones para construir las plantillas
-(`crear_plantilla_join`, `crear_plantilla_game_report`) y los
-mensajes (`crear_mensaje_join`). Los tests deben usarlas
-directamente en lugar de construir la metadata a mano.
-
-Las siguientes funciones auxiliares complementan a las de la
-ontologia para simular mensajes entrantes y comprobar la
-coincidencia con templates. El alumno puede copiarlas
-directamente en su fichero de tests o en un modulo
-`tests/utilidades.py` compartido.
+Las siguientes funciones auxiliares simplifican la creacion de
+mensajes simulados. El alumno puede copiarlas directamente en
+su fichero de tests o en un modulo `tests/utilidades.py`
+compartido.
 
 ```python
 import json
@@ -345,12 +321,7 @@ import pytest
 from unittest.mock import MagicMock, AsyncMock
 from spade.message import Message
 from spade.template import Template
-from ontologia.ontologia import (
-    ONTOLOGIA,
-    crear_mensaje_join,
-    crear_plantilla_join,
-    crear_plantilla_game_report,
-)
+from ontologia.ontologia import ONTOLOGIA
 
 
 def crear_mensaje_request(accion, conversation_id,
@@ -441,7 +412,11 @@ class TestTableroEnrutamiento:
     def test_template_join_acepta_request_join(self):
         """El template del behaviour de inscripcion debe aceptar
         un REQUEST con conversation-id='join'."""
-        plantilla = crear_plantilla_join()
+        plantilla = Template()
+        plantilla.set_metadata("ontology", ONTOLOGIA)
+        plantilla.set_metadata("performative", "request")
+        plantilla.set_metadata("conversation-id", "join")
+
         msg = crear_mensaje_request("join", "join")
         assert template_acepta_mensaje(plantilla, msg)
 
@@ -450,21 +425,33 @@ class TestTableroEnrutamiento:
         aceptar un REQUEST con conversation-id='game-report'.
         Si lo aceptara, el supervisor entraria en el behaviour
         de inscripcion en vez del de informe."""
-        plantilla = crear_plantilla_join()
+        plantilla = Template()
+        plantilla.set_metadata("ontology", ONTOLOGIA)
+        plantilla.set_metadata("performative", "request")
+        plantilla.set_metadata("conversation-id", "join")
+
         msg = crear_mensaje_request("game-report", "game-report")
         assert not template_acepta_mensaje(plantilla, msg)
 
     def test_template_report_acepta_request_game_report(self):
         """El template del behaviour de informe debe aceptar
         un REQUEST con conversation-id='game-report'."""
-        plantilla = crear_plantilla_game_report()
+        plantilla = Template()
+        plantilla.set_metadata("ontology", ONTOLOGIA)
+        plantilla.set_metadata("performative", "request")
+        plantilla.set_metadata("conversation-id", "game-report")
+
         msg = crear_mensaje_request("game-report", "game-report")
         assert template_acepta_mensaje(plantilla, msg)
 
     def test_template_report_rechaza_request_join(self):
         """El template del behaviour de informe NO debe aceptar
         un REQUEST con conversation-id='join'."""
-        plantilla = crear_plantilla_game_report()
+        plantilla = Template()
+        plantilla.set_metadata("ontology", ONTOLOGIA)
+        plantilla.set_metadata("performative", "request")
+        plantilla.set_metadata("conversation-id", "game-report")
+
         msg = crear_mensaje_request("join", "join")
         assert not template_acepta_mensaje(plantilla, msg)
 
@@ -472,8 +459,17 @@ class TestTableroEnrutamiento:
         """Un REQUEST sin conversation-id no debe ser aceptado
         por ninguno de los dos templates. Esto detecta mensajes
         de agentes que no han implementado la convencion."""
-        plantilla_join = crear_plantilla_join()
-        plantilla_report = crear_plantilla_game_report()
+        plantilla_join = Template()
+        plantilla_join.set_metadata("ontology", ONTOLOGIA)
+        plantilla_join.set_metadata("performative", "request")
+        plantilla_join.set_metadata("conversation-id", "join")
+
+        plantilla_report = Template()
+        plantilla_report.set_metadata("ontology", ONTOLOGIA)
+        plantilla_report.set_metadata("performative", "request")
+        plantilla_report.set_metadata(
+            "conversation-id", "game-report",
+        )
 
         msg = crear_mensaje_request("join", "")
         assert not template_acepta_mensaje(plantilla_join, msg)
@@ -557,7 +553,10 @@ class TestJugadorMetadata:
         template de inscripcion del tablero. Este test simula
         la interaccion cruzada en torneo: el mensaje de un
         jugador de un alumno llega al tablero de otro alumno."""
-        plantilla_tablero = crear_plantilla_join()
+        plantilla_tablero = Template()
+        plantilla_tablero.set_metadata("ontology", ONTOLOGIA)
+        plantilla_tablero.set_metadata("performative", "request")
+        plantilla_tablero.set_metadata("conversation-id", "join")
 
         msg = crear_mensaje_request(
             "join", "join",
@@ -594,8 +593,17 @@ class TestEscenarioTorneo:
 
         Cada mensaje debe ser aceptado por exactamente uno de
         los dos templates, no por ambos ni por ninguno."""
-        plantilla_join = crear_plantilla_join()
-        plantilla_report = crear_plantilla_game_report()
+        plantilla_join = Template()
+        plantilla_join.set_metadata("ontology", ONTOLOGIA)
+        plantilla_join.set_metadata("performative", "request")
+        plantilla_join.set_metadata("conversation-id", "join")
+
+        plantilla_report = Template()
+        plantilla_report.set_metadata("ontology", ONTOLOGIA)
+        plantilla_report.set_metadata("performative", "request")
+        plantilla_report.set_metadata(
+            "conversation-id", "game-report",
+        )
 
         # Mensaje del jugador de otro alumno
         msg_join = crear_mensaje_request(
